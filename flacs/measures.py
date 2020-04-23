@@ -1,3 +1,16 @@
+import sys
+
+def full_lockdown(e):
+  e.remove_all_measures()
+  e.add_closure("school", 0)
+  e.add_closure("leisure", 0)
+  e.add_partial_closure("shopping", 0.8)
+  # mimicking a 75% reduction in social contacts.
+  e.add_social_distance_imp9()
+  e.add_work_from_home()
+  e.add_case_isolation()
+  e.add_household_isolation()
+
 def uk_lockdown(e, phase=1):
   e.remove_all_measures()
 
@@ -53,6 +66,8 @@ def work100(e):
 
 def enact_dynamic_lockdown(e, light_lockdown_func, kpi_value, threshold):
   if kpi_value > threshold:
+    print("DYNAMIC: Full lockdown", file=sys.stderr)
     full_lockdown(e)
   else:
+    print("DYNAMIC: Light lockdown", file=sys.stderr)
     light_lockdown_func(e)

@@ -100,7 +100,7 @@ if __name__ == "__main__":
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map.yml".format(data_dir),
-                                        house_ratio=2)
+                                        house_ratio=100)
     # Can only be done after houses are in.
     read_cases_csv.read_cases_csv(e,
                                   "{}/{}_cases.csv".format(data_dir, location),
@@ -134,8 +134,8 @@ if __name__ == "__main__":
             elif transition_scenario == "work100":
                 measures.work100(e)
 
-        if transition_scenario == "dynamic-lockdown" and t%7 == 0:
-            measures.enact_dynamic_lockdown(e, measures.work50, num_infections_today, 100)
+        if t>22 and transition_scenario == "dynamic-lockdown" and t%7 == 0:
+            measures.enact_dynamic_lockdown(e, measures.work50, flacs.num_infections_today, 100)
 
         # Recording of existing measures
         if transition_scenario not in ["no-measures"]:
