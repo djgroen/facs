@@ -12,3 +12,6 @@ covid\_out\_infections.csv
 test-extend-lockdown-62.csv
 
 There is a hardcoded lockdown in run.py which is representative for the UK. This can be disabled by selecting the transition scenario "no-measures".
+
+We also included a simple plotting script. This can be called e.g. as follows:
+`python3 PlotSEIR.py test-extend-lockdown-62.csv test`

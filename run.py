@@ -1,4 +1,5 @@
 import flacs.flacs as flacs
+import flacs.measures as measures
 from readers import read_age_csv
 import numpy as np
 from readers import read_building_csv
@@ -21,12 +22,14 @@ if __name__ == "__main__":
     parser.add_argument('--transition_mode', action="store",
                         type=int, default='1')
     parser.add_argument('--output_dir', action="store", default=".")
+    parser.add_argument('--data_dir', action="store", default="covid_data")
     parser.add_argument('--start_date', action="store", default="3/1/2020")
     args = parser.parse_args()
     location = args.location
     transition_scenario = args.transition_scenario.lower()
     transition_mode = args.transition_mode
     output_dir = args.output_dir
+    data_dir = args.data_dir
 
     # if simsetting.csv exists -> overwrite the simulation setting parameters
     if path.isfile('simsetting.csv'):
@@ -55,7 +58,7 @@ if __name__ == "__main__":
     AcceptableTransitionScenario = ['no-measures', 'extend-lockdown',
                                     'open-all', 'open-schools', 'open-shopping',
                                     'open-leisure', 'work50', 'work75',
-                                    'work100']
+                                    'work100', 'dynamic-lockdown']
     if transition_scenario not in AcceptableTransitionScenario:
         print("\nError !\n\tThe input transition scenario, %s , is not VALID" %
               (transition_scenario))
@@ -72,6 +75,8 @@ if __name__ == "__main__":
                                        transition_day)
 
     end_time = 180
+    if transition_scenario == "dynamic-lockdown":
+      end_time = 730
 
     print("Running basic Covid-19 simulation kernel.")
     print("scenario = %s" % (location))
@@ -84,21 +89,21 @@ if __name__ == "__main__":
 
     e = flacs.Ecosystem(end_time)
 
-    e.ages = read_age_csv.read_age_csv("covid_data/age-distr.csv", location)
+    e.ages = read_age_csv.read_age_csv("{}/age-distr.csv".format(data_dir), location)
 
     print("age distribution in system:", e.ages, file=sys.stderr)
 
     e.disease = read_disease_yml.read_disease_yml(
-        "covid_data/disease_covid19.yml")
+        "covid_data/disease_covid19.yml".format(data_dir))
 
-    building_file = "{}/{}_buildings.csv".format("covid_data", location)
+    building_file = "{}/{}_buildings.csv".format(data_dir, location)
     read_building_csv.read_building_csv(e,
                                         building_file,
-                                        "covid_data/building_types_map.yml",
+                                        "{}/building_types_map.yml".format(data_dir),
                                         house_ratio=2)
     # Can only be done after houses are in.
     read_cases_csv.read_cases_csv(e,
-                                  "covid_data/{}_cases.csv".format(location),
+                                  "{}/{}_cases.csv".format(data_dir, location),
                                   start_date=args.start_date,
                                   date_format="%m/%d/%Y")
 
@@ -107,7 +112,7 @@ if __name__ == "__main__":
     for i in range(0, 30):
         e.evolve()
         print(e.time)
-        e.print_status(outfile)
+        #e.print_status(outfile)
 
     for t in range(0, end_time):
 
@@ -123,53 +128,21 @@ if __name__ == "__main__":
             elif transition_scenario == "open-leisure":
                 e.remove_closure("leisure")
             elif transition_scenario == "work50":
-                e.remove_all_measures()
-                e.add_closure("school", 0)
-                e.add_closure("leisure", 0)
-                e.add_partial_closure("shopping", 0.4)
-                # mimicking a 75% reduction in social contacts.
-                e.add_social_distance_imp9()
-                # light work from home instruction, with 50% compliance
-                e.add_work_from_home(0.5)
-                e.add_case_isolation()
-                e.add_household_isolation()
+                measures.work50(e)
             elif transition_scenario == "work75":
-                e.remove_all_measures()
-                e.add_partial_closure("leisure", 0.5)
-                # mimicking a 75% reduction in social contacts.
-                e.add_social_distance_imp9()
-                # light work from home instruction, with 25% compliance
-                e.add_work_from_home(0.25)
-                e.add_case_isolation()
-                e.add_household_isolation()
+                measures.work75(e)
             elif transition_scenario == "work100":
-                e.remove_all_measures()
-                # mimicking a 75% reduction in social contacts.
-                e.add_social_distance_imp9()
-                e.add_case_isolation()
-                e.add_household_isolation()
+                measures.work100(e)
+
+        if transition_scenario == "dynamic-lockdown" and t%7 == 0:
+            measures.enact_dynamic_lockdown(e, measures.work50, num_infections_today, 100)
 
         # Recording of existing measures
         if transition_scenario not in ["no-measures"]:
             if t == 15:  # 16th of March
-                e.remove_all_measures()
-                # mimicking a 75% reduction in social contacts.
-                e.add_social_distance_imp9()
-                # light work from home instruction, with 50% compliance
-                e.add_work_from_home(0.5)
-                e.add_partial_closure("leisure", 0.5)
-                e.add_case_isolation()
-                e.add_household_isolation()
+                measures.uk_lockdown(e, phase=1)
             if t == 22:  # 23rd of March
-                e.remove_all_measures()
-                e.add_closure("school", 0)
-                e.add_closure("leisure", 0)
-                e.add_partial_closure("shopping", 0.8)
-                # mimicking a 75% reduction in social contacts.
-                e.add_social_distance_imp9()
-                e.add_work_from_home()
-                e.add_case_isolation()
-                e.add_household_isolation()
+                measures.uk_lockdown(e, phase=2)
 
         # Propagate the model by one time step.
         e.evolve()
