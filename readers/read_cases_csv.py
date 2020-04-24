@@ -16,8 +16,8 @@ def subtract_dates(date1, date2, date_format="%m/%d/%Y"):
   return delta.days
 
 def read_cases_csv(e, csvfile, date_format="%m/%d/%Y", start_date="3/18/2020"):
-  period_to_hosp = 11
-  period_to_rec = 25
+  period_to_hosp = 12
+  period_to_rec = 20
 
   num_infections = 0
   if csvfile == "":

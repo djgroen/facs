@@ -26,6 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--start_date', action="store", default="3/1/2020")
     parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
     args = parser.parse_args()
+    print(args)
 
     house_ratio = 2
     if args.quicktest is not None:
@@ -91,6 +92,7 @@ if __name__ == "__main__":
     print("end_time = %d" % (end_time))
     print("output_dir  = %s" % (output_dir))
     print("outfile  = %s" % (outfile))
+    print("data_dir  = %s" % (data_dir))
 
     e = flacs.Ecosystem(end_time)
 
@@ -99,13 +101,15 @@ if __name__ == "__main__":
     print("age distribution in system:", e.ages, file=sys.stderr)
 
     e.disease = read_disease_yml.read_disease_yml(
-        "covid_data/disease_covid19.yml".format(data_dir))
+        "{}/disease_covid19.yml".format(data_dir))
 
     building_file = "{}/{}_buildings.csv".format(data_dir, location)
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map.yml".format(data_dir),
                                         house_ratio=house_ratio)
+
+    print("{}/{}_cases.csv".format(data_dir, location))
     # Can only be done after houses are in.
     read_cases_csv.read_cases_csv(e,
                                   "{}/{}_cases.csv".format(data_dir, location),
