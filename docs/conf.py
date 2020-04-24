@@ -18,8 +18,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'FLACS'
-copyright = '2020, Derek Groen, Imran Mahmood, Hamid Arabnejad, David Bell, Alan Serrano, Diana Suleimenova, Anastasia Anagnostou, Isabel Sassoon, Alaa Marshan, Panos Louvieris'
-author = 'Derek Groen, Imran Mahmood, Hamid Arabnejad, David Bell, Alan Serrano, Diana Suleimenova, Anastasia Anagnostou, Isabel Sassoon, Alaa Marshan, Panos Louvieris'
+copyright = '2020, Derek Groen, Imran Mahmood, David Bell, Hamid Arabnejad et al.'
+author = 'Derek Groen, Imran Mahmood, David Bell, Hamid Arabnejad et al.'
 
 # The full version, including alpha/beta/rc tags
 release = 'v0.1-alpha'
@@ -39,7 +39,7 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
 # -- Options for HTML output -------------------------------------------------
