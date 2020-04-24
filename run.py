@@ -24,7 +24,12 @@ if __name__ == "__main__":
     parser.add_argument('--output_dir', action="store", default=".")
     parser.add_argument('--data_dir', action="store", default="covid_data")
     parser.add_argument('--start_date', action="store", default="3/1/2020")
+    parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
     args = parser.parse_args()
+
+    house_ratio = 2
+    if args.quicktest is not None:
+      house_ratio = 100
     location = args.location
     transition_scenario = args.transition_scenario.lower()
     transition_mode = args.transition_mode
@@ -100,7 +105,7 @@ if __name__ == "__main__":
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map.yml".format(data_dir),
-                                        house_ratio=100)
+                                        house_ratio=house_ratio)
     # Can only be done after houses are in.
     read_cases_csv.read_cases_csv(e,
                                   "{}/{}_cases.csv".format(data_dir, location),

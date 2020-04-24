@@ -64,10 +64,14 @@ def work100(e):
   e.add_case_isolation()
   e.add_household_isolation()
 
+_dyn_lock_full = True # we assume this mechanism starts in lockdown mode.
 def enact_dynamic_lockdown(e, light_lockdown_func, kpi_value, threshold):
+  global _dyn_lock_full
   if kpi_value > threshold:
-    print("DYNAMIC: Full lockdown", file=sys.stderr)
-    full_lockdown(e)
+    if not _dyn_lock_full:
+      print("DYNAMIC: Full lockdown", file=sys.stderr)
+      full_lockdown(e)
   else:
-    print("DYNAMIC: Light lockdown", file=sys.stderr)
-    light_lockdown_func(e)
+    if _dyn_lock_full:
+      print("DYNAMIC: Light lockdown", file=sys.stderr)
+      light_lockdown_func(e)
