@@ -2,7 +2,7 @@ import csv
 import sys
 import pprint
 import yaml
-from flee import disease
+from flacs import disease
 
 pp = pprint.PrettyPrinter()
 
