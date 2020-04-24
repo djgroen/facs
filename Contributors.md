@@ -28,4 +28,5 @@ Simon Taylor, Anastasia Anagnostou, Alan Serrano, Panos Louvieris
 
 # Funding information
 This work was made possible through voluntary effort by the Department of Computer Science, Brunel University London.
-DG,IM,HA and DB received funding from the Horizon 2020-funded project HiDALGO, see: http://hidalgo-project.eu.
+DG,IM,ST and DB received funding from the Horizon 2020-funded project HiDALGO, see: http://hidalgo-project.eu.
+DG and HA received funding from the Horizon 2020-funded project VECMA, see: http://www.vecma.eu.
