@@ -1,4 +1,4 @@
-# covid_flee.py a.k.a. the Flatten code.
+# FLu And Coronavirus Simulator
 # Covid-19 model, based on the general Flee paradigm.
 import numpy as np
 import sys
