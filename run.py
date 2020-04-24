@@ -124,7 +124,7 @@ if __name__ == "__main__":
     e.time = -30
     e.print_header(outfile)
     for i in range(0, 30):
-        e.evolve(reduce_stochasticity=True)
+        e.evolve(reduce_stochasticity=False)
         print(e.time)
         #e.print_status(outfile)
 
