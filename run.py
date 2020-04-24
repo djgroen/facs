@@ -107,7 +107,12 @@ if __name__ == "__main__":
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map.yml".format(data_dir),
-                                        house_ratio=house_ratio)
+                                        house_ratio=house_ratio, workspace=12, office_size=1600, household_size=2.6, work_participation_rate=0.5)
+    # house ratio: number of households per house placed (higher number adds noise, but reduces runtime
+    # And then 3 parameters that ONLY affect office placement.
+    # workspace: m2 per employee on average. (10 in an office setting, but we use 12 as some people work in more spacious environments)
+    # household size: average size of each household, specified separately here.
+    # work participation rate: fraction of population in workforce, irrespective of age
 
     print("{}/{}_cases.csv".format(data_dir, location))
     # Can only be done after houses are in.
@@ -119,7 +124,7 @@ if __name__ == "__main__":
     e.time = -30
     e.print_header(outfile)
     for i in range(0, 30):
-        e.evolve()
+        e.evolve(reduce_stochasticity=True)
         print(e.time)
         #e.print_status(outfile)
 

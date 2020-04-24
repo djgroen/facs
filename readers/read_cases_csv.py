@@ -16,8 +16,8 @@ def subtract_dates(date1, date2, date_format="%m/%d/%Y"):
   return delta.days
 
 def read_cases_csv(e, csvfile, date_format="%m/%d/%Y", start_date="3/18/2020"):
-  period_to_hosp = 12
-  period_to_rec = 20
+  period_to_hosp = e.disease.period_to_hospitalisation
+  period_to_rec = e.disease.recovery_period
 
   num_infections = 0
   if csvfile == "":
@@ -29,7 +29,7 @@ def read_cases_csv(e, csvfile, date_format="%m/%d/%Y", start_date="3/18/2020"):
     for row in cases_reader:
       if len(row[3]) > 0:
         day = subtract_dates(row[3], start_date, date_format)
-        if day<0 and day > - (period_to_rec - period_to_hosp):
+        if day<0 and day > -period_to_rec:
           e.add_infection(float(row[0]), float(row[1]), int(row[2]), day-period_to_hosp) 
           e.add_infections(16, day-period_to_hosp) # 1 hospitalisation per 16.67 infections (0.06 prob).
           num_infections += 17

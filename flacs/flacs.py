@@ -97,14 +97,14 @@ class Person():
     self.age = np.random.choice(91, p=ages) # age in years
 
 
-  def plan_visits(self, e):
+  def plan_visits(self, e, deterministic=False):
     if self.status in ["susceptible","exposed","infectious"]: # recovered people are assumed to be immune.
       personal_needs = needs.get_needs(self)
       for k,element in enumerate(personal_needs):
         nearest_locs = self.home_location.nearest_locations
         if nearest_locs[k] and element>0:
           location_to_visit = nearest_locs[k]
-          location_to_visit.register_visit(e, self, element)
+          location_to_visit.register_visit(e, self, element, deterministic)
 
   def print_needs(self):
     print(self.age, needs.get_needs(self))
@@ -306,6 +306,7 @@ class Location:
     self.inf_visit_minutes = 0 # aggregate number of visit minutes by infected people.
     self.avg_visit_time = avg_visit_times[lids[loc_type]] # using averages for all visits for now. Can replace with a distribution later.
     #print(self.avg_visit_time)
+    self.visit_probability_counter = 0.5 #counter used for deterministic calculations.
 
   def DecrementNumAgents(self):
     self.numAgents -= 1
@@ -317,7 +318,7 @@ class Location:
     self.visits = []
     self.visit_minutes = 0 # total number of minutes of all visits aggregated.
 
-  def register_visit(self, e, person, need):
+  def register_visit(self, e, person, need, deterministic):
     visit_time = self.avg_visit_time
     if person.status == "dead":
       visit_time = 0.0
@@ -331,27 +332,52 @@ class Location:
     else:
       return
 
-    if random.random() < visit_probability:
+    if deterministic:
+      self.visit_probability_counter += min(visit_probability, 1)
+      if self.visit_probability_counter > 1.0:
+        self.visit_probability_counter -= 1.0
+        self.visits.append([person, visit_time])
+        if person.status == "infectious":
+          self.inf_visit_minutes += visit_time
+
+    elif random.random() < visit_probability:
       self.visits.append([person, visit_time])
       if person.status == "infectious":
         self.inf_visit_minutes += visit_time
 
-  def evolve(self, e, verbose=True):
+  def evolve(self, e, verbose=True, deterministic=False):
     minutes_opened = 12*60
-    for v in self.visits:
-      if v[0].status == "susceptible":
-        infection_probability = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (v[1] / minutes_opened) * (self.inf_visit_minutes / self.sqm)
-        # For Covid-19 this should be 0.07 (infection rate) for 1 infectious person, and 1 susceptible person within 2m for a full day.
-        # I assume they can do this in a 4m^2 area.
-        # So 0.07 = x * (24*60/24*60) * (24*60/4) -> 0.07 = x * 360 -> x = 0.07/360 = 0.0002
-        #if ultraverbose:
-        #  if infection_probability > 0.0:
-        #    print("{} = {} * ({}/360.0) * ({}/{}) * ({}/{})".format(infection_probability, e.contact_rate_multiplier[self.type], e.disease.infection_rate, v[1], minutes_opened, self.inf_visit_minutes, self.sqm))
-        if random.random() < infection_probability:
-          v[0].status = "exposed"
-          v[0].status_change_time = e.time
-          if verbose:
-            log_infection(e.time, self.x, self.y, self.type)
+
+    # Deterministic mode: only used for warmup.
+    if deterministic:
+      inf_counter = 0.5
+      for v in self.visits:
+        if v[0].status == "susceptible":
+          infection_probability = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (v[1] / minutes_opened) * (self.inf_visit_minutes / self.sqm)
+          inf_counter += min(infection_probability, 1.0)
+          if inf_counter > 1.0:
+            inf_counter -= 1.0
+            v[0].status = "exposed"
+            v[0].status_change_time = e.time
+            if verbose:
+              log_infection(e.time, self.x, self.y, self.type)
+
+    # Used everywhere else
+    else:
+      for v in self.visits:
+        if v[0].status == "susceptible":
+          infection_probability = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (v[1] / minutes_opened) * (self.inf_visit_minutes / self.sqm)
+          # For Covid-19 this should be 0.07 (infection rate) for 1 infectious person, and 1 susceptible person within 2m for a full day.
+          # I assume they can do this in a 4m^2 area.
+          # So 0.07 = x * (24*60/24*60) * (24*60/4) -> 0.07 = x * 360 -> x = 0.07/360 = 0.0002
+          #if ultraverbose:
+          #  if infection_probability > 0.0:
+          #    print("{} = {} * ({}/360.0) * ({}/{}) * ({}/{})".format(infection_probability, e.contact_rate_multiplier[self.type], e.disease.infection_rate, v[1], minutes_opened, self.inf_visit_minutes, self.sqm))
+          if random.random() < infection_probability:
+            v[0].status = "exposed"
+            v[0].status_change_time = e.time
+            if verbose:
+              log_infection(e.time, self.x, self.y, self.type)
 
 
 class Ecosystem:
@@ -426,7 +452,7 @@ class Ecosystem:
     selected_house.add_infection_by_age(day, age)
 
 
-  def evolve(self):
+  def evolve(self, reduce_stochasticity=False):
     global num_infections_today
     global num_hospitalisations_today
     num_infections_today = 0
@@ -441,7 +467,7 @@ class Ecosystem:
     for h in self.houses:
       for hh in h.households:
         for a in hh.agents:
-          a.plan_visits(self)
+          a.plan_visits(self, reduce_stochasticity)
           a.progress_condition(self.time, self.disease)
 
     # process visits for the current day (spread infection).
@@ -450,7 +476,7 @@ class Ecosystem:
         if self.closures[lk] < self.time:
           continue
       for l in self.locations[lk]:
-        l.evolve(self)
+        l.evolve(self, reduce_stochasticity)
 
     # process intra-household infection spread.
     for h in self.houses:
