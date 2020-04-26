@@ -5,6 +5,7 @@
 
 Welcome to FLACS's documentation!
 =================================
+This is a placeholder, as we will be adding documentation here as part of the beta release.
 
 .. toctree::
    :maxdepth: 2
