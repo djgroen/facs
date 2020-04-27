@@ -345,7 +345,7 @@ class Location:
       if person.status == "infectious":
         self.inf_visit_minutes += visit_time
 
-  def evolve(self, e, verbose=True, deterministic=False):
+  def evolve(self, e, deterministic=False):
     minutes_opened = 12*60
 
     # Deterministic mode: only used for warmup.
@@ -359,8 +359,7 @@ class Location:
             inf_counter -= 1.0
             v[0].status = "exposed"
             v[0].status_change_time = e.time
-            if verbose:
-              log_infection(e.time, self.x, self.y, self.type)
+            log_infection(e.time, self.x, self.y, self.type)
 
     # Used everywhere else
     else:
@@ -376,8 +375,7 @@ class Location:
           if random.random() < infection_probability:
             v[0].status = "exposed"
             v[0].status_change_time = e.time
-            if verbose:
-              log_infection(e.time, self.x, self.y, self.type)
+            log_infection(e.time, self.x, self.y, self.type)
 
 
 class Ecosystem:
