@@ -116,19 +116,19 @@ class Person():
     age = int(min(self.age, len(disease.hospital)-1))
     return disease.hospital[age]
 
-  def infect(self, t, severity="exposed"):
+  def infect(self, t, severity="exposed", location_type="house"):
     # severity can be overridden to infectious when rigidly inserting cases.
     # but by default, it should be exposed.
     self.status = severity
     self.status_change_time = t
     self.mild_version = True
     self.hospitalised = False
-    log_infection(t,self.location.x,self.location.y,"house")
+    log_infection(t,self.location.x,self.location.y,location_type)
 
   def progress_condition(self, t, disease):
     if self.status_change_time > t:
       return
-    if self.status == "exposed" and t-self.status_change_time >= int(round(disease.incubation_period)):
+    if self.status == "exposed" and t-self.status_change_time >= int(self.phase_duration):
       self.status = "infectious"
       self.status_change_time = t
       if random.random() < self.get_hospitalisation_chance(disease): 
@@ -204,9 +204,7 @@ class Household():
           if needs.household_isolation_multiplier < 1.0:
             infection_chance *= 2.0 # interaction duration (and thereby infection chance) double when household isolation is incorporated (Imperial Report 9).
           if random.random() < infection_chance:
-            self.agents[i].status = "exposed"
-            self.agents[i].status_change_time = time
-            log_infection(time,self.house.x,self.house.y,"house")
+            self.agents[i].infect(time)
 
 def calc_dist(x1, y1, x2, y2):
     return (np.abs(x1-x2)**2 + np.abs(y1-y2)**2)**0.5
@@ -357,9 +355,7 @@ class Location:
           inf_counter += min(infection_probability, 1.0)
           if inf_counter > 1.0:
             inf_counter -= 1.0
-            v[0].status = "exposed"
-            v[0].status_change_time = e.time
-            log_infection(e.time, self.x, self.y, self.type)
+            v[0].infect(e.time, location_type=self.type)
 
     # Used everywhere else
     else:
@@ -373,9 +369,7 @@ class Location:
           #  if infection_probability > 0.0:
           #    print("{} = {} * ({}/360.0) * ({}/{}) * ({}/{})".format(infection_probability, e.contact_rate_multiplier[self.type], e.disease.infection_rate, v[1], minutes_opened, self.inf_visit_minutes, self.sqm))
           if random.random() < infection_probability:
-            v[0].status = "exposed"
-            v[0].status_change_time = e.time
-            log_infection(e.time, self.x, self.y, self.type)
+            v[0].infect(e.time, location_type=self.type)
 
 
 class Ecosystem:
