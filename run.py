@@ -52,11 +52,13 @@ if __name__ == "__main__":
 
     transition_day = -1
     if transition_mode == 1:
-        transition_day = 62  # 30th of April
+        transition_day = 77  # 15th of April
     if transition_mode == 2:
-        transition_day = 77  # 15th of May
-    if transition_mode == 3:
         transition_day = 93  # 31st of May
+    if transition_mode == 3:
+        transition_day = 108  # 15th of June
+    if transition_mode == 4:
+        transition_day = 123  # 30th of June
     if transition_mode > 10:
         transition_day = transition_mode
 
