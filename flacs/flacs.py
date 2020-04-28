@@ -125,7 +125,7 @@ class Person():
     self.hospitalised = False
     log_infection(t,self.location.x,self.location.y,location_type)
 
-  def progress_condition(self, t, disease):
+  def progress_condition(self, e, t, disease):
     if self.status_change_time > t:
       return
     if self.status == "exposed" and t-self.status_change_time >= int(self.phase_duration):
@@ -148,6 +148,7 @@ class Person():
         if not self.hospitalised:
           if t-self.status_change_time == self.phase_duration:
             self.hospitalised = True
+            e.num_hospitalised += 1
             log_hospitalisation(t, self.location.x, self.location.y, self.age)
             self.status_change_time = t #hospitalisation is a status change, because recovery_period is from date of hospitalisation.
             if random.random() < 0.0138 / 0.061: # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
@@ -159,6 +160,8 @@ class Person():
           # decease
           if self.dying:
             if t-self.status_change_time >= self.phase_duration: #from hosp. date
+              self.hospitalised = False
+              e.num_hospitalised -= 1
               self.status = "dead"
               self.status_change_time = t
           # hospital discharge
@@ -167,6 +170,7 @@ class Person():
               self.status = "recovered"
               self.status_change_time = t
               self.hospitalised = False 
+              e.num_hospitalised -= 1
 
 
 
@@ -378,6 +382,7 @@ class Ecosystem:
     self.houses = []
     self.house_names = []
     self.time = 0
+    self.num_hospitalised = 0 # currently in hospital (ICU)
     self.disease = None
     self.closures = {}
     self.validation = np.zeros(duration+1)
@@ -460,7 +465,7 @@ class Ecosystem:
       for hh in h.households:
         for a in hh.agents:
           a.plan_visits(self, reduce_stochasticity)
-          a.progress_condition(self.time, self.disease)
+          a.progress_condition(self, self.time, self.disease)
 
     # process visits for the current day (spread infection).
     for lk in self.locations:
@@ -584,7 +589,7 @@ class Ecosystem:
 
   def print_header(self, outfile):
     out = open(outfile,'w')
-    print("#time,susceptible,exposed,infectious,recovered,dead,num infections today,num hospitalisations today,num hospitalisations today (data)",file=out)
+    print("#time,susceptible,exposed,infectious,recovered,dead,num infections today,num hospitalisations today,num hospitalisations today (data),hospital bed occupancy",file=out)
 
   def print_status(self, outfile):
     out = open(outfile,'a')
@@ -593,7 +598,7 @@ class Ecosystem:
       for hh in e.households:
         for a in hh.agents:
           status[a.status] += 1
-    print("{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],num_infections_today,num_hospitalisations_today,self.validation[self.time]), file=out)
+    print("{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out)
 
 
   def add_validation_point(self, time):

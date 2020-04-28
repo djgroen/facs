@@ -151,7 +151,7 @@ if __name__ == "__main__":
                 measures.work100(e)
 
         if t>77 and transition_scenario == "dynamic-lockdown" and t%7 == 0:
-            measures.enact_dynamic_lockdown(e, measures.work50, flacs.num_infections_today, 100)
+            measures.enact_dynamic_lockdown(e, measures.work50, e.num_hospitalised, 100)
 
         # Recording of existing measures
         if transition_scenario not in ["no-measures"]:
