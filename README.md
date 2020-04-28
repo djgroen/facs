@@ -1,4 +1,4 @@
-# FLACS: FLu And Coronavirus Simulator
+# FACS: Flu And Coronavirus Simulator
 
 ## How to run the code
 To run a simple simulation of a basic test dataset, type:
