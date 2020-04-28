@@ -83,8 +83,8 @@ if __name__ == "__main__":
                                        transition_day)
 
     end_time = 180
-    #if transition_scenario == "dynamic-lockdown":
-    #  end_time = 730
+    if transition_scenario == "dynamic-lockdown":
+      end_time = 730
 
     print("Running basic Covid-19 simulation kernel.")
     print("scenario = %s" % (location))
