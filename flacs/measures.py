@@ -71,7 +71,9 @@ def enact_dynamic_lockdown(e, light_lockdown_func, kpi_value, threshold):
     if not _dyn_lock_full:
       print("DYNAMIC: Full lockdown", file=sys.stderr)
       full_lockdown(e)
+      _dyn_lock_full = True
   else:
     if _dyn_lock_full:
       print("DYNAMIC: Light lockdown", file=sys.stderr)
       light_lockdown_func(e)
+      _dyn_lock_full = False
