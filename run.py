@@ -66,7 +66,8 @@ if __name__ == "__main__":
     AcceptableTransitionScenario = ['no-measures', 'extend-lockdown',
                                     'open-all', 'open-schools', 'open-shopping',
                                     'open-leisure', 'work50', 'work75',
-                                    'work100', 'dynamic-lockdown']
+                                    'work100', 'dynamic-lockdown', 'periodic-lockdown']
+
     if transition_scenario not in AcceptableTransitionScenario:
         print("\nError !\n\tThe input transition scenario, %s , is not VALID" %
               (transition_scenario))
@@ -83,7 +84,7 @@ if __name__ == "__main__":
                                        transition_day)
 
     end_time = 180
-    if transition_scenario == "dynamic-lockdown":
+    if transition_scenario in ["dynamic-lockdown","periodic-lockdown"]:
       end_time = 730
 
     print("Running basic Covid-19 simulation kernel.")
@@ -153,6 +154,9 @@ if __name__ == "__main__":
         if t>77 and transition_scenario == "dynamic-lockdown" and t%7 == 0:
             print("Dynamic lockdown test: {}/100".format(e.num_hospitalised), file=sys.stderr)
             measures.enact_dynamic_lockdown(e, measures.work50, e.num_hospitalised, 100)
+        if t>77 and transition_scenario == "periodic-lockdown" and t%61 == 0:
+            print("Periodic lockdown with 61 day interval.")
+            measures.enact_periodic_lockdown(e, measures.work50)
 
         # Recording of existing measures
         if transition_scenario not in ["no-measures"]:
