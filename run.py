@@ -21,6 +21,8 @@ if __name__ == "__main__":
     parser.add_argument('--transition_scenario', action="store", default="no-measures")
     parser.add_argument('--transition_mode', action="store",
                         type=int, default='1')
+    parser.add_argument('--ci_multiplier', action="store",
+                        type=float, default='0.475', help="Multiplier set for Case Isolation which represents the ratio of out-of-house interactions for Covid patients relative to the default interaction rate. Default value comes from Imp Report 9.")
     parser.add_argument('--output_dir', action="store", default=".")
     parser.add_argument('--data_dir', action="store", default="covid_data")
     parser.add_argument('--start_date', action="store", default="3/1/2020")
@@ -32,6 +34,7 @@ if __name__ == "__main__":
     if args.quicktest is not None:
       house_ratio = 100
     location = args.location
+    ci_multiplier = float(args.ci_multiplier)
     transition_scenario = args.transition_scenario.lower()
     transition_mode = args.transition_mode
     output_dir = args.output_dir
@@ -99,6 +102,7 @@ if __name__ == "__main__":
 
     e = flacs.Ecosystem(end_time)
 
+    e.ci_multiplier = ci_multiplier
     e.ages = read_age_csv.read_age_csv("{}/age-distr.csv".format(data_dir), location)
 
     print("age distribution in system:", e.ages, file=sys.stderr)

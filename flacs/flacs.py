@@ -389,6 +389,7 @@ class Ecosystem:
     self.contact_rate_multiplier = {}
     self.initialise_social_distance() # default: no social distancing.
     self.self_isolation_multiplier = 1.0
+    self.ci_multiplier = 0.475 # default multiplier for case isolation mode.
     self.work_from_home = False
     self.ages = np.ones(91) # by default equal probability of all ages 0 to 90.
 
@@ -564,12 +565,12 @@ class Ecosystem:
     self.contact_rate_multiplier["house"] *= 1.25
     self.print_contact_rate("SD (covid_flee method) with distance {} and compliance {}".format(distance, compliance))
 
-  def add_case_isolation(self, multiplier=0.475):
+  def add_case_isolation(self):
     # default value is derived from Imp Report 9.
     # 75% reduction in social contacts for 70 percent of the cases.
     # (0.25*0.7)+0.3
-    self.self_isolation_multiplier=multiplier
-    self.print_isolation_rate("CI with multiplier {}".format(multiplier))
+    self.self_isolation_multiplier=self.ci_multiplier
+    self.print_isolation_rate("CI with multiplier {}".format(self.self_isolation_multiplier))
 
 
   def add_household_isolation(self, multiplier=0.4):
