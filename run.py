@@ -31,7 +31,7 @@ if __name__ == "__main__":
     print(args)
 
     house_ratio = 2
-    if args.quicktest is not None:
+    if args.quicktest:
       house_ratio = 100
     location = args.location
     ci_multiplier = float(args.ci_multiplier)
