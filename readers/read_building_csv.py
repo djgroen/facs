@@ -93,9 +93,14 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
     print(row_number, "read", file=sys.stderr)
     print("bounds:", xbound, ybound, file=sys.stderr)
     office_sqm_red = office_sqm
+    
+    f = open("offices.csv","w")
     while office_sqm_red > 0:
       num_locs += 1
-      e.addLocation(num_locs, "office", random.uniform(xbound[0],xbound[1]), random.uniform(ybound[0],ybound[1]), office_size)
+      x = random.uniform(xbound[0],xbound[1])
+      y = random.uniform(ybound[0],ybound[1])
+      e.addLocation(num_locs, "office", x, y, office_size)
+      f.write("office,{},{},{}\n".format(x, y, office_size))
       office_sqm_red -= office_size
 
     e.update_nearest_locations()
