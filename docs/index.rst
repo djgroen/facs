@@ -6,6 +6,11 @@
 FLu And Coronavirus Simulator (FLACS)
 =================================
 
+Dependencies
+-------------------
+* PyYaml
+* numpy
+
 How to run the code
 -------------------
 To run a simple simulation of a basic test dataset, type:
