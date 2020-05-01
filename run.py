@@ -30,7 +30,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args)
 
-    house_ratio = 4
+    house_ratio = 2
     if args.quicktest:
       house_ratio = 100
     location = args.location
