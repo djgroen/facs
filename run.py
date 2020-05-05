@@ -27,6 +27,7 @@ if __name__ == "__main__":
     parser.add_argument('--data_dir', action="store", default="covid_data")
     parser.add_argument('--start_date', action="store", default="3/1/2020")
     parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
+    parser.add_argument('--generic_outfile', action="store_true", help="Write main output to out.csv instead of a scenario-specific named file.")
     args = parser.parse_args()
     print(args)
 
@@ -81,10 +82,13 @@ if __name__ == "__main__":
     # check if output_dir is exists
     if not path.exists(output_dir):
         makedirs(output_dir)
+
     outfile = "{}/{}-{}-{}.csv".format(output_dir,
                                        location,
                                        transition_scenario,
                                        transition_day)
+    if args.generic_outfile:
+      outfile = "{}/out.csv".format(output_dir)
 
     end_time = 180
     if transition_scenario in ["dynamic-lockdown","periodic-lockdown"]:
