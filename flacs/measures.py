@@ -11,7 +11,7 @@ def full_lockdown(e):
   e.add_case_isolation()
   e.add_household_isolation()
 
-def uk_lockdown(e, phase=1, transition_fraction=1.0 keyworker_fraction=0.18):
+def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
   e.remove_all_measures()
 
   if phase == 1: # Enacted March 16th
