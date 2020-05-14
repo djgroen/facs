@@ -18,7 +18,7 @@ if __name__ == "__main__":
     # Instantiate the parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--location', action="store", default="brent")
-    parser.add_argument('--transition_scenario', action="store", default="no-measures")
+    parser.add_argument('--transition_scenario', action="store", default="extend-lockdown")
     parser.add_argument('--transition_mode', action="store",
                         type=int, default='1')
     parser.add_argument('--ci_multiplier', action="store",
@@ -168,8 +168,8 @@ if __name__ == "__main__":
 
         # Recording of existing measures
         if transition_scenario not in ["no-measures"]:
-            if t == 15:  # 16th of March
-                measures.uk_lockdown(e, phase=1)
+            if t > 10 and t < 20:  # 16th of March (range 11-21)
+                measures.uk_lockdown(e, phase=1, transition_fraction=((t-10)*1.0)/100.0)
             if t == 22:  # 23rd of March
                 measures.uk_lockdown(e, phase=2)
 

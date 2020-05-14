@@ -552,16 +552,26 @@ class Ecosystem:
     self.work_from_home_compliance = compliance
     self.print_contact_rate("Work from home with {} compliance".format(compliance))
 
-  def add_social_distance(self, distance=2, compliance=0.8571):
+  def add_social_distance(self, distance=2, compliance=0.8571, mask_uptake=0.0):
+
+    distance += mask_uptake / 2.0 #if everyone wears a mask, we add 0.5 meter to the distancing.
+
     dist_factor = (0.5 / distance)**2
+    dist_factor_tight = (0.5 / 1.0)**2 # assuming people stay 1 meter apart in tight areas
     # 0.5 is seen as a rough border between intimate and interpersonal contact, 
     # based on proxemics (Edward T Hall).
     # The -2 exponent is based on the observation that particles move linearly in
     # one dimension, and diffuse in the two other dimensions.
     # gravitational effects are ignored, as particles on surfaces could still
     # lead to future contamination through surface contact.
-    for l in lids:
-      self.contact_rate_multiplier[l] *= dist_factor * compliance + (1.0-compliance)
+
+    self.contact_rate_multiplier["hospital"] *= dist_factor * compliance + (1.0-compliance)
+    self.contact_rate_multiplier["leisure"] *= dist_factor * compliance + (1.0-compliance)
+    self.contact_rate_multiplier["shopping"] *= dist_factor * compliance + (1.0-compliance)
+    self.contact_rate_multiplier["park"] *= dist_factor * compliance + (1.0-compliance)
+    self.contact_rate_multiplier["supermarket"] *= dist_factor_tight * compliance + (1.0-compliance)
+    self.contact_rate_multiplier["office"] *= dist_factor_tight * compliance + (1.0-compliance)
+    self.contact_rate_multiplier["school"] *= dist_factor * compliance + (1.0-compliance)
     self.contact_rate_multiplier["house"] *= 1.25
     self.print_contact_rate("SD (covid_flee method) with distance {} and compliance {}".format(distance, compliance))
 
