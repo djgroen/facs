@@ -41,23 +41,17 @@ class Needs():
         else:
           for i in range(0,len(needs_cols)):
             self.needs[i,row_number-1] = int(row[needs_cols[i]])
-          self.needs[i,lids["school"] = int(0.75*int(row[needs_cols[i]])) # assuming 25% of school time is outside of the building (PE or breaks)
+          self.needs[i,lids["school"]] = int(0.75*int(row[needs_cols[i]])) # assuming 25% of school time is outside of the building (PE or breaks)
         row_number += 1
-
-  def get_need(self, person, need):
-    if not person.hospitalised:
-      if person.status not in ["infectious"] and person.household.is_infected(): # trigger condition for household isolation.
-        return self.needs[need,person.age] * self.household_isolation_multiplier
-      else:
-        return self.needs[need,person.age]
-    elif need == "hospital":
-      return 120
-    else:
-      return 0
 
   def get_needs(self, person):
     if not person.hospitalised:
-      return self.needs[:,person.age]
+      n = self.needs[:,person.age]
+      if person.work_from_home:
+        n[lids["office"]]=0
+      if person.school_from_home:
+        n[lids["school"]]=0
+      return n
     else:
       return np.array([0,60,0,0,0,0,0])
 
@@ -89,6 +83,8 @@ class Person():
     self.mild_version = True
     self.hospitalised = False
     self.dying = False
+    self.work_from_home = False
+    self.school_from_home = False
     self.phase_duration = 0.0 # duration to next phase.
 
     self.status = "susceptible" # states: susceptible, exposed, infectious, recovered, dead.
@@ -504,10 +500,34 @@ class Ecosystem:
     del self.closures[loc_type]
 
   def add_partial_closure(self, loc_type, fraction=0.8):
-    needs.needs[lids[loc_type],:] *= (1.0 - fraction)
+    if loc_type == "school":
+      for k,e in enumerate(self.houses):
+        for hh in e.households:
+          for a in hh.agents:
+            if random.random() < fraction:
+              a.school_from_home = True
+    elif loc_type == "office":
+      for k,e in enumerate(self.houses):
+        for hh in e.households:
+          for a in hh.agents:
+            if random.random() < fraction:
+              a.work_from_home = True
+    else:
+      needs.needs[lids[loc_type],:] *= (1.0 - fraction)
 
   def undo_partial_closure(self, loc_type, fraction=0.8):
-    needs.needs[lids[loc_type],:] /= (1.0 - fraction)
+    if loc_type == "school":
+      for k,e in enumerate(self.houses):
+        for hh in e.households:
+          for a in hh.agents:
+            a.school_from_home = False
+    elif loc_type == "office":
+      for k,e in enumerate(self.houses):
+        for hh in e.households:
+          for a in hh.agents:
+            a.work_from_home = False
+    else:
+      needs.needs[lids[loc_type],:] /= (1.0 - fraction)
 
   def initialise_social_distance(self, contact_ratio=1.0): 
     for l in lids:
@@ -530,6 +550,11 @@ class Ecosystem:
     self.initialise_social_distance()
     self.reset_case_isolation()
     needs = Needs("covid_data/needs.csv")
+    for k,e in enumerate(self.houses):
+      for hh in e.households:
+        for a in hh.agents:
+          a.school_from_home = False
+          a.work_from_home = False
 
   def add_social_distance_imp9(self): # Add social distancing as defined in Imperial Report 0.
     # The default values are chosen to give a 75% reduction in social interactions,
@@ -548,9 +573,7 @@ class Ecosystem:
     self.print_contact_rate("SD (Imperial Report 9)")
 
   def add_work_from_home(self, compliance=0.75):
-    self.contact_rate_multiplier["office"] *= 1.0 - compliance
-    self.work_from_home = True
-    self.work_from_home_compliance = compliance
+    self.add_partial_closure("office", compliance)
     self.print_contact_rate("Work from home with {} compliance".format(compliance))
 
   def add_social_distance(self, distance=2, compliance=0.8571, mask_uptake=0.0):
