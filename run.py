@@ -90,7 +90,7 @@ if __name__ == "__main__":
     if args.generic_outfile:
       outfile = "{}/out.csv".format(output_dir)
 
-    end_time = 180
+    end_time = 30
     if transition_scenario in ["dynamic-lockdown","periodic-lockdown"]:
       end_time = 730
 
@@ -172,6 +172,8 @@ if __name__ == "__main__":
                 measures.uk_lockdown(e, phase=1, transition_fraction=((t-10)*1.0)/100.0)
             if t == 22:  # 23rd of March
                 measures.uk_lockdown(e, phase=2)
+            if t == 73:
+                measures.uk_lockdown(e, phase=3)
 
         # Propagate the model by one time step.
         e.evolve()

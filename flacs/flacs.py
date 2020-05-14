@@ -41,6 +41,7 @@ class Needs():
         else:
           for i in range(0,len(needs_cols)):
             self.needs[i,row_number-1] = int(row[needs_cols[i]])
+          self.needs[i,lids["school"] = int(0.75*int(row[needs_cols[i]])) # assuming 25% of school time is outside of the building (PE or breaks)
         row_number += 1
 
   def get_need(self, person, need):
