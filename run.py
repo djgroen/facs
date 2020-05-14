@@ -90,7 +90,7 @@ if __name__ == "__main__":
     if args.generic_outfile:
       outfile = "{}/out.csv".format(output_dir)
 
-    end_time = 30
+    end_time = 180
     if transition_scenario in ["dynamic-lockdown","periodic-lockdown"]:
       end_time = 730
 
