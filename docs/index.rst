@@ -45,6 +45,7 @@ However, as a number of calculations are performed on the house level (not the h
    :maxdepth: 2
    :caption: Contents:
 
+   preparation
 
 
 Indices and tables
