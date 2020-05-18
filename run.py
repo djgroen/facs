@@ -173,6 +173,8 @@ if __name__ == "__main__":
             print("Periodic lockdown with 61 day interval.")
             measures.enact_periodic_lockdown(e, measures.work50)
 
+        measures.update_hospital_protection_factor_uk(e,t)
+
         # Recording of existing measures
         if transition_scenario not in ["no-measures"]:
             if t > 10 and t < 20:  # 16th of March (range 11-21)
