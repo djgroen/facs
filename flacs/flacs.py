@@ -53,7 +53,7 @@ class Needs():
         n[lids["school"]]=0
       return n
     else:
-      return np.array([0,60,0,0,0,0,0])
+      return np.array([0,5040,0,0,0,0,0])
 
 # Global storage for needs now, to keep it simple.
 needs = Needs("covid_data/needs.csv")
@@ -130,9 +130,11 @@ class Person():
       self.status_change_time = t
       if random.random() < self.get_hospitalisation_chance(disease): 
         self.mild_version = False
-        self.phase_duration = np.random.poisson(disease.period_to_hospitalisation - disease.incubation_period)
+        #self.phase_duration = np.random.poisson(disease.period_to_hospitalisation - disease.incubation_period)
+        self.phase_duration = max(1, np.random.poisson(disease.period_to_hospitalisation) - self.phase_duration)
       else:
-        self.phase_duration = np.random.poisson(disease.mild_recovery_period - disease.incubation_period)
+        #self.phase_duration = np.random.poisson(disease.mild_recovery_period - disease.incubation_period)
+        self.phase_duration = max(1, np.random.poisson(disease.mild_recovery_period) - self.phase_duration)
 
     elif self.status == "infectious":
       # mild version (may require hospital visits, but not ICU visits)
@@ -320,9 +322,13 @@ class Location:
   def register_visit(self, e, person, need, deterministic):
     visit_time = self.avg_visit_time
     if person.status == "dead":
-      visit_time = 0.0
+      return
     if person.status == "infectious":
       visit_time *= e.self_isolation_multiplier # implementing case isolation (CI)
+
+    if person.hospitalised and self.type == "hospital":
+      self.inf_visit_minutes += need/7 * e.hospital_protection_factor
+      return
 
     if visit_time > 0.0:
       visit_probability = need/(visit_time * 7) # = minutes per week / (average visit time * days in the week)
@@ -389,6 +395,7 @@ class Ecosystem:
     self.ci_multiplier = 0.475 # default multiplier for case isolation mode.
     self.work_from_home = False
     self.ages = np.ones(91) # by default equal probability of all ages 0 to 90.
+    self.hospital_protection_factor = 0.5 # 0 is perfect, 1 is no protection.
 
     #Make header for infections file
     out_inf = open("covid_out_infections.csv",'w')

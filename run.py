@@ -28,6 +28,7 @@ if __name__ == "__main__":
     parser.add_argument('--start_date', action="store", default="3/1/2020")
     parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
     parser.add_argument('--generic_outfile', action="store_true", help="Write main output to out.csv instead of a scenario-specific named file.")
+    parser.add_argument('--dbg', action="store_true", help="Write additional outputs to help debugging")
     args = parser.parse_args()
     print(args)
 
@@ -125,19 +126,25 @@ if __name__ == "__main__":
     # household size: average size of each household, specified separately here.
     # work participation rate: fraction of population in workforce, irrespective of age
 
-    print("{}/{}_cases.csv".format(data_dir, location))
+    #print("{}/{}_cases.csv".format(data_dir, location))
     # Can only be done after houses are in.
-    read_cases_csv.read_cases_csv(e,
-                                  "{}/{}_cases.csv".format(data_dir, location),
-                                  start_date=args.start_date,
-                                  date_format="%m/%d/%Y")
+    #read_cases_csv.read_cases_csv(e,
+    #                              "{}/{}_cases.csv".format(data_dir, location),
+    #                              start_date=args.start_date,
+    #                              date_format="%m/%d/%Y")
 
-    e.time = -30
+    starting_num_infections = 500
+
+    for i in range(0,10):
+      e.add_infections(int(starting_num_infections/10), i-19)
+
+    e.time = -20
     e.print_header(outfile)
-    for i in range(0, 30):
+    for i in range(0, 20):
         e.evolve(reduce_stochasticity=False)
         print(e.time)
-        #e.print_status(outfile)
+        if args.dbg:
+            e.print_status(outfile)
 
     for t in range(0, end_time):
 
@@ -172,8 +179,10 @@ if __name__ == "__main__":
                 measures.uk_lockdown(e, phase=1, transition_fraction=((t-10)*1.0)/100.0)
             if t == 22:  # 23rd of March
                 measures.uk_lockdown(e, phase=2)
-            if t == 73:
+            if t == 52:  # 22nd of April
                 measures.uk_lockdown(e, phase=3)
+            if t == 73: # 13th of May
+                measures.uk_lockdown(e, phase=4)
 
         # Propagate the model by one time step.
         e.evolve()
