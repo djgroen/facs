@@ -3,9 +3,10 @@
 .. Preparing simulations
 .. ========================
 
-Overview
+Preparing simulations
 ============
 To prepare simulations for a specific region, you will require to do undertake the following steps:
+
 1. Extract building CSV files from geospatial data.
 2. Acquiring validation data.
 3. Acquiring demographics data.
