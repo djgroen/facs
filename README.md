@@ -1,5 +1,7 @@
 # FACS: Flu And Coronavirus Simulator
 
+Full documentation can be found at: http://facs.readthedocs.io
+
 ## How to run the code
 To run a simple simulation of a basic test dataset, type:
 `python3 run.py --location=test --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`

@@ -1,9 +1,9 @@
-.. FLACS documentation master file, created by
+.. FACS documentation master file, created by
    sphinx-quickstart on Fri Apr 24 15:16:11 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-FLu And Coronavirus Simulator (FLACS)
+Flu And Coronavirus Simulator (FACS)
 =================================
 
 Dependencies
@@ -32,7 +32,7 @@ Advanced usage
 --------------
 
 1. Running with a specific data directory
-Flacs can be run with a different input data directory as follows:
+FACS can be run with a different input data directory as follows:
 `python3 run.py --location=brent --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=. --data_dir=/home/derek/covid19-postprocess/flacs_input_private`
 
 2. Performing quick tests
@@ -45,6 +45,7 @@ However, as a number of calculations are performed on the house level (not the h
    :maxdepth: 2
    :caption: Contents:
 
+   preparation
 
 
 Indices and tables
