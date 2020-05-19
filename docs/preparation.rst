@@ -58,3 +58,14 @@ The exact format may still be subject to change, but among others we have fields
 * *mild_recovery_period* - mean duration to recovery (i.e., no longer shedding viral particles) after infection.
 * *incubation_period* - mean duration between receiving the virus and becoming infectious. NOTE: does not relate to exhibiting symptoms (!)
 * *period_to_hospitalisation* - mean duration for severely ill patients between getting infected and being admitted to **intensive care**.
+
+5. Defining the exact public health interventions undertaken
+------------------------------------------------------------
+
+This is perhaps the most complicated step, and will require some Python coding at this stage. We have implemented a range of measures, which can be viewed in the facs/measures.py (or flacs/measures.py if I didn't update the repo yet).
+
+The main run file, run.py, shows examples on how we raise and release various measures as part of different scenarios.
+
+Because the interventions are a moving target, we will not provide static documentation here. However, we are happy to provide advice, or implement customized measures on request. To do so, simply raise a GitHub issue.
+
+Within FACS, most public health interventions are straightforward to implement, as the code base is relatively small, and Python3 makes modification relatively easy. However, one still needs to have expertise in Python3 and a reasonably good understanding of the working of the code.
