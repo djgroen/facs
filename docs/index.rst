@@ -6,10 +6,24 @@
 Flu And Coronavirus Simulator (FACS)
 =================================
 
-Dependencies
--------------------
+FACS is an agent-based modelling code that models the spread of flu and coronaviruses in local regions. Up to now, we have used it to model the spread of Covid-19 in a range of London boroughs.
+
+The code can be repurposed to model other regions, and its current (sequential) implementation should be able to run up to 500,000 households within a reasonable time frame.
+
+What sets FACS apart from many other codes is that we have a partially automated location extraction approach from OpenStreetMaps data (the scripts reside at https://www.github.com/djgroen/covid19-preprocess), that we resolve a wide range of different location types (e.g., supermarkets, offices, parks, schools, leisure locations and hospitals) and that we have a specific algorithm for modeling infections *within* these locations, taking into account the physical size of each location.
+
+We are currently finalizing a first journal paper about FACS, and will link to it from this page once it has become available.
+
+Quick installation notes
+========================
+
+To install FACS, simply clone the GitHub repository, and ensure the dependencies are met.
+
+These dependencies are:
+
 * PyYaml
 * numpy
+* pandas
 
 How to run the code
 -------------------
