@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'FLACS'
+project = 'FACS'
 copyright = '2020, Derek Groen, Imran Mahmood, David Bell, Hamid Arabnejad et al.'
 author = 'Derek Groen, Imran Mahmood, David Bell, Hamid Arabnejad et al.'
 

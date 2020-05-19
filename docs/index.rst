@@ -6,10 +6,24 @@
 Flu And Coronavirus Simulator (FACS)
 =================================
 
-Dependencies
--------------------
+FACS is an agent-based modelling code that models the spread of flu and coronaviruses in local regions. Up to now, we have used it to model the spread of Covid-19 in a range of London boroughs.
+
+The code can be repurposed to model other regions, and its current (sequential) implementation should be able to run up to 500,000 households within a reasonable time frame.
+
+What sets FACS apart from many other codes is that we have a partially automated location extraction approach from OpenStreetMaps data (the scripts reside at https://www.github.com/djgroen/covid19-preprocess), that we resolve a wide range of different location types (e.g., supermarkets, offices, parks, schools, leisure locations and hospitals) and that we have a specific algorithm for modeling infections *within* these locations, taking into account the physical size of each location.
+
+We are currently finalizing a first journal paper about FACS, and will link to it from this page once it has become available.
+
+Quick installation notes
+========================
+
+To install FACS, simply clone the GitHub repository, and ensure the dependencies are met.
+
+These dependencies are:
+
 * PyYaml
 * numpy
+* pandas
 
 How to run the code
 -------------------
@@ -28,24 +42,13 @@ There is a hardcoded lockdown in run.py which is representative for the UK. This
 We also included a simple plotting script. This can be called e.g. as follows:
 `python3 PlotSEIR.py test-extend-lockdown-62.csv test`
 
-Advanced usage
---------------
-
-1. Running with a specific data directory
-FACS can be run with a different input data directory as follows:
-`python3 run.py --location=brent --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=. --data_dir=/home/derek/covid19-postprocess/flacs_input_private`
-
-2. Performing quick tests
-Quick tests can be triggered with the '-q' flag. This sets the house ratio to 100 (default is 2), which means that households will be less well distributed.
-However, as a number of calculations are performed on the house level (not the household level), this setting speeds up the code by up to an order of magnitude.
-`python3 run.py -q --location=brent --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
-
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    preparation
+   advanced_usage
+   acknowledgements
 
 
 Indices and tables
