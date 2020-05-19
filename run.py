@@ -179,8 +179,8 @@ if __name__ == "__main__":
         if transition_scenario not in ["no-measures"]:
             if t > 10 and t <= 20:  # 16th of March (range 11-21)
                 measures.uk_lockdown(e, phase=1, transition_fraction=((t-10)*1.0)/100.0)
-            if t > 22 and t <= 27:  # 23rd of March, t=22
-                measures.uk_lockdown(e, phase=2, transition_fraction=((t-5)*2.0)/100.0)
+            if t > 22 and t <= 32:  # 23rd of March, t=22
+                measures.uk_lockdown(e, phase=2, transition_fraction=((t-22)*1.0)/100.0)
             if t == 52:  # 22nd of April
                 measures.uk_lockdown(e, phase=3)
             if t == 73: # 13th of May

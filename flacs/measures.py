@@ -13,6 +13,8 @@ def full_lockdown(e):
 
 def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
   e.remove_all_measures()
+  transition_fraction = max(0.0, min(1.0, transition_fraction))
+  keyworker_fraction = max(0.0, min(1.0, keyworker_fraction))
 
   if phase == 1: # Enacted March 16th
     e.add_partial_closure("leisure", 0.5)
@@ -37,6 +39,7 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
     e.add_partial_closure("shopping", 0.6)
     e.add_social_distance(compliance=0.8, mask_uptake=0.2)
     e.add_work_from_home(0.7)
+    e.ci_multiplier *= 0.7 # Assumption: additional directives for those with anosmia to stay home improves compliance by 30%.
 
   # mimicking a 75% reduction in social contacts.
   #e.add_social_distance_imp9()
@@ -47,9 +50,9 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
 
 def update_hospital_protection_factor_uk(e, t):
   if t == 10:
-    e.hospital_protection_factor = 0.38
+    e.hospital_protection_factor = 0.4
   if t == 20:
-    e.hospital_protection_factor = 0.36
+    e.hospital_protection_factor = 0.37
   if t == 30: # start of testing ramp up in early april.
     e.hospital_protection_factor = 0.34
   if t == 40:
