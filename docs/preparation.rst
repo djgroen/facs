@@ -32,4 +32,13 @@ Acquiring demographics data
 ---------------------------
 We provide example demographics data in https://www.github.com/djgroen/facs/covid_data/age-distr.csv . This data is loaded automatically into FACS on startup.
 
-The data contains the number of citizens by age, with a generic group for people aged 90 and over.
+The data contains the number of citizens by age, with a generic group for people aged 90 and over. 
+The layout of the file is as follows:
+
+    Age,<borough name>,<borough2 name>,<country name>
+    0,x,x,x
+    1,x,x,x
+    ...
+    90+,x,x,x
+    
+Here you can add one new column for each new scenario location that you're adding. This could be a city or a country (if you plan to do a very large scale run). It is perfectly fine to remove columns of locations that you're not using, to make the file simpler.
