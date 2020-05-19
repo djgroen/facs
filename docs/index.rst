@@ -34,6 +34,7 @@ We also included a simple plotting script. This can be called e.g. as follows:
 
    preparation
    advanced_usage
+   acknowledgements
 
 
 Indices and tables
