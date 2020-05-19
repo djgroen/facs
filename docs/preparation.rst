@@ -33,7 +33,7 @@ Acquiring demographics data
 We provide example demographics data in https://www.github.com/djgroen/facs/covid_data/age-distr.csv . This data is loaded automatically into FACS on startup.
 
 The data contains the number of citizens by age, with a generic group for people aged 90 and over. 
-The layout of the file is as follows:
+The layout of the file is as follows::
 
     Age,<borough name>,<borough2 name>,<country name>
     0,x,x,x
