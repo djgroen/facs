@@ -22,20 +22,20 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
   if phase == 2: # Enacted March 23rd
     e.add_partial_closure("school", 1.0 - keyworker_fraction)
     e.add_closure("leisure", 0)
-    e.add_partial_closure("shopping", 0.8)
-    e.add_social_distance(compliance=0.75, mask_uptake=0.1)
-    e.add_work_from_home(1.0 - keyworker_fraction) # www.ifs.org.uk/publications/14763 (18% are key worker in London)
+    e.add_partial_closure("shopping", 0.6 + (transition_fraction * 0.2))
+    e.add_social_distance(compliance=0.65 + (transition_fraction * 0.1), mask_uptake=0.05)
+    e.add_work_from_home(0.9 - keyworker_fraction + (transition_fraction * 0.1)) # www.ifs.org.uk/publications/14763 (18% are key worker in London)
   if phase == 3: # Enacted April 22nd
     e.add_partial_closure("school", 1.0 - keyworker_fraction)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.8)
-    e.add_social_distance(compliance=0.75, mask_uptake=0.2)
+    e.add_social_distance(compliance=0.8, mask_uptake=0.15)
     e.add_work_from_home(1.0 - keyworker_fraction) # www.ifs.org.uk/publications/14763 (18% are key worker in London)
   if phase == 4: # Enacted May 13th
     e.add_partial_closure("school", 1.0 - keyworker_fraction)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6)
-    e.add_social_distance(compliance=0.75, mask_uptake=0.25)
+    e.add_social_distance(compliance=0.8, mask_uptake=0.2)
     e.add_work_from_home(0.7)
 
   # mimicking a 75% reduction in social contacts.
