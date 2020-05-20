@@ -1,5 +1,5 @@
-import flacs.flacs as flacs
-import flacs.measures as measures
+import facs.facs as facs
+import facs.measures as measures
 from readers import read_age_csv
 import numpy as np
 from readers import read_building_csv
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     print("outfile  = %s" % (outfile))
     print("data_dir  = %s" % (data_dir))
 
-    e = flacs.Ecosystem(end_time)
+    e = facs.Ecosystem(end_time)
 
     e.ci_multiplier = ci_multiplier
     e.ages = read_age_csv.read_age_csv("{}/age-distr.csv".format(data_dir), location)
