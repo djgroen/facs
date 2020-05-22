@@ -17,7 +17,7 @@ To prepare simulations for a specific region, you will require to do undertake t
 1. Extract building CSV files
 --------------------------
 
-This can be done e.g. using the scripts availably at https://www.github.com/djgroen/covid19-preprocessing
+This can be done e.g. using the scripts availably at https://www.github.com/djgroen/covid19-preprocess
 
 2. Acquiring validation data
 -------------------------
