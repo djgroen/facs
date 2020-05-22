@@ -12,6 +12,9 @@ def full_lockdown(e):
   e.add_household_isolation()
 
 def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
+  """
+  Code which reflects EXISTING UK lockdown measures.
+  """
   e.remove_all_measures()
   transition_fraction = max(0.0, min(1.0, transition_fraction))
   keyworker_fraction = max(0.0, min(1.0, keyworker_fraction))
@@ -22,19 +25,19 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
     # light work from home instruction, with ascending compliance to 60%.
     e.add_work_from_home(0.65*transition_fraction)
   if phase == 2: # Enacted March 23rd
-    e.add_partial_closure("school", 1.0 - keyworker_fraction)
+    e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6 + (transition_fraction * 0.2))
     e.add_social_distance(compliance=0.65 + (transition_fraction * 0.1), mask_uptake=0.05)
     e.add_work_from_home(0.9 - keyworker_fraction + (transition_fraction * 0.1)) # www.ifs.org.uk/publications/14763 (18% are key worker in London)
   if phase == 3: # Enacted April 22nd
-    e.add_partial_closure("school", 1.0 - keyworker_fraction)
+    e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.8)
     e.add_social_distance(compliance=0.8, mask_uptake=0.15)
     e.add_work_from_home(1.0 - keyworker_fraction) # www.ifs.org.uk/publications/14763 (18% are key worker in London)
   if phase == 4: # Enacted May 13th
-    e.add_partial_closure("school", 1.0 - keyworker_fraction)
+    e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6)
     e.add_social_distance(compliance=0.8, mask_uptake=0.2)
@@ -68,8 +71,83 @@ def update_hospital_protection_factor_uk(e, t):
   if t == 120:
     e.hospital_protection_factor = 0.08
 
-    
 
+def uk_lockdown_scenarios(e, t, step):
+  e.remove_all_measures()
+
+  if step == 2: # June 1st, planned school opening
+    e.add_partial_closure("school", 0.5) #school times halved
+    e.add_partial_closure("school", 0.75, exclude_people=True) #25% of students go.
+    e.add_closure("leisure", 0)
+    e.add_partial_closure("shopping", 0.6)
+    e.add_social_distance(compliance=0.8, mask_uptake=0.2)
+    e.add_work_from_home(0.7)
+
+  if step == 3: # 70% of students go to  school, first leisure locs open
+    e.add_partial_closure("school", 0.5)
+    e.add_partial_closure("school", 0.3, exclude_people=True) #70% of students go.
+    e.add_partial_closure("leisure", 0.75)
+    e.add_partial_closure("shopping", 0.4)
+    e.add_social_distance(compliance=0.8, mask_uptake=0.3)
+    e.add_work_from_home(0.4)
+
+  if step == 4: # all schools open
+    e.add_partial_closure("school", 0.5)
+    e.add_partial_closure("leisure", 0.5)
+    e.add_partial_closure("shopping", 0.2)
+    e.add_social_distance(compliance=0.8, mask_uptake=0.3)
+    e.add_work_from_home(0.3)
+
+  if step == 5: # track and trace in place.
+    e.add_partial_closure("school", 0.5)
+    e.add_partial_closure("leisure", 0.5)
+    e.add_social_distance(compliance=0.8, mask_uptake=0.3)
+    e.add_work_from_home(0.25)
+    # Assumption: track and trace will render case isolation twice as effective.
+    e.ci_multiplier *= 0.5 
+
+  if step == 6: # vaccine in place. Schools fully open.
+    e.add_social_distance(compliance=0.8, mask_uptake=0.3)
+    e.add_work_from_home(0.25)
+    e.vaccinations_available += 100
+
+  if step == 7: # 50% vaccination coverage.
+    e.add_social_distance(compliance=0.8, mask_uptake=0.3)
+    e.add_work_from_home(0.25)
+    e.vaccinations_available += 1000
+
+  e.add_case_isolation()
+  e.add_household_isolation()
+   
+def uk_lockdown_existing(e, t):
+  update_hospital_protection_factor_uk(e,t)
+
+  # Recording of existing measures
+  if t > 10 and t <= 20:  # 16th of March (range 11-21)
+    uk_lockdown(e, phase=1, transition_fraction=((t-10)*1.0)/100.0)
+  if t > 22 and t <= 32:  # 23rd of March, t=22
+    uk_lockdown(e, phase=2, transition_fraction=((t-22)*1.0)/100.0)
+  if t == 52:  # 22nd of April
+    uk_lockdown(e, phase=3)
+  if t == 73: # 13th of May
+    uk_lockdown(e, phase=4)
+
+def uk_lockdown_forecast(e, t):
+  if t<74:
+    uk_lockdown_existing(e, t)
+  else:
+    if t == 92: # June 1st
+      uk_lockdown_scenarios(e, t, 2)
+    if t == 122: # July 1st
+      uk_lockdown_scenarios(e, t, 3)
+    if t == 184: # September 1st
+      uk_lockdown_scenarios(e, t, 4)
+    if t == 306: # January 1st 2021
+      uk_lockdown_scenarios(e, t, 5)
+    if t == 365: # March 1st 2021
+      uk_lockdown_scenarios(e, t, 6)
+    if t == 487: # July 1st 2021
+      uk_lockdown_scenarios(e, t, 7)
 
 def work50(e):
   e.remove_all_measures()

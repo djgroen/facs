@@ -87,7 +87,7 @@ class Person():
     self.school_from_home = False
     self.phase_duration = 0.0 # duration to next phase.
 
-    self.status = "susceptible" # states: susceptible, exposed, infectious, recovered, dead.
+    self.status = "susceptible" # states: susceptible, exposed, infectious, recovered, dead, immune.
     self.symptomatic = False # may be symptomatic if infectious
     self.status_change_time = -1
 
@@ -396,6 +396,8 @@ class Ecosystem:
     self.work_from_home = False
     self.ages = np.ones(91) # by default equal probability of all ages 0 to 90.
     self.hospital_protection_factor = 0.5 # 0 is perfect, 1 is no protection.
+    self.vaccinations_available = 0 # vaccinations available per day
+    self.vaccinations_today = 0
 
     #Make header for infections file
     out_inf = open("covid_out_infections.csv",'w')
@@ -459,6 +461,7 @@ class Ecosystem:
     global num_hospitalisations_today
     num_infections_today = 0
     num_hospitalisations_today = 0 
+    self.vaccinations_today = 0
 
     # remove visits from the previous day
     for lk in self.locations.keys():
@@ -471,6 +474,11 @@ class Ecosystem:
         for a in hh.agents:
           a.plan_visits(self, reduce_stochasticity)
           a.progress_condition(self, self.time, self.disease)
+
+          if self.vaccinations_available - self.vaccinations_today > 0:
+            if a.status == "susceptible":
+              self.vaccinations_today += 1
+              a.status = "immune"
 
     # process visits for the current day (spread infection).
     for lk in self.locations:
@@ -506,14 +514,14 @@ class Ecosystem:
   def remove_closure(self, loc_type):
     del self.closures[loc_type]
 
-  def add_partial_closure(self, loc_type, fraction=0.8):
-    if loc_type == "school":
+  def add_partial_closure(self, loc_type, fraction=0.8, exclude_people=False):
+    if loc_type == "school" and exclude_people:
       for k,e in enumerate(self.houses):
         for hh in e.households:
           for a in hh.agents:
             if random.random() < fraction:
               a.school_from_home = True
-    elif loc_type == "office":
+    elif loc_type == "office" and exclude_people:
       for k,e in enumerate(self.houses):
         for hh in e.households:
           for a in hh.agents:
@@ -580,7 +588,7 @@ class Ecosystem:
     self.print_contact_rate("SD (Imperial Report 9)")
 
   def add_work_from_home(self, compliance=0.75):
-    self.add_partial_closure("office", compliance)
+    self.add_partial_closure("office", compliance, exclude_people=True)
     self.print_contact_rate("Work from home with {} compliance".format(compliance))
 
   def add_social_distance(self, distance=2, compliance=0.8571, mask_uptake=0.0):
@@ -631,16 +639,17 @@ class Ecosystem:
 
   def print_header(self, outfile):
     out = open(outfile,'w')
-    print("#time,susceptible,exposed,infectious,recovered,dead,num infections today,num hospitalisations today,num hospitalisations today (data),hospital bed occupancy",file=out)
+    print("#time,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,num hospitalisations today (data),hospital bed occupancy",file=out)
 
   def print_status(self, outfile):
     out = open(outfile,'a')
-    status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0}
+    status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     for k,e in enumerate(self.houses):
       for hh in e.households:
         for a in hh.agents:
           status[a.status] += 1
-    print("{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out)
+    print("{},{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],status["immune"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out)
+    self.status = status
 
 
   def add_validation_point(self, time):

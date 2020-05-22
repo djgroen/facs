@@ -71,7 +71,7 @@ if __name__ == "__main__":
     AcceptableTransitionScenario = ['no-measures', 'extend-lockdown',
                                     'open-all', 'open-schools', 'open-shopping',
                                     'open-leisure', 'work50', 'work75',
-                                    'work100', 'dynamic-lockdown', 'periodic-lockdown']
+                                    'work100', 'dynamic-lockdown', 'periodic-lockdown','uk-forecast']
 
     if transition_scenario not in AcceptableTransitionScenario:
         print("\nError !\n\tThe input transition scenario, %s , is not VALID" %
@@ -92,7 +92,7 @@ if __name__ == "__main__":
       outfile = "{}/out.csv".format(output_dir)
 
     end_time = 180
-    if transition_scenario in ["dynamic-lockdown","periodic-lockdown"]:
+    if transition_scenario in ["dynamic-lockdown","periodic-lockdown","uk-forecast"]:
       end_time = 730
 
     print("Running basic Covid-19 simulation kernel.")
@@ -173,18 +173,11 @@ if __name__ == "__main__":
             print("Periodic lockdown with 61 day interval.")
             measures.enact_periodic_lockdown(e, measures.work50)
 
-        measures.update_hospital_protection_factor_uk(e,t)
-
         # Recording of existing measures
-        if transition_scenario not in ["no-measures"]:
-            if t > 10 and t <= 20:  # 16th of March (range 11-21)
-                measures.uk_lockdown(e, phase=1, transition_fraction=((t-10)*1.0)/100.0)
-            if t > 22 and t <= 32:  # 23rd of March, t=22
-                measures.uk_lockdown(e, phase=2, transition_fraction=((t-22)*1.0)/100.0)
-            if t == 52:  # 22nd of April
-                measures.uk_lockdown(e, phase=3)
-            if t == 73: # 13th of May
-                measures.uk_lockdown(e, phase=4)
+        if transition_scenario in ["uk-forecast"]:
+          measures.uk_lockdown_forecast(e, t)
+        elif transition_scenario not in ["no-measures"]:
+          measures.uk_lockdown_existing(e, t)
 
         # Propagate the model by one time step.
         e.evolve()
