@@ -25,6 +25,7 @@ Next, you need to extract locations from the OSM file. You can do this using:
 `python3 extract_<location_type>.py <osm_file> > <out_dir>/<location_type>.csv`
 
 The location types required are:
+
 * houses
 * offices
 * hospitals
@@ -37,6 +38,7 @@ All these locations will be stored in separate CSV files, so that they are easy 
 2. Acquiring validation data
 -------------------------
 To do this you require region-specific data related to Covid-19 spread. These could include:
+
 * daily hospital admissions by region.
 * daily intensive care unit admissions by region.
 * daily intensive care unit bed occupancy (covid patients only) by region.
