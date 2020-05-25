@@ -19,6 +19,21 @@ To prepare simulations for a specific region, you will require to do undertake t
 
 This can be done e.g. using the scripts availably at https://www.github.com/djgroen/covid19-preprocess
 
+The first thing you will need is an OSM file of the region of interest. You can obtain these e.g. by exporting them from Openstreetmaps.org, or using the OSRM tool.
+
+Next, you need to extract locations from the OSM file. You can do this using:
+`python3 extract_<location_type>.py <osm_file> > <out_dir>/<location_type>.csv`
+
+The location types required are:
+* houses
+* offices
+* hospitals
+* parks (this includes leisure locations)
+* schools
+* supermarkets
+
+All these locations will be stored in separate CSV files, so that they are easy to inspect manually. To then create a buildings.csv for FACS, simply concatenate all the previously extracted locations into one CSV file.
+
 2. Acquiring validation data
 -------------------------
 To do this you require region-specific data related to Covid-19 spread. These could include:
