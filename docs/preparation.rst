@@ -3,8 +3,9 @@
 .. Preparing simulations
 .. ========================
 
+=====================
 Preparing simulations
-============
+=====================
 To prepare simulations for a specific region, you will require to do undertake the following steps:
 
 #. Extract building CSV files from geospatial data.
@@ -15,7 +16,7 @@ To prepare simulations for a specific region, you will require to do undertake t
 
 
 1. Extract building CSV files
---------------------------
+=============================
 
 This can be done e.g. using the scripts availably at https://www.github.com/djgroen/covid19-preprocess
 
@@ -35,8 +36,15 @@ The location types required are:
 
 All these locations will be stored in separate CSV files, so that they are easy to inspect manually. To then create a buildings.csv for FACS, simply concatenate all the previously extracted locations into one CSV file.
 
+Notes on specific buildings:
+----------------------------
+
+**Houses**: The current extract_houses.py script generates houses randomly within the OSM residential zones. This is because in London there is no comprehensive data on individual house buildings available. Such data is available for cities in e.g. the Netherlands and Germany, so one could choose to extract individual houses there for a more accurate house distribution.
+
+**Offices**: Many local regions have a very large mismatch between the number of houses and the number of offices, as many workers commute elsewhere. Currently, we generate *random* offices across the borough in FACS. However, explicit offices can be placed by uncommenting the line in this if statement: https://github.com/djgroen/facs/blob/1a9fd43f73ba672e3caf95c38c8c2ed6d3010ba8/readers/read_building_csv.py#L81 . If it turns out that this feature is desirable for anyone, then we will refactor the code and offer this functionality as a run-time parameter (just raise an issue in the FACS repo).
+
 2. Acquiring validation data
--------------------------
+============================
 To do this you require region-specific data related to Covid-19 spread. These could include:
 
 * daily hospital admissions by region.
@@ -46,7 +54,7 @@ To do this you require region-specific data related to Covid-19 spread. These co
 If you only have validation data for a single hospital, then you could choose to make a separate validation model, covering only the catchment area of the hospital, before developing the main simulation.
 
 3. Acquiring demographics data
----------------------------
+==============================
 We provide example demographics data in https://www.github.com/djgroen/facs/covid_data/age-distr.csv . This data is loaded automatically into FACS on startup.
 
 The data contains the number of citizens by age, with a generic group for people aged 90 and over. 
@@ -61,7 +69,7 @@ The layout of the file is as follows::
 Here you can add one new column for each new scenario location that you're adding. This could be a city or a country (if you plan to do a very large scale run). It is perfectly fine to remove columns of locations that you're not using, to make the file simpler.
 
 4. Verifying the disease specification in disease.yml
------------------------------------------------------
+=====================================================
 
 One of the input files is a definition of the disease one is trying to model. We provide a YML-based specification of an example interpretation of Covid-19 in the `covid_data` subdirectory for your convenience, see: https://github.com/djgroen/facs/blob/master/covid_data/disease_covid19.yml .
 
@@ -77,7 +85,7 @@ The exact format may still be subject to change, but among others we have fields
 * *period_to_hospitalisation* - mean duration for severely ill patients between getting infected and being admitted to **intensive care**.
 
 5. Defining the exact public health interventions undertaken
-------------------------------------------------------------
+============================================================
 
 This is perhaps the most complicated step, and will require some Python coding at this stage. We have implemented a range of measures, which can be viewed in the facs/measures.py (or flacs/measures.py if I didn't update the repo yet).
 
