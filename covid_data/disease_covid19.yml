@@ -22,8 +22,8 @@ hospitalised:
  - [84.5,0.184]
 mortality_period: 8.0 # from day of hospitalisation (ICU)
 recovery_period: 8.0 # from day of hospitalisation (ICU)
-mild_recovery_period: 14.0 # add ref (patient.info)
-incubation_period: 3.5 
+mild_recovery_period: 8.5 # (7-10 days) https://www.ams.edu.sg/view-pdf.aspx?file=media%5c5558_fi_168.pdf&ofile=Period+of+Infectivity+Position+Statement+(final)+23-5-20.pdf
+incubation_period: 3 # https://www.ams.edu.sg/view-pdf.aspx?file=media%5c5558_fi_168.pdf&ofile=Period+of+Infectivity+Position+Statement+(final)+23-5-20.pdf
 # 5 days of incubation, infectiousness starts 36 hours before the end of incubation.
 # Clinical course and risk factors for mortality of adult inpatients with Covid-19 in Wuhan, China: a retrospective cohort study
 # Fei Zhou et al. The Lancet vol. 395.
