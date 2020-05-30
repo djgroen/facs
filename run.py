@@ -175,7 +175,7 @@ if __name__ == "__main__":
 
         # Recording of existing measures
         if transition_scenario in ["uk-forecast"]:
-          measures.uk_lockdown_forecast(e, t)
+          measures.uk_lockdown_forecast(e, t, transition_mode)
         elif transition_scenario not in ["no-measures"]:
           measures.uk_lockdown_existing(e, t)
 

@@ -625,10 +625,13 @@ class Ecosystem:
     self.print_isolation_rate("CI with multiplier {}".format(self.self_isolation_multiplier))
 
 
-  def add_household_isolation(self, multiplier=0.4):
+  def add_household_isolation(self, multiplier=0.625):
     # compulsory household isolation
-    # assuming a reduction in contacts by 75%, and 
-    # 80% of household complying.
+    # assumption: 50% of household members complying
+    # 25%*50% + 100%*50% = 0.625
+    # source: https://www.gov.uk/government/publications/spi-b-key-behavioural-issues-relevant-to-test-trace-track-and-isolate-summary-6-may-2020
+    # old assumption: a reduction in contacts by 75%, and 
+    # 80% of household complying. (Imp Report 9)
     # 25%*80% + 100%*20% = 40% = 0.4
     needs.household_isolation_multiplier=multiplier
     self.print_contact_rate("Household isolation with {} multiplier".format(multiplier))

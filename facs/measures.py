@@ -72,7 +72,7 @@ def update_hospital_protection_factor_uk(e, t):
     e.hospital_protection_factor = 0.08
 
 
-def uk_lockdown_scenarios(e, t, step):
+def uk_lockdown_scenarios(e, t, step, vaccine=100, track_trace_multiplier = 0.5):
   e.remove_all_measures()
 
   if step == 2: # June 1st, planned school opening
@@ -104,17 +104,17 @@ def uk_lockdown_scenarios(e, t, step):
     e.add_social_distance(compliance=0.8, mask_uptake=0.3)
     e.add_work_from_home(0.25)
     # Assumption: track and trace will render case isolation twice as effective.
-    e.ci_multiplier *= 0.5 
+    e.ci_multiplier *= track_trace_multiplier
 
   if step == 6: # vaccine in place. Schools fully open.
     e.add_social_distance(compliance=0.8, mask_uptake=0.3)
     e.add_work_from_home(0.25)
-    e.vaccinations_available += 100
+    e.vaccinations_available += vaccine
 
   if step == 7: # 50% vaccination coverage.
     e.add_social_distance(compliance=0.8, mask_uptake=0.3)
     e.add_work_from_home(0.25)
-    e.vaccinations_available += 1000
+    e.vaccinations_available += vaccine*10
 
   e.add_case_isolation()
   e.add_household_isolation()
@@ -132,22 +132,57 @@ def uk_lockdown_existing(e, t):
   if t == 73: # 13th of May
     uk_lockdown(e, phase=4)
 
-def uk_lockdown_forecast(e, t):
+def uk_lockdown_forecast(e, t, mode = 0):
+
+  # 0 = default
+  # 1 = 1 month delay
+  # 2 = september 3 month delay
+  # 3 = increased track and trace
+  # 4 = reduced track and trace
+  # 5 = 50% vaccine
+  # 6 = 25% vaccine
+  # 7 = no vaccine
+  # 8 = temporary immunity
+
+
+  delay = 0
+  if mode == 1:
+    delay += 30
+
+  delay3 = 0
+  if mode == 2:
+    delay3 = 92
+
+  track_trace_multiplier = 0.5
+  if mode == 3:
+    track_trace_multiplier = 0.25
+  if mode == 4:
+    track_trace_multiplier = 0.75
+
+  vaccine = 100
+  if mode == 5:
+    vaccine = 50
+  if mode == 6:
+    vaccine = 25
+  if mode == 7:
+    vaccine = 0
+
+
   if t<74:
     uk_lockdown_existing(e, t)
   else:
-    if t == 92: # June 1st
+    if t == 92+delay: # June 1st
       uk_lockdown_scenarios(e, t, 2)
-    if t == 122: # July 1st
+    if t == 122+delay+delay3: # July 1st
       uk_lockdown_scenarios(e, t, 3)
-    if t == 184: # September 1st
+    if t == 184+delay+delay3: # September 1st
       uk_lockdown_scenarios(e, t, 4)
-    if t == 306: # January 1st 2021
-      uk_lockdown_scenarios(e, t, 5)
-    if t == 365: # March 1st 2021
-      uk_lockdown_scenarios(e, t, 6)
-    if t == 487: # July 1st 2021
-      uk_lockdown_scenarios(e, t, 7)
+    if t == 306+delay+delay3: # January 1st 2021
+      uk_lockdown_scenarios(e, t, 5, track_trace_multiplier=track_trace_multiplier)
+    if t == 365+delay+delay3: # March 1st 2021
+      uk_lockdown_scenarios(e, t, 6, vaccine=vaccine)
+    if t == 487+delay+delay3: # July 1st 2021
+      uk_lockdown_scenarios(e, t, 7, vaccine=vaccine)
 
 def work50(e):
   e.remove_all_measures()
