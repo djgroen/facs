@@ -147,6 +147,8 @@ if __name__ == "__main__":
         print(e.time)
         if args.dbg:
             e.print_status(outfile)
+        else:
+            e.print_status(outfile, silent=True)
 
     for t in range(0, end_time):
 

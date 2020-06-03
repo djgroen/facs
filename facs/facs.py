@@ -430,7 +430,7 @@ class Ecosystem:
       for hh in e.households:
         for a in hh.agents:
           infection_probability = self.traffic_multiplier * self.disease.infection_rate * (20 / 900) * ((self.status["infectious"] * 20 * self.self_isolation_multiplier) / num_agents * 1)
-          # assume average of 20 minutes travel per day, transport open of 900 minutes/day (15h), self_isolation further reduces use of transport, and each agent has 1 m^2 of space in public transport.
+          # assume average of 40-50 minutes travel per day per travelling person (5 million people travel, so I reduced it to 20 minutes per person), transport open of 900 minutes/day (15h), self_isolation further reduces use of transport, and each agent has 1 m^2 of space in public transport.
           # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
           # 1. if half the people use a service that has halved intervals, then the number of infection halves.
           # 2. if half the people use a service that has normal intervals, then the number of infections reduces by 75%.
@@ -668,14 +668,15 @@ class Ecosystem:
     out = open(outfile,'w')
     print("#time,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,num hospitalisations today (data),hospital bed occupancy",file=out)
 
-  def print_status(self, outfile):
+  def print_status(self, outfile, silent=False):
     out = open(outfile,'a')
     status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     for k,e in enumerate(self.houses):
       for hh in e.households:
         for a in hh.agents:
           status[a.status] += 1
-    print("{},{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],status["immune"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out)
+    if not silent:
+      print("{},{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],status["immune"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out)
     self.status = status
 
 
