@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser.add_argument('--transition_mode', action="store",
                         type=int, default='1')
     parser.add_argument('--ci_multiplier', action="store",
-                        type=float, default='0.475', help="Multiplier set for Case Isolation which represents the ratio of out-of-house interactions for Covid patients relative to the default interaction rate. Default value comes from Imp Report 9.")
+                        type=float, default='0.625', help="Multiplier set for Case Isolation which represents the ratio of out-of-house interactions for Covid patients relative to the default interaction rate. Default value comes from Imp Report 9.")
     parser.add_argument('--output_dir', action="store", default=".")
     parser.add_argument('--data_dir', action="store", default="covid_data")
     parser.add_argument('--start_date', action="store", default="3/1/2020")
@@ -134,6 +134,8 @@ if __name__ == "__main__":
     #                              date_format="%m/%d/%Y")
 
     starting_num_infections = 500
+    if location == "test":
+      starting_num_infections = 10
 
     for i in range(0,10):
       e.add_infections(int(starting_num_infections/10), i-19)

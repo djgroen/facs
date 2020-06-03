@@ -40,7 +40,7 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
     e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6)
-    e.add_social_distance(compliance=0.8, mask_uptake=0.2)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2)
     e.add_work_from_home(0.7)
     e.ci_multiplier *= 0.7 # Assumption: additional directives for those with anosmia to stay home improves compliance by 30%.
 
@@ -80,7 +80,7 @@ def uk_lockdown_scenarios(e, t, step, vaccine=100, track_trace_multiplier = 0.5)
     e.add_partial_closure("school", 0.75, exclude_people=True) #25% of students go.
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6)
-    e.add_social_distance(compliance=0.8, mask_uptake=0.2)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2)
     e.add_work_from_home(0.7)
 
   if step == 3: # 70% of students go to  school, first leisure locs open
@@ -88,31 +88,31 @@ def uk_lockdown_scenarios(e, t, step, vaccine=100, track_trace_multiplier = 0.5)
     e.add_partial_closure("school", 0.3, exclude_people=True) #70% of students go.
     e.add_partial_closure("leisure", 0.75)
     e.add_partial_closure("shopping", 0.4)
-    e.add_social_distance(compliance=0.8, mask_uptake=0.3)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.3)
     e.add_work_from_home(0.4)
 
   if step == 4: # all schools open
     e.add_partial_closure("school", 0.5)
     e.add_partial_closure("leisure", 0.5)
     e.add_partial_closure("shopping", 0.2)
-    e.add_social_distance(compliance=0.8, mask_uptake=0.3)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.3)
     e.add_work_from_home(0.3)
 
   if step == 5: # track and trace in place.
     e.add_partial_closure("school", 0.5)
     e.add_partial_closure("leisure", 0.5)
-    e.add_social_distance(compliance=0.8, mask_uptake=0.3)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.3)
     e.add_work_from_home(0.25)
     # Assumption: track and trace will render case isolation twice as effective.
     e.ci_multiplier *= track_trace_multiplier
 
   if step == 6: # vaccine in place. Schools fully open.
-    e.add_social_distance(compliance=0.8, mask_uptake=0.3)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.3)
     e.add_work_from_home(0.25)
     e.vaccinations_available += vaccine
 
   if step == 7: # 50% vaccination coverage.
-    e.add_social_distance(compliance=0.8, mask_uptake=0.3)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.3)
     e.add_work_from_home(0.25)
     e.vaccinations_available += vaccine*10
 
@@ -121,6 +121,16 @@ def uk_lockdown_scenarios(e, t, step, vaccine=100, track_trace_multiplier = 0.5)
    
 def uk_lockdown_existing(e, t):
   update_hospital_protection_factor_uk(e,t)
+
+  # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
+  # Traffic: Mar 10: 90% (estimate), Mar 16: 60%, Mar 20: 20%, Mar 28: 10%
+  # Service: Mar 20: 80%, Mar 28: 50%
+  if t > 10 and t <= 15:
+    e.traffic_multiplier = ((0.9 - (0.06*(t-10)))**2) / 1.0
+  if t > 15 and t <= 20:
+    e.traffic_multiplier = ((0.6 - (0.08*(t-15)))**2) / 0.8
+  if t > 20 and t <= 28:
+    e.traffic_multiplier = ((0.2 - (0.0125*(t-20)))**2) / 0.5
 
   # Recording of existing measures
   if t > 10 and t <= 20:  # 16th of March (range 11-21)

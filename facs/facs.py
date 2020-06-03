@@ -133,6 +133,7 @@ class Person():
         #self.phase_duration = np.random.poisson(disease.period_to_hospitalisation - disease.incubation_period)
         self.phase_duration = max(1, np.random.poisson(disease.period_to_hospitalisation) - self.phase_duration)
       else:
+        self.mild_version = True
         #self.phase_duration = np.random.poisson(disease.mild_recovery_period - disease.incubation_period)
         self.phase_duration = max(1, np.random.poisson(disease.mild_recovery_period) - self.phase_duration)
 
@@ -154,22 +155,19 @@ class Person():
               self.dying = True
               self.phase_duration = np.random.poisson(disease.mortality_period)
             else:
+              self.dying = False
               self.phase_duration = np.random.poisson(disease.recovery_period)
         else:
-          # decease
-          if self.dying:
-            if t-self.status_change_time >= self.phase_duration: #from hosp. date
-              self.hospitalised = False
-              e.num_hospitalised -= 1
+          if t-self.status_change_time >= self.phase_duration: #from hosp. date
+            self.hospitalised = False 
+            e.num_hospitalised -= 1
+            self.status_change_time = t
+            # decease
+            if self.dying:
               self.status = "dead"
-              self.status_change_time = t
-          # hospital discharge
-          else:
-            if t-self.status_change_time >= self.phase_duration: #from hosp. date
+            # hospital discharge
+            else:
               self.status = "recovered"
-              self.status_change_time = t
-              self.hospitalised = False 
-              e.num_hospitalised -= 1
 
 
 
@@ -220,7 +218,7 @@ class House:
     self.x = x
     self.y = y
     self.households = []
-    self.numAgents = 0
+    self.num_agents = 0
     #Find nearest locations now needs to be called separately after
     #all locations have been added.
     #self.find_nearest_locations(e)
@@ -229,10 +227,10 @@ class House:
         self.households.append(Household(self, e.ages))
 
   def IncrementNumAgents(self):
-    self.numAgents += 1
+    self.num_agents += 1
 
   def DecrementNumAgents(self):
-    self.numAgents -= 1
+    self.num_agents -= 1
 
   def evolve(self, e, time, disease):
     for hh in self.households:
@@ -393,6 +391,7 @@ class Ecosystem:
     self.initialise_social_distance() # default: no social distancing.
     self.self_isolation_multiplier = 1.0
     self.ci_multiplier = 0.625 # default multiplier for case isolation mode 
+    self.num_agents = 0
     # value is 75% reduction in social contacts for 50% of the cases (known lower compliance).
     # 0.25*50% + 1.0*50% =0.625
     # source: https://www.gov.uk/government/publications/spi-b-key-behavioural-issues-relevant-to-test-trace-track-and-isolate-summary-6-may-2020
@@ -404,6 +403,8 @@ class Ecosystem:
     self.hospital_protection_factor = 0.5 # 0 is perfect, 1 is no protection.
     self.vaccinations_available = 0 # vaccinations available per day
     self.vaccinations_today = 0
+    self.traffic_multiplier = 1.0
+    self.status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
 
     #Make header for infections file
     out_inf = open("covid_out_infections.csv",'w')
@@ -418,6 +419,24 @@ class Ecosystem:
     print("Enacted measure:", measure)
     print("isolation rate multipliers set to:")
     print(self.self_isolation_multiplier)
+
+  def evolve_public_transport(self):
+    num_agents = 0
+
+    for k,e in enumerate(self.houses):
+      num_agents += e.num_agents
+
+    for k,e in enumerate(self.houses):
+      for hh in e.households:
+        for a in hh.agents:
+          infection_probability = self.traffic_multiplier * self.disease.infection_rate * (20 / 900) * ((self.status["infectious"] * 20 * self.self_isolation_multiplier) / num_agents * 1)
+          # assume average of 20 minutes travel per day, transport open of 900 minutes/day (15h), self_isolation further reduces use of transport, and each agent has 1 m^2 of space in public transport.
+          # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
+          # 1. if half the people use a service that has halved intervals, then the number of infection halves.
+          # 2. if half the people use a service that has normal intervals, then the number of infections reduces by 75%.
+          # infection_probability = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (v[1] / minutes_opened) * (self.inf_visit_minutes / self.sqm)
+          if random.random() < infection_probability:
+            a.infect(self.time, location_type="traffic")
 
   def update_nearest_locations(self):
     count = 0
@@ -485,6 +504,8 @@ class Ecosystem:
             if a.status == "susceptible":
               self.vaccinations_today += 1
               a.status = "immune"
+
+    self.evolve_public_transport()
 
     # process visits for the current day (spread infection).
     for lk in self.locations:
