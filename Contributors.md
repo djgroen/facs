@@ -20,11 +20,11 @@ Isabel Sassoon, Alaa Marshan, Diana Suleimenova
 * Assisted with the case input data processing.
 * Contributed to the daily discussions around code development, validation and application.
 
-Karen Moore
-* Assisted with building input data processing.
-
 Simon Taylor, Anastasia Anagnostou, Alan Serrano, Panos Louvieris
 * Contributed to the daily discussions around code development, validation and application.
+
+Karen Moore
+* Assisted with doing input data processing.
 
 # Funding information
 This work was made possible through voluntary effort by the Department of Computer Science, Brunel University London.
