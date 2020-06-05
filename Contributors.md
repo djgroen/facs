@@ -1,4 +1,4 @@
-# List of contributors to FLACS
+# List of contributors to FACS
 
 Derek Groen
 * Initial and lead FLACS developer.
