@@ -46,7 +46,7 @@ class Needs():
 
   def get_needs(self, person):
     if not person.hospitalised:
-      n = self.needs[:,person.age]
+      n = self.needs[:,person.age].copy()
       if person.work_from_home:
         n[lids["office"]]=0
       if person.school_from_home:
