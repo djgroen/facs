@@ -9,7 +9,7 @@ import csv
 # TODO: store all this in a YaML file
 lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,"shopping":6} # location ids and labels
 avg_visit_times = [90,60,60,360,360,60,60] #average time spent per visit
-home_interaction_fraction = 0.05 # people are within 2m at home of a specific other person 5% of the time.
+home_interaction_fraction = 0.2 # people are within 2m at home of a specific other person 20% of the time.
 
 class Needs():
   def __init__(self, csvfile):
