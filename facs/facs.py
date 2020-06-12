@@ -541,6 +541,9 @@ class Ecosystem:
   def remove_closure(self, loc_type):
     del self.closures[loc_type]
 
+  def remove_closures(self):
+    self.closures = {}
+
   def add_partial_closure(self, loc_type, fraction=0.8, exclude_people=False):
     if loc_type == "school" and exclude_people:
       for k,e in enumerate(self.houses):
@@ -591,6 +594,7 @@ class Ecosystem:
     global needs
     self.initialise_social_distance()
     self.reset_case_isolation()
+    self.remove_closures()
     needs = Needs("covid_data/needs.csv")
     for k,e in enumerate(self.houses):
       for hh in e.households:
