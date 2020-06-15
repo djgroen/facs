@@ -4,7 +4,12 @@ infection_rate: 0.07
 # 1: 11.2% secondary attack rate in house holds: 1.112^(1/8.5)=1.012568 -> 1.2568% infection chance per day.
 # We assume that 20% of the time is spent within 2 meters in the household -> 1.2568% / 20% = 6.284% or 0.06284
 # Qifang Bhi et al., Lancet, 2020. DOI: https://doi.org/10.1016/S1473-3099(20)30287-5
-# 2: 
+# 2: Source paper: https://www.sciencedirect.com/science/article/pii/S2468042720300063
+# This paper reports a peak value of R ~ 8 among the crew of the Diamond Princess (who are probably subject to similar confinement levels).
+# Deriving from that: 8**(1 / 8.5)= 1.277 -> infection rate of 0.277 in a heavily confined cruiseship setting with little precautions and awareness.
+# 13.8% secondary attack rate in house holds: 1.138^(1/8.5)= 1.015325 -> 1.5325% infections chance per day.
+# We assume that 20% of the time is spent within 2 meters in the household -> 1.5325% / 20% = 7.6625% or 0.076625
+# Wei Li et al., clinical Infectious Diseases 2020. Source paper: https://doi.org/10.1093/cid/ciaa450
 
 mortality: # Verity et al., Lancet, 2020. Median age, (probability)
  - [4.5,0.000026]
