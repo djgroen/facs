@@ -18,6 +18,11 @@ Quick installation notes
 ========================
 
 To install FACS, simply clone the GitHub repository, and ensure the dependencies are met.
+ 
+.. code:: console
+
+          git clone https://github.com/djgroen/facs.git
+
 
 These dependencies are:
 
