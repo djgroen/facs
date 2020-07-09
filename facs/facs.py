@@ -101,6 +101,8 @@ class Person():
         nearest_locs = self.home_location.nearest_locations
         if nearest_locs[k] and element>0:
           location_to_visit = nearest_locs[k]
+          if k == lids["hospital"] and self.hospitalised:
+            location_to_visit = self.hospital
           location_to_visit.register_visit(e, self, element, deterministic)
 
   def print_needs(self):
@@ -148,6 +150,7 @@ class Person():
         if not self.hospitalised:
           if t-self.status_change_time == self.phase_duration:
             self.hospitalised = True
+            self.hospital = e.find_hospital()
             e.num_hospitalised += 1
             log_hospitalisation(t, self.location.x, self.location.y, self.age)
             self.status_change_time = t #hospitalisation is a status change, because recovery_period is from date of hospitalisation.
@@ -660,6 +663,20 @@ class Ecosystem:
     # 25%*80% + 100%*20% = 40% = 0.4
     needs.household_isolation_multiplier=multiplier
     self.print_contact_rate("Household isolation with {} multiplier".format(multiplier))
+
+
+  def find_hospital(self):
+    n = []
+    if lids["hospital"] not in self.locations.keys():
+      return None
+    else:
+      hospitals = []
+      sqms= []
+      for k,element in enumerate(e.locations[lids["hospital"]]): # using 'element' to avoid clash with Ecosystem e.
+        if element.sqm > 4000:
+          sqms += [element.sqm]
+          hospitals += [e.locations[lids["hospital"]][k]]
+    return np.random.choice(hospitals, p=sqms) 
 
 
   def print_needs(self):
