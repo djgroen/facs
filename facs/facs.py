@@ -667,15 +667,20 @@ class Ecosystem:
 
   def find_hospital(self):
     n = []
-    if lids["hospital"] not in self.locations.keys():
+    hospitals = []
+    sqms= []
+    total_sqms = 0
+    if "hospital" not in self.locations.keys():
       return None
     else:
-      hospitals = []
-      sqms= []
-      for k,element in enumerate(e.locations[lids["hospital"]]): # using 'element' to avoid clash with Ecosystem e.
+      for k,element in enumerate(self.locations["hospital"]): # using 'element' to avoid clash with Ecosystem e.
         if element.sqm > 4000:
           sqms += [element.sqm]
-          hospitals += [e.locations[lids["hospital"]][k]]
+          hospitals += [self.locations["hospital"][k]]
+      if len(hospitals) == 0:
+        print("Error: couldn't find hospitals with more than 4000 sqm.")
+        sys.exit()
+    sqms = [float(i)/sum(sqms) for i in sqms]
     return np.random.choice(hospitals, p=sqms) 
 
 
