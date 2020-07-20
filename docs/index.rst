@@ -47,6 +47,22 @@ There is a hardcoded lockdown in run.py which is representative for the UK. This
 We also included a simple plotting script. This can be called e.g. as follows:
 `python3 PlotSEIR.py test-extend-lockdown-62.csv test`
 
+Citing FACS
+-----------
+
+Our journal paper on FACS has now been accepted, and can be found here:
+https://bura.brunel.ac.uk/handle/2438/20914
+
+The BibTex code is here::
+
+  @article{mahmood2020facs,
+    title={FACS: A geospatial agent-based simulator for analyzing COVID-19 spread and public health measures on local regions},
+    author={Mahmood, Imran and Arabnejad, Hamid and Suleimenova, Diana and Sassoon, Isabel and Marshan, Alaa and Serrano, Alan and Louvieris, Panos and Anagnostou, Anastasia and Taylor, S and Bell, David and others},
+    year={2020},
+    journal={Journal of Simulation (in press)}
+    publisher={Taylor \& Francis}
+  }
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
