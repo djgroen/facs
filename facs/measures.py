@@ -43,6 +43,32 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
     e.add_social_distance(compliance=0.7, mask_uptake=0.2)
     e.add_work_from_home(0.7)
     e.ci_multiplier *= 0.7 # Assumption: additional directives for those with anosmia to stay home improves compliance by 30%.
+  if phase == 5: # Enacted June 1st
+    e.add_partial_closure("school", (1.0 - keyworker_fraction) / 2.0, exclude_people=True)
+    e.add_closure("leisure", 0)
+    e.add_partial_closure("shopping", 0.6)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2)
+    e.add_work_from_home(0.7)
+  if phase == 6: # Enacted June 15th
+    e.add_partial_closure("school", (1.0 - keyworker_fraction) / 2.0, exclude_people=True)
+    e.add_closure("leisure", 0)
+    e.add_partial_closure("shopping", 0.2)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2)
+    e.add_work_from_home(0.65)
+    e.enforce_face_masks_on_transport()
+  if phase == 7: # Enacted July 4th
+    e.add_partial_closure("school", (1.0 - keyworker_fraction) / 2.0, exclude_people=True)
+    e.add_partial_closure("leisure", 0.8)
+    e.add_partial_closure("shopping", 0.1)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2)
+    e.add_work_from_home(0.65)
+  if phase == 7: # Enacted July 15th
+    e.add_partial_closure("school", (1.0 - keyworker_fraction) / 2.0, exclude_people=True)
+    e.add_partial_closure("leisure", 0.3)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2)
+    e.add_work_from_home(0.65)
+    e.enforce_face_masks_in_shops()
+
 
   # mimicking a 75% reduction in social contacts.
   #e.add_social_distance_imp9()
