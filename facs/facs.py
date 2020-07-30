@@ -5,7 +5,7 @@ import sys
 import random
 import array
 import csv
-
+import pandas as pd
 # TODO: store all this in a YaML file
 lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,"shopping":6} # location ids and labels
 avg_visit_times = [90,60,60,360,360,60,60] #average time spent per visit
@@ -705,7 +705,14 @@ class Ecosystem:
       print("{},{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],status["immune"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out)
     self.status = status
 
+  def add_cum_column(self, csv_file, cum_columns):
+    df = pd.read_csv(csv_file, index_col=None, header=0)
 
+    for column in cum_columns:
+      df['cum %s' % (column)] = df[column].cumsum()
+      
+    df.to_csv(csv_file)
+        
   def add_validation_point(self, time):
     self.validation[max(time,0)] += 1
 
