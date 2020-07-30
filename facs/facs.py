@@ -354,12 +354,21 @@ class Location:
   def evolve(self, e, deterministic=False):
     minutes_opened = 12*60
 
+    base_rate = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (1.0 / minutes_opened) * (self.inf_visit_minutes / self.sqm)
+    # For Covid-19 this should be 0.07 (infection rate) for 1 infectious person, and 1 susceptible person within 2m for a full day.
+    # I assume they can do this in a 4m^2 area.
+    # So 0.07 = x * (24*60/24*60) * (24*60/4) -> 0.07 = x * 360 -> x = 0.07/360 = 0.0002
+    # "1.0" is a place holder for v[1] (visited minutes).
+
+    if self.type in ["shopping", "supermarket"] and e.enforce_masks_in_shops:
+      base_rate *= 0.5
+
     # Deterministic mode: only used for warmup.
     if deterministic:
       inf_counter = 0.5
       for v in self.visits:
         if v[0].status == "susceptible":
-          infection_probability = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (v[1] / minutes_opened) * (self.inf_visit_minutes / self.sqm)
+          infection_probability = v[1] * base_rate
           inf_counter += min(infection_probability, 1.0)
           if inf_counter > 1.0:
             inf_counter -= 1.0
@@ -369,10 +378,7 @@ class Location:
     else:
       for v in self.visits:
         if v[0].status == "susceptible":
-          infection_probability = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (v[1] / minutes_opened) * (self.inf_visit_minutes / self.sqm)
-          # For Covid-19 this should be 0.07 (infection rate) for 1 infectious person, and 1 susceptible person within 2m for a full day.
-          # I assume they can do this in a 4m^2 area.
-          # So 0.07 = x * (24*60/24*60) * (24*60/4) -> 0.07 = x * 360 -> x = 0.07/360 = 0.0002
+          infection_probability = v[1] * base_rate
           #if ultraverbose:
           #  if infection_probability > 0.0:
           #    print("{} = {} * ({}/360.0) * ({}/{}) * ({}/{})".format(infection_probability, e.contact_rate_multiplier[self.type], e.disease.infection_rate, v[1], minutes_opened, self.inf_visit_minutes, self.sqm))
@@ -408,6 +414,8 @@ class Ecosystem:
     self.vaccinations_today = 0
     self.traffic_multiplier = 1.0
     self.status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
+    self.enforce_masks_on_transport = False
+    self.enforce_masks_in_shops = False
 
     #Make header for infections file
     out_inf = open("covid_out_infections.csv",'w')
@@ -426,13 +434,17 @@ class Ecosystem:
   def evolve_public_transport(self):
     num_agents = 0
 
+    base_rate = self.traffic_multiplier * self.disease.infection_rate * (20 / 900)
+    if self.enforce_masks_on_transport:
+      base_rate *= 0.5
+
     for k,e in enumerate(self.houses):
       num_agents += e.num_agents
 
     for k,e in enumerate(self.houses):
       for hh in e.households:
         for a in hh.agents:
-          infection_probability = self.traffic_multiplier * self.disease.infection_rate * (20 / 900) * ((self.status["infectious"] * 20 * self.self_isolation_multiplier) / num_agents * 1)
+          infection_probability = base_rate * ((self.status["infectious"] * 20 * self.self_isolation_multiplier) / num_agents * 1)
           # assume average of 40-50 minutes travel per day per travelling person (5 million people travel, so I reduced it to 20 minutes per person), transport open of 900 minutes/day (15h), self_isolation further reduces use of transport, and each agent has 1 m^2 of space in public transport.
           # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
           # 1. if half the people use a service that has halved intervals, then the number of infection halves.
