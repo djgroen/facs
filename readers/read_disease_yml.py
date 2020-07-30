@@ -13,6 +13,7 @@ def read_disease_yml(ymlfile="covid_data/disease-covid19.yml"):
     dp = yaml.load(f, Loader=yaml.FullLoader)
   d = disease.Disease(dp["infection_rate"], dp["incubation_period"], dp["mild_recovery_period"], dp["recovery_period"], dp["mortality_period"], dp["period_to_hospitalisation"])
   d.addHospitalisationChances(dp["hospitalised"])
+  d.addMortalityChances(dp["mortality"])
   d.print()
   return d
 

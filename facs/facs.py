@@ -154,7 +154,7 @@ class Person():
             e.num_hospitalised += 1
             log_hospitalisation(t, self.location.x, self.location.y, self.age)
             self.status_change_time = t #hospitalisation is a status change, because recovery_period is from date of hospitalisation.
-            if random.random() < 0.0138 / 0.061: # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
+            if random.random() < self.get_mortality_chance(disease)) / self.get_hospitalisation_chance(disease): # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
               self.dying = True
               self.phase_duration = np.random.poisson(disease.mortality_period)
             else:

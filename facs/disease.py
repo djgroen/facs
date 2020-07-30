@@ -9,6 +9,7 @@ class Disease():
     self.mortality_period = mortality_period
     self.period_to_hospitalisation = period_to_hospitalisation
     self.hospital = np.zeros(91)
+    self.mortality = np.zeros(91)
 
 
   def addHospitalisationChances(self, hosp_array):
@@ -16,6 +17,12 @@ class Disease():
     for a in range(0,len(self.hospital)):
       for i in hosp_array:
         self.hospital[a] = np.interp(a, hosp_array[:,0], hosp_array[:,1])
+
+  def addMortalityChances(self, mort_array):
+    hosp_array = np.asarray(mort_array)
+    for a in range(0,len(self.mortality)):
+      for i in mort_array:
+        self.mortality[a] = np.interp(a, mort_array[:,0], mort_array[:,1])
 
 
   def print(self):
