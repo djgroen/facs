@@ -360,9 +360,6 @@ class Location:
     # So 0.07 = x * (24*60/24*60) * (24*60/4) -> 0.07 = x * 360 -> x = 0.07/360 = 0.0002
     # "1.0" is a place holder for v[1] (visited minutes).
 
-    if self.type in ["shopping", "supermarket"] and e.enforce_masks_in_shops:
-      base_rate *= 0.5
-
     # Deterministic mode: only used for warmup.
     if deterministic:
       inf_counter = 0.5
@@ -414,8 +411,6 @@ class Ecosystem:
     self.vaccinations_today = 0
     self.traffic_multiplier = 1.0
     self.status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
-    self.enforce_masks_on_transport = False
-    self.enforce_masks_in_shops = False
 
     #Make header for infections file
     out_inf = open("covid_out_infections.csv",'w')
@@ -436,7 +431,7 @@ class Ecosystem:
 
     base_rate = self.traffic_multiplier * self.disease.infection_rate * (20 / 900)
     if self.enforce_masks_on_transport:
-      base_rate *= 0.5
+      base_rate *= 0.44 # 56% reduction when masks are widely used: https://www.medrxiv.org/content/10.1101/2020.04.17.20069567v4.full.pdf
 
     for k,e in enumerate(self.houses):
       num_agents += e.num_agents
@@ -637,12 +632,15 @@ class Ecosystem:
     self.add_partial_closure("office", compliance, exclude_people=True)
     self.print_contact_rate("Work from home with {} compliance".format(compliance))
 
-  def add_social_distance(self, distance=2, compliance=0.8571, mask_uptake=0.0):
+  def add_social_distance(self, distance=2, compliance=0.8571, mask_uptake=0.0, mask_uptake_shopping=0.0):
 
-    distance += mask_uptake / 2.0 #if everyone wears a mask, we add 0.5 meter to the distancing.
+    distance += mask_uptake*0.5 #if everyone wears a mask, we add 0.5 meter to the distancing, 
+    tight_distance = 1.0 + mask_uptake_shopping*0.5
+    # representing a ~56% reduction for a base distance of 1 m, and a ~34% reduction for a base distance of 2 m.
+    # Source: https://www.medrxiv.org/content/10.1101/2020.04.17.20069567v4.full.pdf
 
     dist_factor = (0.5 / distance)**2
-    dist_factor_tight = (0.5 / 1.0)**2 # assuming people stay 1 meter apart in tight areas
+    dist_factor_tight = (0.5 / tight_distance)**2 # assuming people stay 1 meter apart in tight areas
     # 0.5 is seen as a rough border between intimate and interpersonal contact, 
     # based on proxemics (Edward T Hall).
     # The -2 exponent is based on the observation that particles move linearly in
@@ -650,12 +648,14 @@ class Ecosystem:
     # gravitational effects are ignored, as particles on surfaces could still
     # lead to future contamination through surface contact.
 
+    # dist_factor_tight excludes mask wearing, as this is incorporated explicitly for supermarkets and shopping.
+
     self.contact_rate_multiplier["hospital"] *= dist_factor * compliance + (1.0-compliance)
     self.contact_rate_multiplier["leisure"] *= dist_factor * compliance + (1.0-compliance)
-    self.contact_rate_multiplier["shopping"] *= dist_factor * compliance + (1.0-compliance)
+    self.contact_rate_multiplier["shopping"] *= dist_factor_tight * compliance + (1.0-compliance)
     self.contact_rate_multiplier["park"] *= dist_factor * compliance + (1.0-compliance)
     self.contact_rate_multiplier["supermarket"] *= dist_factor_tight * compliance + (1.0-compliance)
-    self.contact_rate_multiplier["office"] *= dist_factor_tight * compliance + (1.0-compliance)
+    self.contact_rate_multiplier["office"] *= dist_factor * compliance + (1.0-compliance)
     self.contact_rate_multiplier["school"] *= dist_factor * compliance + (1.0-compliance)
     self.contact_rate_multiplier["house"] *= 1.25
     self.print_contact_rate("SD (covid_flee method) with distance {} and compliance {}".format(distance, compliance))
