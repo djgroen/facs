@@ -61,12 +61,12 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
     e.add_partial_closure("leisure", 0.8)
     e.add_partial_closure("shopping", 0.1)
     e.add_social_distance(compliance=0.7, mask_uptake=0.2)
-    e.add_work_from_home(0.65)
+    e.add_work_from_home(0.5)
   if phase == 7: # Enacted July 15th
     e.add_partial_closure("school", (1.0 - keyworker_fraction) / 2.0, exclude_people=True)
     e.add_partial_closure("leisure", 0.3)
     e.add_social_distance(compliance=0.7, mask_uptake=0.2)
-    e.add_work_from_home(0.65)
+    e.add_work_from_home(0.5)
     e.enforce_face_masks_in_shops()
 
 
