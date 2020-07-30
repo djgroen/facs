@@ -189,4 +189,8 @@ if __name__ == "__main__":
         print(t)
         e.print_status(outfile)
 
+    # calculate cumulative sum of the values for selected columns
+    e.add_cum_column(outfile, ["dead", "num hospitalisations today",
+                               "infectious", "num infections today"])
+
     print("Simulation complete.", file=sys.stderr)
