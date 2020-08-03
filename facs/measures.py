@@ -28,47 +28,47 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
     e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6 + (transition_fraction * 0.2))
-    e.add_social_distance(compliance=0.65 + (transition_fraction * 0.1), mask_uptake=0.05, shopping_mask_uptake=0.1)
+    e.add_social_distance(compliance=0.65 + (transition_fraction * 0.1), mask_uptake=0.05, mask_uptake_shopping=0.1)
     e.add_work_from_home(0.9 - keyworker_fraction + (transition_fraction * 0.1)) # www.ifs.org.uk/publications/14763 (18% are key worker in London)
   if phase == 3: # Enacted April 22nd
     e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.8)
-    e.add_social_distance(compliance=0.8, mask_uptake=0.15, shopping_mask_uptake=0.2)
+    e.add_social_distance(compliance=0.8, mask_uptake=0.15, mask_uptake_shopping=0.2)
     e.add_work_from_home(1.0 - keyworker_fraction) # www.ifs.org.uk/publications/14763 (18% are key worker in London)
   if phase == 4: # Enacted May 13th
     e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, shopping_mask_uptake=0.3)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.3)
     e.add_work_from_home(0.7)
     e.ci_multiplier *= 0.7 # Assumption: additional directives for those with anosmia to stay home improves compliance by 30%.
   if phase == 5: # Enacted June 1st
     e.add_partial_closure("school", (1.0 - keyworker_fraction) / 2.0, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, shopping_mask_uptake=0.3)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.3)
     e.add_work_from_home(0.7)
   if phase == 6: # Enacted June 15th
     e.add_partial_closure("school", (1.0 - keyworker_fraction) / 2.0, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.2)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, shopping_mask_uptake=0.3)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.3)
     e.add_work_from_home(0.65)
     e.enforce_masks_on_transport = True
   if phase == 7: # Enacted July 4th
     e.add_partial_closure("school", (1.0 - keyworker_fraction) / 2.0, exclude_people=True)
     e.add_partial_closure("leisure", 0.8)
     e.add_partial_closure("shopping", 0.1)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, shopping_mask_uptake=0.3)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.3)
     e.add_work_from_home(0.5)
   if phase == 7: # Enacted July 15th
     e.add_partial_closure("school", 0.8) # Assuming some kids go to summer camps, but 80% of school-like activities are not taking place due to holidays.
     e.add_partial_closure("leisure", 0.3)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, shopping_mask_uptake=1.0)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=1.0)
     e.add_work_from_home(0.5)
   if phase == 8: # Enacted Sept 1st
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, shopping_mask_uptake=1.0)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=1.0)
     e.add_work_from_home(0.5)
 
 
