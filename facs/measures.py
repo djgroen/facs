@@ -101,6 +101,9 @@ def update_hospital_protection_factor_uk(e, t):
 
 
 def uk_lockdown_scenarios(e, t, step, vaccine=100, track_trace_multiplier = 0.5):
+  pass
+
+  """
   e.remove_all_measures()
 
   if step == 2: # June 1st, planned school opening
@@ -146,7 +149,8 @@ def uk_lockdown_scenarios(e, t, step, vaccine=100, track_trace_multiplier = 0.5)
 
   e.add_case_isolation()
   e.add_household_isolation()
-   
+  """
+
 def uk_lockdown_existing(e, t):
   update_hospital_protection_factor_uk(e,t)
 
@@ -169,6 +173,15 @@ def uk_lockdown_existing(e, t):
     uk_lockdown(e, phase=3)
   if t == 73: # 13th of May
     uk_lockdown(e, phase=4)
+  if t == 92:
+    uk_lockdown(e, phase=5)
+  if t == 106:
+    uk_lockdown(e, phase=6)
+  if t == 125:
+    uk_lockdown(e, phase=7)
+  if t == 136:
+    uk_lockdown(e, phase=8)
+
 
 def uk_lockdown_forecast(e, t, mode = 0):
 
@@ -206,7 +219,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
     vaccine = 0
 
 
-  if t<74:
+  if t<150:
     uk_lockdown_existing(e, t)
   else:
     if t == 92+delay: # June 1st
