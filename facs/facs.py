@@ -115,6 +115,10 @@ class Person():
     age = int(min(self.age, len(disease.hospital)-1))
     return disease.hospital[age]
 
+  def get_mortality_chance(self, disease):
+    age = int(min(self.age, len(disease.hospital)-1))
+    return disease.mortality[age]
+
   def infect(self, t, severity="exposed", location_type="house"):
     # severity can be overridden to infectious when rigidly inserting cases.
     # but by default, it should be exposed.
@@ -154,7 +158,7 @@ class Person():
             e.num_hospitalised += 1
             log_hospitalisation(t, self.location.x, self.location.y, self.age)
             self.status_change_time = t #hospitalisation is a status change, because recovery_period is from date of hospitalisation.
-            if random.random() < self.get_mortality_chance(disease)) / self.get_hospitalisation_chance(disease): # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
+            if random.random() < self.get_mortality_chance(disease) / self.get_hospitalisation_chance(disease): # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
               self.dying = True
               self.phase_duration = np.random.poisson(disease.mortality_period)
             else:
@@ -243,19 +247,21 @@ class House:
     """
     identify preferred locations for each particular purpose,
     and store in an array.
+
+    Takes into account distance, and to a lesser degree size.
     """
     n = []
     for l in lids.keys():
       if l not in e.locations.keys():
         n.append(None)
       else:
-        min_dist = 99999.0
+        min_score = 99999.0
         nearest_loc_index = 0
         for k,element in enumerate(e.locations[l]): # using 'element' to avoid clash with Ecosystem e.
           #d = calc_dist_cheap(self.x, self.y, element.x, element.y)
-          d = calc_dist(self.x, self.y, element.x, element.y)
-          if d < min_dist:
-            min_dist = d
+          d = calc_dist(self.x, self.y, element.x, element.y) / np.sqrt(element.sqm)
+          if d < min_score:
+            min_score = d
             nearest_loc_index = k
         n.append(e.locations[l][nearest_loc_index])
 
@@ -411,6 +417,7 @@ class Ecosystem:
     self.vaccinations_today = 0
     self.traffic_multiplier = 1.0
     self.status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
+    self.enforce_masks_on_transport = False
 
     #Make header for infections file
     out_inf = open("covid_out_infections.csv",'w')

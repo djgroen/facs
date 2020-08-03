@@ -11,7 +11,8 @@ infection_rate: 0.07
 # We assume that 20% of the time is spent within 2 meters in the household -> 1.5325% / 20% = 7.6625% or 0.076625
 # Wei Li et al., clinical Infectious Diseases 2020. Source paper: https://doi.org/10.1093/cid/ciaa450
 
-mortality: # Verity et al., Lancet, 2020. Median age, (probability)
+# Verity et al., Lancet, 2020. Median age, (probability)
+mortality: 
  - [4.5,0.000026]
  - [14.5,0.000148]
  - [24.5,0.000600]
