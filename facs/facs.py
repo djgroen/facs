@@ -402,6 +402,7 @@ class Ecosystem:
     self.contact_rate_multiplier = {}
     self.initialise_social_distance() # default: no social distancing.
     self.self_isolation_multiplier = 1.0
+    self.track_trace_multiplier = 1.0
     self.ci_multiplier = 0.625 # default multiplier for case isolation mode 
     self.num_agents = 0
     # value is 75% reduction in social contacts for 50% of the cases (known lower compliance).
@@ -641,9 +642,9 @@ class Ecosystem:
 
   def add_social_distance(self, distance=2, compliance=0.8571, mask_uptake=0.0, mask_uptake_shopping=0.0):
 
-    distance += mask_uptake*0.5 #if everyone wears a mask, we add 0.5 meter to the distancing, 
-    tight_distance = 1.0 + mask_uptake_shopping*0.5
-    # representing a ~56% reduction for a base distance of 1 m, and a ~34% reduction for a base distance of 2 m.
+    distance += mask_uptake*1.0 #if everyone wears a mask, we add 1.0 meter to the distancing, 
+    tight_distance = 1.0 + mask_uptake_shopping*1.0
+    # representing a ~75% reduction for a base distance of 1 m, and a ~55% reduction for a base distance of 2 m.
     # Source: https://www.medrxiv.org/content/10.1101/2020.04.17.20069567v4.full.pdf
 
     dist_factor = (0.5 / distance)**2
@@ -668,7 +669,7 @@ class Ecosystem:
     self.print_contact_rate("SD (covid_flee method) with distance {} and compliance {}".format(distance, compliance))
 
   def add_case_isolation(self):
-    self.self_isolation_multiplier=self.ci_multiplier
+    self.self_isolation_multiplier=self.ci_multiplier * self.track_trace_multiplier
     self.print_isolation_rate("CI with multiplier {}".format(self.self_isolation_multiplier))
 
 
