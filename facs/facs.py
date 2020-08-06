@@ -73,6 +73,18 @@ def log_hospitalisation(t, x, y, age):
   print("{},{},{},{}".format(t, x, y, age), file=out_inf)
   num_hospitalisations_today += 1
 
+def log_death(t, x, y, age):
+  global num_deaths_today
+  out_inf = open("{}/covid_out_deaths.csv".format(log_prefix),'a')
+  print("{},{},{},{}".format(t, x, y, age), file=out_inf)
+  num_deaths_today += 1
+
+def log_recovery(t, x, y, age):
+  global num_recoveries_today
+  out_inf = open("{}/covid_out_recoveries.csv".format(log_prefix),'a')
+  print("{},{},{},{}".format(t, x, y, age), file=out_inf)
+  num_recoveries_today += 1
+
 
 class Person():
   def __init__(self, location, household, ages):
@@ -149,6 +161,7 @@ class Person():
         if t-self.status_change_time >= self.phase_duration:
           self.status = "recovered"
           self.status_change_time = t
+          log_recovery(t,self.location.x,self.location.y,"house")
       # non-mild version (will involve ICU visit)
       else:
         if not self.hospitalised:
@@ -172,9 +185,11 @@ class Person():
             # decease
             if self.dying:
               self.status = "dead"
+              log_death(t,self.location.x,self.location.y,"hospital")
             # hospital discharge
             else:
               self.status = "recovered"
+              log_recovery(t,self.location.x,self.location.y,"hospital")
 
 
 
