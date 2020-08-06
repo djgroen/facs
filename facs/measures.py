@@ -56,6 +56,7 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
     e.add_partial_closure("shopping", 0.2)
     e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.3)
     e.add_work_from_home(0.65)
+    e.traffic_multiplier = 0.125 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report
     e.enforce_masks_on_transport = True
     e.track_trace_multiplier = 0.5 # 50% of cases escape track and trace.
   if phase == 7: # Enacted July 4th
@@ -64,6 +65,7 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
     e.add_partial_closure("shopping", 0.1)
     e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.3)
     e.add_work_from_home(0.5)
+    e.traffic_multiplier = 0.2 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report
     e.track_trace_multiplier = 0.3 # 30% of cases escape track and trace.
   if phase == 7: # Enacted July 15th
     e.add_partial_closure("school", 0.8) # Assuming some kids go to summer camps, but 80% of school-like activities are not taking place due to holidays.
@@ -168,6 +170,7 @@ def uk_lockdown_existing(e, t):
     e.traffic_multiplier = ((0.6 - (0.08*(t-15)))**2) / 0.8
   if t > 20 and t <= 28:
     e.traffic_multiplier = ((0.2 - (0.0125*(t-20)))**2) / 0.5
+
 
   # Recording of existing measures
   if t > 10 and t <= 20:  # 16th of March (range 11-21)
