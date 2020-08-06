@@ -92,7 +92,7 @@ if __name__ == "__main__":
       outfile = "{}/out.csv".format(output_dir)
 
     end_time = 180
-    if transition_scenario in ["dynamic-lockdown","periodic-lockdown","uk-forecast"]:
+    if transition_scenario in ["extend-lockdown","dynamic-lockdown","periodic-lockdown","uk-forecast"]:
       end_time = 730
 
     print("Running basic Covid-19 simulation kernel.")
