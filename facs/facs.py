@@ -310,6 +310,10 @@ class Location:
     self.closed_links = [] #paths connecting to other locations that are closed.
     self.type = loc_type # supermarket, park, hospital, shopping, school, office, leisure? (home is a separate class, to conserve memory)
     self.sqm = sqm # size in square meters.
+
+    if loc_type == "park":
+      self.sqm *= 10 # https://www.medrxiv.org/content/10.1101/2020.02.28.20029272v2 (I took a factor of 10 instead of 19 due to the large error bars)
+
     self.visits = []
     self.inf_visit_minutes = 0 # aggregate number of visit minutes by infected people.
     self.avg_visit_time = avg_visit_times[lids[loc_type]] # using averages for all visits for now. Can replace with a distribution later.
