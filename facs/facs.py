@@ -59,6 +59,8 @@ class Needs():
 needs = Needs("covid_data/needs.csv")
 num_infections_today = 0
 num_hospitalisations_today = 0
+num_deaths_today = 0
+num_recoveries_today = 0
 log_prefix = "."
 
 def log_infection(t, x, y, loc_type):
