@@ -108,6 +108,17 @@ class Person():
     self.age = np.random.choice(91, p=ages) # age in years
 
 
+  def assign_group(group_type, num_groups):
+    """
+    Used to assign a grouping to a person.
+    For example, a campus may have 30 classes (num_groups = 30). Then you would use:
+    assign_group("class", 30)
+    """
+    if not hasattr(self, 'groups'):
+      self.groups = {}
+    self.groups[group_type] = np.random.randint(num_groups)
+
+
   def plan_visits(self, e, deterministic=False):
     if self.status in ["susceptible","exposed","infectious"]: # recovered people are assumed to be immune.
       personal_needs = needs.get_needs(self)
