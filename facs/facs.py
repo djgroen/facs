@@ -8,6 +8,7 @@ import csv
 
 # TODO: store all this in a YaML file
 lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,"shopping":6} # location ids and labels
+lnames = ["park","hospital","supermarket","office","school","leisure","shopping"]
 avg_visit_times = [90,60,60,360,360,60,60] #average time spent per visit
 home_interaction_fraction = 0.2 # people are within 2m at home of a specific other person 20% of the time.
 
@@ -108,27 +109,53 @@ class Person():
     self.age = np.random.choice(91, p=ages) # age in years
 
 
-  def assign_group(group_type, num_groups):
+  def assign_group(self, location_type, num_groups):
     """
     Used to assign a grouping to a person.
     For example, a campus may have 30 classes (num_groups = 30). Then you would use:
-    assign_group("class", 30)
+    assign_group("school", 30)
+    The location type should match the corresponding personal needs category (e.g., school or supermarket).
     """
     if not hasattr(self, 'groups'):
       self.groups = {}
-    self.groups[group_type] = np.random.randint(num_groups)
+    self.groups[lids[location_type]] = np.random.randint(num_groups)
+
+
+  def location_has_grouping(self, lid):
+    """
+    Takes a location type ID: return True or False
+    """
+    if hasattr(self, 'groups'):
+      if lid in self.groups.keys():
+        return True
+    return False
 
 
   def plan_visits(self, e, deterministic=False):
+    """
+    Plan visits for the day.
+    TODO: plan visits to classes not using nearest location (make an override).
+    """
+
     if self.status in ["susceptible","exposed","infectious"]: # recovered people are assumed to be immune.
       personal_needs = needs.get_needs(self)
       for k,element in enumerate(personal_needs):
         nearest_locs = self.home_location.nearest_locations
-        if nearest_locs[k] and element>0:
+
+        if element < 1:
+          continue
+        elif k == lids["hospital"] and self.hospitalised:
+          location_to_visit = self.hospital
+
+        elif self.location_has_grouping(k):
+          location_to_visit = e.get_location_by_group(k, self.groups[k])
+
+        elif nearest_locs[k]: 
           location_to_visit = nearest_locs[k]
-          if k == lids["hospital"] and self.hospitalised:
-            location_to_visit = self.hospital
-          location_to_visit.register_visit(e, self, element, deterministic)
+        else: #no known nearby locations.
+          continue
+      
+        location_to_visit.register_visit(e, self, element, deterministic)
 
   def print_needs(self):
     print(self.age, needs.get_needs(self))
@@ -181,6 +208,9 @@ class Person():
           if t-self.status_change_time == self.phase_duration:
             self.hospitalised = True
             self.hospital = e.find_hospital()
+            if self.hospital == None:
+              print("Error: agent is hospitalised, but there are no hospitals in the location graph.")
+              sys.exit()
             e.num_hospitalised += 1
             log_hospitalisation(t, self.location.x, self.location.y, self.age)
             self.status_change_time = t #hospitalisation is a status change, because recovery_period is from date of hospitalisation.
@@ -298,6 +328,7 @@ class House:
     #    print(i.name, i.type)
     self.nearest_locations = n
     return n
+
 
   def add_infection(self, time, severity="exposed"): # used to preseed infections (could target using age later on)
     infection_pending = True
@@ -451,10 +482,34 @@ class Ecosystem:
     self.traffic_multiplier = 1.0
     self.status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     self.enforce_masks_on_transport = False
+    self.loc_groups = {}
 
     #Make header for infections file
     out_inf = open("covid_out_infections.csv",'w')
     print("#time,x,y,location_type", file=out_inf)
+
+
+  def make_group(loc_type, max_groups):
+    """
+    Creates a grouping for a location, and assigns agents randomly to groups.
+    Agents need to have been read in *before* running this function.
+    """
+    num_locs = len(self.locations[loc_type])
+    # Assign groups to specific locations of that type in round robin fashion.
+    for i in range(0, max_groups):
+      self.loc_groups[loc_type][i] = self.locations[loc_type][i % num_locs]
+
+    # randomly assign agents to groups
+    for k,e in enumerate(self.houses):
+      for hh in e.households:
+        for a in hh.agents:
+          a.assign_group(loc_type, max_groups)
+
+
+  def get_location_by_group(loc_type_id, group_num):
+    loc_type = lnames[loc_type_id]
+    return self.loc_groups[loc_type][group_num]
+
 
   def print_contact_rate(self, measure):
     print("Enacted measure:", measure)
@@ -723,7 +778,8 @@ class Ecosystem:
     sqms= []
     total_sqms = 0
     if "hospital" not in self.locations.keys():
-      return None
+      print("Error: couldn't find hospitals with more than 4000 sqm.")
+      sys.exit()
     else:
       for k,element in enumerate(self.locations["hospital"]): # using 'element' to avoid clash with Ecosystem e.
         if element.sqm > 4000:
