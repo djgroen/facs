@@ -66,17 +66,23 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
     e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.3)
     e.add_work_from_home(0.5)
     e.traffic_multiplier = 0.2 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report
-    e.track_trace_multiplier = 0.3 # 30% of cases escape track and trace.
-  if phase == 7: # Enacted July 15th
+    e.track_trace_multiplier = 0.5 # 50% of cases escape track and trace.
+  if phase == 8: # Enacted July 15th
     e.add_partial_closure("school", 0.8) # Assuming some kids go to summer camps, but 80% of school-like activities are not taking place due to holidays.
     e.add_partial_closure("leisure", 0.3)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=1.0)
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.8)
     e.add_work_from_home(0.5)
-    e.track_trace_multiplier = 0.3 # 30% of cases escape track and trace.
-  if phase == 8: # Enacted Sept 1st
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=1.0)
-    e.add_work_from_home(0.5)
-    e.track_trace_multiplier = 0.3 # 30% of cases escape track and trace.
+    e.track_trace_multiplier = 0.5 # 50% of cases escape track and trace.
+  if phase == 9: # Enacted Sept 1st
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.8)
+    e.add_work_from_home(0.3)
+    e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
+    e.track_trace_multiplier = 0.5 # 50% of cases escape track and trace.
+  if phase == 10: # Enacted Sept 22nd
+    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.8)
+    e.add_work_from_home(0.5) # Work from home directive reinstated by government.
+    e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
+    e.track_trace_multiplier = 0.5 # 50% of cases escape track and trace.
 
 
   # mimicking a 75% reduction in social contacts.
@@ -181,14 +187,18 @@ def uk_lockdown_existing(e, t):
     uk_lockdown(e, phase=3)
   if t == 73: # 13th of May
     uk_lockdown(e, phase=4)
-  if t == 92:
+  if t == 92: # June 1st
     uk_lockdown(e, phase=5)
-  if t == 106:
+  if t == 106: # June 15th
     uk_lockdown(e, phase=6)
-  if t == 125:
+  if t == 125:  # July 4th
     uk_lockdown(e, phase=7)
-  if t == 136:
+  if t == 136:  # July 15th
     uk_lockdown(e, phase=8)
+  if t == 184:  # Sept 1st
+    uk_lockdown(e, phase=9)
+  if t == 206:  # Sept 22nd
+    uk_lockdown(e, phase=10)
 
 
 def uk_lockdown_forecast(e, t, mode = 0):
