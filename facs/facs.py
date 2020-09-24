@@ -395,6 +395,8 @@ class Location:
       return
     if person.status == "infectious":
       visit_time *= e.self_isolation_multiplier # implementing case isolation (CI)
+    elif person.household.is_infected(): # person is in household quarantine, but not subject to CI.
+      visit_time *= needs.household_isolation_multiplier
 
     if person.hospitalised and self.type == "hospital":
       self.inf_visit_minutes += need/7 * e.hospital_protection_factor
