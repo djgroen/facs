@@ -25,6 +25,7 @@ if __name__ == "__main__":
                         type=float, default='0.625', help="Multiplier set for Case Isolation which represents the ratio of out-of-house interactions for Covid patients relative to the default interaction rate. Default value comes from Imp Report 9.")
     parser.add_argument('--output_dir', action="store", default=".")
     parser.add_argument('--data_dir', action="store", default="covid_data")
+    parser.add_argument('-s','--starting_infections', action="store", default="500")
     parser.add_argument('--start_date', action="store", default="3/1/2020")
     parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
     parser.add_argument('-g', '--generic_outfile', action="store_true", help="Write main output to out.csv instead of a scenario-specific named file.")
@@ -134,6 +135,8 @@ if __name__ == "__main__":
     #                              date_format="%m/%d/%Y")
 
     starting_num_infections = 500
+    if args.starting_infections:
+      starting_num_infections = int(args.starting_infections)
     if location == "test":
       starting_num_infections = 10
 
