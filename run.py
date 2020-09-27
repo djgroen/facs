@@ -17,15 +17,13 @@ if __name__ == "__main__":
 
     # Instantiate the parser
     parser = argparse.ArgumentParser()
-    parser.add_argument('--location', action="store", default="brent")
-    parser.add_argument('--transition_scenario', action="store", default="extend-lockdown")
-    parser.add_argument('--transition_mode', action="store",
-                        type=int, default='1')
-    parser.add_argument('--ci_multiplier', action="store",
-                        type=float, default='0.625', help="Multiplier set for Case Isolation which represents the ratio of out-of-house interactions for Covid patients relative to the default interaction rate. Default value comes from Imp Report 9.")
-    parser.add_argument('--output_dir', action="store", default=".")
-    parser.add_argument('--data_dir', action="store", default="covid_data")
-    parser.add_argument('--start_date', action="store", default="3/1/2020")
+    parser.add_argument('--location',  default="brent")
+    parser.add_argument('--transition_scenario',  default="extend-lockdown")
+    parser.add_argument('--transition_mode', type=int, default='1')
+    parser.add_argument('--ci_multiplier', type=float, default='0.625', help="Multiplier set for Case Isolation which represents the ratio of out-of-house interactions for Covid patients relative to the default interaction rate. Default value comes from Imp Report 9.")
+    parser.add_argument('--output_dir',  default="./output")
+    parser.add_argument('--data_dir',  default="./covid_data")
+    parser.add_argument('--start_date',  default="3/1/2020")
     parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
     parser.add_argument('-g', '--generic_outfile', action="store_true", help="Write main output to out.csv instead of a scenario-specific named file.")
     parser.add_argument('--dbg', action="store_true", help="Write additional outputs to help debugging")
@@ -119,7 +117,7 @@ if __name__ == "__main__":
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map.yml".format(data_dir),
-                                        house_ratio=house_ratio, workspace=12, office_size=1600, household_size=2.6, work_participation_rate=0.5)
+                                        house_ratio=house_ratio, workspace=12, office_size=1600, household_size=8, work_participation_rate=0.5)
     # house ratio: number of households per house placed (higher number adds noise, but reduces runtime
     # And then 3 parameters that ONLY affect office placement.
     # workspace: m2 per employee on average. (10 in an office setting, but we use 12 as some people work in more spacious environments)
@@ -133,9 +131,7 @@ if __name__ == "__main__":
     #                              start_date=args.start_date,
     #                              date_format="%m/%d/%Y")
 
-    starting_num_infections = 500
-    if location == "test":
-      starting_num_infections = 10
+    starting_num_infections = 10
 
     for i in range(0,10):
       e.add_infections(int(starting_num_infections/10), i-19)
