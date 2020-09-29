@@ -58,13 +58,13 @@ if __name__ == "__main__":
 
     transition_day = -1
     if transition_mode == 1:
-        transition_day = 77  # 15th of April
+        transition_day = 77  
     if transition_mode == 2:
-        transition_day = 93  # 31st of May
+        transition_day = 93 
     if transition_mode == 3:
-        transition_day = 108  # 15th of June
+        transition_day = 108  
     if transition_mode == 4:
-        transition_day = 123  # 30th of June
+        transition_day = 123 
     if transition_mode > 10:
         transition_day = transition_mode
 
@@ -161,11 +161,13 @@ if __name__ == "__main__":
             elif transition_scenario == "open-all":
                 e.remove_all_measures()
 
+        t_adjusted = t - 204 # Adjusted t for measures to account for a start date in September.
+
         # Recording of existing measures
         if transition_scenario in ["uk-forecast"]:
-          measures.uk_lockdown_forecast(e, t, transition_mode)
+          measures.uk_lockdown_forecast(e, t-t_adjusted, transition_mode)
         elif transition_scenario not in ["no-measures"]:
-          measures.uk_lockdown_existing(e, t)
+          measures.uk_lockdown_existing(e, t-t_adjusted)
 
         # Propagate the model by one time step.
         e.evolve()
