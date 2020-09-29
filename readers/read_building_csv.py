@@ -54,15 +54,15 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
       if row_number == 0:
         row_number += 1
         continue
-      x = float(row[1])
-      y = float(row[2])
+      x = float(row[2])
+      y = float(row[3])
       xbound[0] = min(x,xbound[0])
       ybound[0] = min(y,ybound[0])
       xbound[1] = max(x,xbound[1])
       ybound[1] = max(y,ybound[1])
 
       location_type = apply_building_mapping(building_mapping, row[0])
-      sqm = int(row[3])
+      sqm = int(row[4])
 
       #count all the building types in a dict.
       if row[0] not in building_types:

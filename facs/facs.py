@@ -7,9 +7,15 @@ import array
 import csv
 
 # TODO: store all this in a YaML file
-lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,"shopping":6,
-        'hostel':7, 'library':8, 'sports':9, 'cafe':10, 'bar':11, 'parking':12} # location ids and labels
-avg_visit_times = [90,60,60,360,360,60,60,720,120,60,60,60,15] #average time spent per visit
+# lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,"shopping":6,
+#         'hostel':7, 'library':8, 'sports':9, 'cafe':10, 'bar':11, 'parking':12} # location ids and labels
+
+lids = {'park':0, 'hospital':1, 'supermarket':2, 'office':3, 'school':4, 'leisure':5, 'shopping':6,
+        'academic':7,'lecturehall':8, 'house':9, 'recreational':10, 'library':11, 'sports':12,
+        'cafe':13, 'bar':14, 'parking':15, 'pharmacy':16}
+
+avg_visit_times = [90,60,60,60,360,360,60,60,360,120,720,60,60,60,60,60,60,15,30] #average time spent per visit
+
 home_interaction_fraction = 0.2 # people are within 2m at home of a specific other person 20% of the time.
 
 class Needs():
@@ -28,7 +34,8 @@ class Needs():
       self.add_hardcoded_needs()
       return
     self.needs = np.zeros((len(lids),120))
-    needs_cols = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+    needs_cols = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    print(len(lids), len(needs_cols))
     with open(csvfile) as csvfile:
       needs_reader = csv.reader(csvfile)
       row_number = 0
@@ -109,7 +116,7 @@ class Person():
     self.age = np.random.choice(91, p=ages) # age in years
 
 
-  def assign_group(group_type, num_groups):
+  def assign_group(self, group_type, num_groups):
     """
     Used to assign a grouping to a person.
     For example, a campus may have 30 classes (num_groups = 30). Then you would use:
