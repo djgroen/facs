@@ -500,6 +500,7 @@ class Ecosystem:
     """
     print(self.locations.keys(),loc_type)
     num_locs = len(self.locations[loc_type])
+    self.loc_groups[loc_type] = {}
     # Assign groups to specific locations of that type in round robin fashion.
     for i in range(0, max_groups):
       self.loc_groups[loc_type][i] = self.locations[loc_type][i % num_locs]
