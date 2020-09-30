@@ -33,6 +33,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args)
 
+    #Overwrite location types and needs in FACS.
+    facs.lids = {'park':0, 'hospital':1, 'supermarket':2, 'office':3, 'school':4, 'leisure':5, 'shopping':6,
+        'academic':7,'lecturehall':8, 'house':9, 'library':10, 'sports':11,
+        'cafe':13, 'bar':14}
+    facs.lnames = list(facs.lids.keys())
+    
+    facs.avg_visit_times = [90,60,60,60,360,360,60,60,360,120,720,60,60,60,60,60,60,15,30] #average time spent per visit
+
+
     house_ratio = 2
     if args.quicktest:
       house_ratio = 100
@@ -117,9 +126,10 @@ if __name__ == "__main__":
         "{}/disease_covid19.yml".format(data_dir))
 
     building_file = "{}/{}_buildings.csv".format(data_dir, location)
+    print(building_file)
     read_building_csv.read_building_csv(e,
                                         building_file,
-                                        "{}/building_types_map.yml".format(data_dir),
+                                        "{}/building_types_map_campus.yml".format(data_dir),
                                         house_ratio=house_ratio, workspace=12, office_size=1600, household_size=8, work_participation_rate=0.5)
     # house ratio: number of households per house placed (higher number adds noise, but reduces runtime
     # And then 3 parameters that ONLY affect office placement.
@@ -142,6 +152,10 @@ if __name__ == "__main__":
 
     for i in range(0,10):
       e.add_infections(int(starting_num_infections/10), i-19)
+
+    print(e.locations.keys())
+    # Enact class groups [type],[number of groups]
+    e.make_group("lecturehall",200)
 
     e.time = -20
     e.print_header(outfile)

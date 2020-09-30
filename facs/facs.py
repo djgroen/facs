@@ -8,7 +8,7 @@ import csv
 
 # TODO: store all this in a YaML file
 lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,"shopping":6} # location ids and labels
-lnames = ["park","hospital","supermarket","office","school","leisure","shopping"]
+lnames = list(lids.keys())
 avg_visit_times = [90,60,60,360,360,60,60] #average time spent per visit
 home_interaction_fraction = 0.2 # people are within 2m at home of a specific other person 20% of the time.
 
@@ -148,6 +148,7 @@ class Person():
           location_to_visit = self.hospital
 
         elif self.location_has_grouping(k):
+          print("group")
           location_to_visit = e.get_location_by_group(k, self.groups[k])
 
         elif nearest_locs[k]: 
@@ -375,6 +376,7 @@ class Location:
 
     self.visits = []
     self.inf_visit_minutes = 0 # aggregate number of visit minutes by infected people.
+    #print(loc_type, len(lids), lids[loc_type], len(avg_visit_times))
     self.avg_visit_time = avg_visit_times[lids[loc_type]] # using averages for all visits for now. Can replace with a distribution later.
     #print(self.avg_visit_time)
     self.visit_probability_counter = 0.5 #counter used for deterministic calculations.
@@ -491,11 +493,12 @@ class Ecosystem:
     print("#time,x,y,location_type", file=out_inf)
 
 
-  def make_group(loc_type, max_groups):
+  def make_group(self, loc_type, max_groups):
     """
     Creates a grouping for a location, and assigns agents randomly to groups.
     Agents need to have been read in *before* running this function.
     """
+    print(self.locations.keys(),loc_type)
     num_locs = len(self.locations[loc_type])
     # Assign groups to specific locations of that type in round robin fashion.
     for i in range(0, max_groups):
@@ -508,7 +511,7 @@ class Ecosystem:
           a.assign_group(loc_type, max_groups)
 
 
-  def get_location_by_group(loc_type_id, group_num):
+  def get_location_by_group(self, loc_type_id, group_num):
     loc_type = lnames[loc_type_id]
     return self.loc_groups[loc_type][group_num]
 

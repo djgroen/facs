@@ -17,7 +17,7 @@ def apply_building_mapping(mapdict, label):
   into the appropriate category.
   """
   for category in mapdict:
-    #print(mapdict, category)
+    print(mapdict, category, label)
     if label in mapdict[category]['labels']:
       return category
   return "house"
