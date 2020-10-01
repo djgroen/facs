@@ -126,7 +126,7 @@ if __name__ == "__main__":
         "{}/disease_covid19.yml".format(data_dir))
 
     building_file = "{}/{}_buildings.csv".format(data_dir, location)
-    print(building_file)
+    #print(building_file)
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map_campus.yml".format(data_dir),
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     for i in range(0,10):
       e.add_infections(int(starting_num_infections/10), i-19)
 
-    print(e.locations.keys())
+    #print(e.locations.keys())
     # Enact class groups [type],[number of groups]
     e.make_group("lecturehall",200)
 
@@ -167,6 +167,9 @@ if __name__ == "__main__":
         else:
             e.print_status(outfile, silent=True)
 
+    # Initialize code with phase 9 of UK lockdown, as this is in effect in mid Sept.
+    measures.uk_lockdown(e, phase=9)
+
     for t in range(0, end_time):
 
         if t == transition_day:
@@ -175,13 +178,13 @@ if __name__ == "__main__":
             elif transition_scenario == "open-all":
                 e.remove_all_measures()
 
-        t_adjusted = t - 204 # Adjusted t for measures to account for a start date in September.
+        t_adjusted = t + 204 # Adjusted t for measures to account for a start date in September.
 
         # Recording of existing measures
         if transition_scenario in ["uk-forecast"]:
-          measures.uk_lockdown_forecast(e, t-t_adjusted, transition_mode)
+          measures.uk_lockdown_forecast(e, t_adjusted, transition_mode)
         elif transition_scenario not in ["no-measures"]:
-          measures.uk_lockdown_existing(e, t-t_adjusted)
+          measures.uk_lockdown_existing(e, t_adjusted)
 
         # Propagate the model by one time step.
         e.evolve()

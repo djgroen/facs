@@ -177,7 +177,6 @@ def uk_lockdown_existing(e, t):
   if t > 20 and t <= 28:
     e.traffic_multiplier = ((0.2 - (0.0125*(t-20)))**2) / 0.5
 
-
   # Recording of existing measures
   if t > 10 and t <= 20:  # 16th of March (range 11-21)
     uk_lockdown(e, phase=1, transition_fraction=((t-10)*1.0)/100.0)

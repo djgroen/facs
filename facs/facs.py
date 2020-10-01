@@ -751,14 +751,16 @@ class Ecosystem:
 
     # dist_factor_tight excludes mask wearing, as this is incorporated explicitly for supermarkets and shopping.
 
-    self.contact_rate_multiplier["hospital"] *= dist_factor * compliance + (1.0-compliance)
-    self.contact_rate_multiplier["leisure"] *= dist_factor * compliance + (1.0-compliance)
-    self.contact_rate_multiplier["shopping"] *= dist_factor_tight * compliance + (1.0-compliance)
-    self.contact_rate_multiplier["park"] *= dist_factor * compliance + (1.0-compliance)
-    self.contact_rate_multiplier["supermarket"] *= dist_factor_tight * compliance + (1.0-compliance)
-    self.contact_rate_multiplier["office"] *= dist_factor * compliance + (1.0-compliance)
-    self.contact_rate_multiplier["school"] *= dist_factor * compliance + (1.0-compliance)
-    self.contact_rate_multiplier["house"] *= 1.25
+    for k,e in enumerate(self.contact_rate_multiplier):
+      if e in ["supermarket","shopping"]: # 2M not practical, so we use 1M+.
+        m = dist_factor_tight * compliance + (1.0-compliance)
+      if e in "house": # Intra-household interactions are boosted when there is SD outside (Imp Report 9)
+        m = 1.25
+      else: # Default is 2M social distancing.
+        m = dist_factor * compliance + (1.0-compliance)
+      
+      self.contact_rate_multiplier[e] *= m
+
     self.print_contact_rate("SD (covid_flee method) with distance {} and compliance {}".format(distance, compliance))
 
   def add_case_isolation(self):

@@ -1,100 +1,328 @@
-#type,x,y,area,name
-library,-0.473895388857409,51.5327596862565,5392,Brunel University Library
-lecturehall,-0.472820132669192,51.5328430658682,5533,Lecture Centre
-academic,-0.472638119608631,51.5339946289466,5759,Halsbury / Quad North
-academic,-0.474715589344199,51.5340770921562,4979,Heinz Wolff
-academic,-0.473286579457144,51.5319518694954,3061,
-academic,-0.473840374047255,51.5315315707655,14923,Towers
-academic,-0.474854953988658,51.5326731441529,2791,Michael Sterling
-academic,-0.474039768106832,51.5308876562797,1363,Joseph Lowe
-academic,-0.474936995494475,51.5309359263757,1640,Antonin Artaud Building
-academic,-0.472078135617377,51.5334146034416,3162,John Crank
-academic,-0.472865837789928,51.5345017213598,1758,Bragg
-academic,-0.474859589265517,51.5344669244665,827,
-academic,-0.469332729985493,51.5344673025299,2231,St John's
-academic,-0.467566075567736,51.5322869590923,922,Elliot Jaques
-academic,-0.467354041528475,51.5318384177442,2752,Elliot Jaques
-house,-0.471961818683017,51.5323009283744,3120,Saltash
-house,-0.470791160915917,51.532339734987,3267,Clifton Halls
-house,-0.471294624238702,51.5316072209914,3021,Chepstow Hall
-house,-0.470571402131959,51.5311909134861,1082,Faraday Complex
-house,-0.469510760487778,51.5313611634027,1651,Faraday
-academic,-0.468461417900023,51.5328125102473,2028,Mary Seacole
-house,-0.470221082224871,51.5328368840418,1187,Bishop
-house,-0.469898283133584,51.5316047143126,1589,St Margaret's
-house,-0.470133188941359,51.532448194357,1309,Kilmorey
-house,-0.470110787255567,51.5320266836075,1348,Lacy
-house,-0.471893636636467,51.5339221116207,1111,Maria Grey
-house,-0.471931002134973,51.5344312625316,847,Borough Road
-house,-0.471419232556766,51.5337462069413,404,Southwark
-house,-0.471365187306843,51.5334023245516,758,Stockwell
-house,-0.477942470174636,51.5334380432819,6452,Fleming Hall
-house,-0.47794055,51.53343175,766,
-academic,-0.476762439475172,51.5328206008208,3542,Marie Jahoda
-academic,-0.478990090372629,51.5327418110726,1062,Chadwick
-academic,-0.473275954055653,51.5319470342964,842,Howell
-house,-0.476724975974498,51.5334477907056,4277,
-house,-0.476708705892265,51.5333732069756,1180,
-academic,-0.467158371229698,51.5313537921706,2392,AMCC
-office,-0.468560964859943,51.5335133789301,4159,Eastern Gateway
-house,-0.478731020552778,51.5335470926908,0,
-house,-0.479263216143769,51.5333246540939,0,
-house,-0.47906245462218,51.5334461461824,892,
-lecturehall,-0.472809817768945,51.5333997751736,3200,The Quad
-lecturehall,-0.478057430643524,51.5329252100047,2346,Gaskell
-academic,-0.478355677544214,51.532748765647,1182,Gaskell
-academic,-0.471968868355284,51.5330200907801,526,
-house,-0.470481114606182,51.5317085875148,972,Faraday Complex
+type,x,y,area,name
+academic,-0.47263812,51.53399463,5759,Halsbury / Quad North
+academic,-0.474715589,51.53407709,4979,Heinz Wolff
+academic,-0.473286579,51.53195187,3061,
+academic,-0.473840374,51.53153157,14923,Towers
+academic,-0.474854954,51.53267314,2791,Michael Sterling
+academic,-0.474039768,51.53088766,1363,Joseph Lowe
+academic,-0.474936995,51.53093593,1640,Antonin Artaud Building
+academic,-0.472078136,51.5334146,3162,John Crank
+academic,-0.472865838,51.53450172,1758,Bragg
+academic,-0.474859589,51.53446692,827,
+academic,-0.46933273,51.5344673,2231,St John's
+academic,-0.467566076,51.53228696,922,Elliot Jaques
+academic,-0.467354042,51.53183842,2752,Elliot Jaques
+academic,-0.468461418,51.53281251,2028,Mary Seacole
+academic,-0.476762439,51.5328206,3542,Marie Jahoda
+academic,-0.47899009,51.53274181,1062,Chadwick
+academic,-0.473275954,51.53194703,842,Howell
+academic,-0.467158371,51.53135379,2392,AMCC
+academic,-0.478355678,51.53274877,1182,Gaskell
+academic,-0.471968868,51.53302009,526,
 academic,-0.48004165,51.5333189,323,
-house,-0.479841458225935,51.5335995592983,813,North
-house,-0.480372166451878,51.533576133854,794,Meadow
-house,-0.479826967349961,51.5330856462191,814,Concourse
-house,-0.480637599778274,51.5331584962512,782,Michael Bevis
-house,-0.480609122601759,51.5325799329276,826,West
-house,-0.480051475627583,51.5328304983827,874,Stephen Bragg
-house,-0.479634629690858,51.5320907776344,796,East
-house,-0.479905000294177,51.5325243154048,766,Maurice Kogan
-house,-0.480606367609523,51.5321315557599,765,David Neave
-house,-0.480137670378642,51.5320983350055,845,Central Hall
-house,-0.48008826999591,51.5316437259875,628,Runnymede
-house,-0.479644037495482,51.5314920650786,784,George Shipp
-house,-0.479824351786874,51.5311306874976,730,Shoreditch
-house,-0.480523176916051,51.5313252092588,753,Trevor Slater
-house,-0.48048110555632,51.5308430793405,763,Syd Urry
-house,-0.480034865014953,51.5307228147222,738,South
-house,-0.479522260638005,51.530740666623,749,Brian Winstanley
-academic,-0.475326054550803,51.5326977599178,1824,Wilfred Brown
-shopping,-0.473388576130853,51.5332070753199,208,Costcutter
-leisure,-0.479391473393282,51.5325828107908,314,Isambard Amenity Building
-academic,-0.467896409756492,51.5313560733926,973,Gardiner
-academic,-0.468566797610078,51.5312278699941,1855,AMPC
-sports,-0.470213815167868,51.533374807767,3289,
-sports,-0.469524509583467,51.5333247399567,1476,
-sports,-0.470245319645127,51.5337167752015,518,
-sports,-0.469561818740689,51.5324037217452,5397,Indoor Athletics Centre (IAC)
-park,-0.475020518840323,51.5334714275742,8824,Crank Garden
-shopping,-0.473999202251434,51.5332336425781,100,Brunel Pharmacy
-cafe,-0.473863989114761,51.5334091186523,100,More
-cafe,-0.472103089094162,51.5329055786133,100,Costa Coffee
-cafe,-0.473537385463715,51.5328903198242,100,Costa
-hospital,-0.472298,51.5318513,5000,Brunel Medical Centre
-parking,-0.467992495962255,51.5319489212899,3717,
-parking,-0.467162384327132,51.5321469473293,1138,
-parking,-0.477416056398567,51.5327374983946,1536,
-parking,-0.477923622252888,51.5340345125658,1027,
-parking,-0.477372022252889,51.5340646125658,1027,
-parking,-0.476622540103689,51.5340899057838,2287,
-parking,-0.473363413569337,51.5309340234101,1570,
-parking,-0.473873784741526,51.5343395005049,6856,
-parking,-0.473146214582817,51.5342832568183,571,
-parking,-0.472282234202791,51.5344855337673,945,
-parking,-0.470588304987089,51.5338632903624,3031,
-parking,-0.470030980936503,51.5344832008918,4372,
-parking,-0.46924841657215,51.5341359592124,5859,New Parking Area (Building has been demolished)
-parking,-0.469155179888309,51.5337835565958,1546,Disabled Parking Area
-parking,-0.468863561145883,51.5345587054646,843,
-parking,-0.472246521007104,51.5315913523115,938,
-parking,-0.475302540421017,51.5343947967484,1233,
-parking,-0.474816971729209,51.5343239570459,853,
-parking,-0.475066861630832,51.5316922019583,14741,
-bar,-0.473591561520417,51.5334059252073,633,Locos
+academic,-0.475326055,51.53269776,1824,Wilfred Brown
+academic,-0.46789641,51.53135607,973,Gardiner
+academic,-0.468566798,51.53122787,1855,AMPC
+bar,-0.473591562,51.53340593,633,Locos
+cafe,-0.473863989,51.53340912,100,More
+cafe,-0.472103089,51.53290558,100,Costa Coffee
+cafe,-0.473537385,51.53289032,100,Costa
+hospital,-0.472298,51.5318513,612,Brunel Medical Centre
+lecturehall,-0.472820133,51.53284307,5533,Lecture Centre
+lecturehall,-0.472809818,51.53339978,3200,The Quad
+lecturehall,-0.478057431,51.53292521,2346,Gaskell
+library,-0.473895389,51.53275969,5392,Brunel University Library
+office,-0.468560965,51.53351338,4159,Eastern Gateway
+park,-0.475020519,51.53347143,8824,Crank Garden
+parking,-0.467992496,51.53194892,3717,
+parking,-0.467162384,51.53214695,1138,
+parking,-0.477416056,51.5327375,1536,
+parking,-0.477923622,51.53403451,1027,
+parking,-0.477372022,51.53406461,1027,
+parking,-0.47662254,51.53408991,2287,
+parking,-0.473363414,51.53093402,1570,
+parking,-0.473873785,51.5343395,6856,
+parking,-0.473146215,51.53428326,571,
+parking,-0.472282234,51.53448553,945,
+parking,-0.470588305,51.53386329,3031,
+parking,-0.470030981,51.5344832,4372,
+parking,-0.469248417,51.53413596,5859,New Parking Area (Building has been demolished)
+parking,-0.46915518,51.53378356,1546,Disabled Parking Area
+parking,-0.468863561,51.53455871,843,
+parking,-0.472246521,51.53159135,938,
+parking,-0.47530254,51.5343948,1233,
+parking,-0.474816972,51.53432396,853,
+parking,-0.475066862,51.5316922,14741,
+pharmacy,-0.473999202,51.53323364,100,Brunel Pharmacy
+recreational,-0.479391473,51.53258281,314,Isambard Amenity Building
+residential,-0.471961819,51.53230093,3120,Saltash
+residential,-0.470791161,51.53233973,3267,Clifton Halls
+residential,-0.471294624,51.53160722,3021,Chepstow Hall
+residential,-0.470571402,51.53119091,1082,Faraday Complex
+residential,-0.46951076,51.53136116,1651,Faraday
+residential,-0.470221082,51.53283688,1187,Bishop
+residential,-0.469898283,51.53160471,1589,St Margaret's
+residential,-0.470133189,51.53244819,1309,Kilmorey
+residential,-0.470110787,51.53202668,1348,Lacy
+residential,-0.471893637,51.53392211,1111,Maria Grey
+residential,-0.471931002,51.53443126,847,Borough Road
+residential,-0.471419233,51.53374621,404,Southwark
+residential,-0.471365187,51.53340232,758,Stockwell
+residential,-0.47794247,51.53343804,6452,Fleming Hall
+residential,-0.47794055,51.53343175,766,
+residential,-0.476724976,51.53344779,4277,
+residential,-0.476708706,51.53337321,1180,
+residential,-0.478731021,51.53354709,0,
+residential,-0.479263216,51.53332465,0,
+residential,-0.479062455,51.53344615,892,
+residential,-0.470481115,51.53170859,972,Faraday Complex
+residential,-0.479841458,51.53359956,813,North
+residential,-0.480372166,51.53357613,794,Meadow
+residential,-0.479826967,51.53308565,814,Concourse
+residential,-0.4806376,51.5331585,782,Michael Bevis
+residential,-0.480609123,51.53257993,826,West
+residential,-0.480051476,51.5328305,874,Stephen Bragg
+residential,-0.47963463,51.53209078,796,East
+residential,-0.479905,51.53252432,766,Maurice Kogan
+residential,-0.480606368,51.53213156,765,David Neave
+residential,-0.48013767,51.53209834,845,Central Hall
+residential,-0.48008827,51.53164373,628,Runnymede
+residential,-0.479644037,51.53149207,784,George Shipp
+residential,-0.479824352,51.53113069,730,Shoreditch
+residential,-0.480523177,51.53132521,753,Trevor Slater
+residential,-0.480481106,51.53084308,763,Syd Urry
+residential,-0.480034865,51.53072281,738,South
+residential,-0.479522261,51.53074067,749,Brian Winstanley
+shopping,-0.473388576,51.53320708,208,Costcutter
+sports,-0.470213815,51.53337481,3289,
+sports,-0.46952451,51.53332474,1476,
+sports,-0.47024532,51.53371678,518,
+sports,-0.469561819,51.53240372,5397,Indoor Athletics Centre (IAC)
+sports,-0.470213815,51.53337481,576,Sports Centre
+sports,-0.470213815,51.53337481,504,Sports Centre
+lecturehall,-0.473275954,51.53194703,264,Howell Centre Ground Floor
+lecturehall,-0.474936995,51.53093593,252,Antonin Artaud Ground Floor
+lecturehall,-0.468560965,51.53351338,240,"ESGW006 Eastern Gateway Ground Floor, Tiered Seating"
+lecturehall,-0.473840374,51.53153157,216,Tower A
+lecturehall,-0.473591562,51.53340593,192,"Hamilton Centre, Newton S+N Combined"
+lecturehall,-0.468560965,51.53351338,168,"ESGW001 Eastern Gateway Ground Floor, Atrium"
+lecturehall,-0.473840374,51.53153157,160,Tower A DEC
+lecturehall,-0.472820133,51.53284307,156,Lecture Centre Second/ Third Floor
+lecturehall,-0.472820133,51.53284307,156,Lecture Centre Second Third Floor
+lecturehall,-0.474715589,51.53407709,152,"BioSciences Lab, Heinz Wolff Building First Floor"
+lecturehall,-0.474715589,51.53407709,128,Heinz Wolff Building Second Floor
+lecturehall,-0.475326055,51.53269776,128,Wilfred Brown Building Ground FLoor
+lecturehall,-0.474936995,51.53093593,120,Antonin Artaud First Floor
+lecturehall,-0.472820133,51.53284307,120,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,108,Lecture Centre Second/ Third Floor
+lecturehall,-0.473840374,51.53153157,108,Tower A
+lecturehall,-0.473840374,51.53153157,108,Tower A
+lecturehall,-0.473840374,51.53153157,108,Tower C
+lecturehall,-0.473591562,51.53340593,104,"Hamilton Centre, Darwin"
+lecturehall,-0.472103089,51.53290558,96,Bannerman Centre 3rd Floor
+lecturehall,-0.474715589,51.53407709,96,"BioSciences Lab, Heinz Wolff Building First Floor"
+lecturehall,-0.472820133,51.53284307,96,Lecture Centre Ground Floor
+lecturehall,-0.473840374,51.53153157,92,"Tower C, Combined 203+208"
+lecturehall,-0.478057431,51.53292521,88,"Gaskell Building, Combined 170+172- Games Lab"
+lecturehall,-0.468560965,51.53351338,84,Eastern Gateway Ground Floor
+lecturehall,-0.472820133,51.53284307,84,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,84,Lecture Centre First Floor
+lecturehall,-0.474936995,51.53093593,80,Antonin Artaud First Floor
+lecturehall,-0.475326055,51.53269776,80,Wilfred Brown Building First FLoor
+lecturehall,-0.474854954,51.53267314,76,Michael Sterling Building First Floor
+lecturehall,-0.468461418,51.53281251,76,Mary Seacole Building Ground Floor- Gym
+lecturehall,-0.473840374,51.53153157,76,Tower B
+lecturehall,-0.468560965,51.53351338,72,Eastern Gateway First Floor
+lecturehall,-0.468560965,51.53351338,72,Eastern Gateway Second Floor
+lecturehall,-0.478355678,51.53274877,72,Gaskell Building Second Floor
+lecturehall,-0.473591562,51.53340593,72,"Hamilton Centre, Mead Room"
+lecturehall,-0.474715589,51.53407709,72,Heinz Wolf Building Ground Floor
+lecturehall,-0.474715589,51.53407709,72,"Seminar Room, Heinz Wolff Building Second Floor"
+lecturehall,-0.472820133,51.53284307,72,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,72,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,72,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,72,Lecture Centre Second Floor
+lecturehall,-0.474854954,51.53267314,72,Michael Sterling Building First Floor
+lecturehall,-0.474936995,51.53093593,68,Antonin Artaud Ground Floor
+lecturehall,-0.473840374,51.53153157,68,Tower D Fourth Floor
+lecturehall,-0.468560965,51.53351338,64,Combined ESGW Computer Lab
+lecturehall,-0.473591562,51.53340593,64,"Hamilton Centre, Cavendish"
+lecturehall,-0.474715589,51.53407709,64,Heinz Wolff Building Ground Floor
+lecturehall,-0.472820133,51.53284307,64,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,64,Lecture Centre Ground Floor
+lecturehall,-0.474854954,51.53267314,64,Michael Sterling Building Third Floor
+lecturehall,-0.468461418,51.53281251,64,"Specialist Skills room, Mary Seacole Building First Floor"
+lecturehall,-0.472809818,51.53339978,64,Quad North Building Ground Floor
+lecturehall,-0.473840374,51.53153157,64,Tower D
+lecturehall,-0.472820133,51.53284307,60,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,60,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,60,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,60,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,60,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,60,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,60,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,60,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,60,Central Lecture Block Third Floor
+lecturehall,-0.474854954,51.53267314,60,Michael Sterling Building Third Floor
+lecturehall,-0.474854954,51.53267314,60,Michael Sterling Building Third Floor
+lecturehall,-0.468461418,51.53281251,60,Mary Seacole Building First Floor
+lecturehall,-0.468461418,51.53281251,60,Mary Seacole Building Second Floor
+lecturehall,-0.468461418,51.53281251,60,Mary Seacole Building Second Floor
+lecturehall,-0.468461418,51.53281251,60,Mary Seacole Building Third Floor
+lecturehall,-0.468461418,51.53281251,60,Mary Seacole Building Third Floor
+lecturehall,-0.470213815,51.53337481,60,Tennis Courts
+lecturehall,-0.475326055,51.53269776,60,Wilfred Brown Building Second Floor
+lecturehall,-0.472103089,51.53290558,56,Bannerman Centre 2nd Floor
+lecturehall,-0.472103089,51.53290558,56,Bannerman Centre 2nd Floor
+lecturehall,-0.474715589,51.53407709,56,"BioSciences Lab, Heinz Wolff Building First Floor"
+lecturehall,-0.473840374,51.53153157,56,Tower B
+lecturehall,-0.467354042,51.53183842,52,Elliot Jacques First Floor
+lecturehall,-0.478057431,51.53292521,52,Gaskell Building Second Floor- Computer Lab
+lecturehall,-0.472820133,51.53284307,52,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,52,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,52,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,52,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,52,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,52,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,52,Lecture Centre Ground Floor
+lecturehall,-0.474854954,51.53267314,52,Michael Sterling Building First Floor
+lecturehall,-0.474936995,51.53093593,48,Antonin Artaud First Floor
+lecturehall,-0.467354042,51.53183842,48,Elliott Jacques Ground Floor Moot Court
+lecturehall,-0.468560965,51.53351338,48,Eastern Gateway Fourth Floor
+lecturehall,-0.478057431,51.53292521,48,Gaskell Building Ground Floor- Drama Studio
+lecturehall,-0.478355678,51.53274877,48,Gaskell Building Second Floor
+lecturehall,-0.478355678,51.53274877,48,Gaskell Building Second Floor
+lecturehall,-0.474715589,51.53407709,48,"Seminar Room, Heinz Wolff Building Second Floor"
+lecturehall,-0.473275954,51.53194703,48,Howell Building First Floor
+lecturehall,-0.473275954,51.53194703,48,Howell Building Third Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre First Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,48,Lecture Centre Second Floor
+lecturehall,-0.472820133,51.53284307,48,Central Lecture Block Third Floor
+lecturehall,-0.472820133,51.53284307,48,Central Lecture Block Third Floor
+lecturehall,-0.468461418,51.53281251,48,"Clincial Bathroom, Mary Seacole Building Ground Floor"
+lecturehall,-0.468461418,51.53281251,48,Mary Seacole Building Ground Floor- Gym
+lecturehall,-0.468461418,51.53281251,48,Mary Seacole Building First Floor
+lecturehall,-0.473840374,51.53153157,48,Tower C
+lecturehall,-0.473840374,51.53153157,48,Tower C
+lecturehall,-0.473840374,51.53153157,48,Tower C
+lecturehall,-0.468560965,51.53351338,44,"Eastern Gateway First Floor, Seminar"
+lecturehall,-0.468461418,51.53281251,44,Mary Seacole Building First Floor
+lecturehall,-0.473840374,51.53153157,44,Tower A
+lecturehall,-0.473840374,51.53153157,44,Tower C
+lecturehall,-0.473840374,51.53153157,44,Tower D Lab
+lecturehall,-0.473840374,51.53153157,44,Tower D
+lecturehall,-0.473840374,51.53153157,44,Tower D
+lecturehall,-0.467354042,51.53183842,40,Elliot Jacques First Floor
+lecturehall,-0.473591562,51.53340593,40,"Hamilton Centre, Telford"
+lecturehall,-0.474715589,51.53407709,40,"Sports Physiology Lab, Heinz Wolff Building Second Floor"
+lecturehall,-0.473275954,51.53194703,40,Howell Building First Floor
+lecturehall,-0.472820133,51.53284307,40,Lecture Centre Ground Floor
+lecturehall,-0.473840374,51.53153157,40,Tower A
+lecturehall,-0.473840374,51.53153157,40,Tower B
+lecturehall,-0.473840374,51.53153157,40,Tower B
+lecturehall,-0.473840374,51.53153157,40,Tower B
+lecturehall,-0.473840374,51.53153157,40,Tower B
+lecturehall,-0.473840374,51.53153157,40,Tower C
+lecturehall,-0.473840374,51.53153157,40,Tower C
+lecturehall,-0.473840374,51.53153157,40,Tower C
+lecturehall,-0.473840374,51.53153157,40,Tower C
+lecturehall,-0.473840374,51.53153157,40,Tower D
+lecturehall,-0.473840374,51.53153157,40,Tower D
+lecturehall,-0.474936995,51.53093593,36,Antonin Artaud Ground Floor
+lecturehall,-0.467354042,51.53183842,36,Elliot Jacques First Floor
+lecturehall,-0.467354042,51.53183842,36,Elliot Jacques First Floor
+lecturehall,-0.468560965,51.53351338,36,Eastern Gateway Ground Floor
+lecturehall,-0.474715589,51.53407709,36,Heinz Wolff Building First Floor
+lecturehall,-0.474715589,51.53407709,36,Heinz Wolff Building Second Floor
+lecturehall,-0.468461418,51.53281251,36,Mary Seacole Building First Floor
+lecturehall,-0.472809818,51.53339978,36,Quad North Building Ground Floor
+lecturehall,-0.472809818,51.53339978,36,Quad North Building First Floor
+lecturehall,-0.468566798,51.53122787,36,Russell Building Classroom
+lecturehall,-0.473840374,51.53153157,36,Tower D
+lecturehall,-0.473840374,51.53153157,36,Tower D
+lecturehall,-0.472103089,51.53290558,32,Bannerman Centre 2nd Floor
+lecturehall,-0.467354042,51.53183842,32,Elliot Jacques First Floor
+lecturehall,-0.467354042,51.53183842,32,Elliot Jacques First Floor
+lecturehall,-0.468560965,51.53351338,32,Eastern Gateway First Floor
+lecturehall,-0.468560965,51.53351338,32,Eastern Gateway First Floor
+lecturehall,-0.478057431,51.53292521,32,Gaskell Building Ground Floor- Screening Room
+lecturehall,-0.478057431,51.53292521,32,Gaskell Building Ground Floor- Reading Lab
+lecturehall,-0.478355678,51.53274877,32,Gaskell Building First Floor
+lecturehall,-0.478355678,51.53274877,32,Gaskell Building Second Floor
+lecturehall,-0.478355678,51.53274877,32,Gaskell Building Second Floor
+lecturehall,-0.474715589,51.53407709,32,Heinz Wolf Building Ground Floor
+lecturehall,-0.474715589,51.53407709,32,Heinz Wolf Building Ground Floor
+lecturehall,-0.474715589,51.53407709,32,"Biomechanics Lab, Heinz Wolff Building Ground Floor"
+lecturehall,-0.472820133,51.53284307,32,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,32,Lecture Centre Ground Floor
+lecturehall,-0.476762439,51.5328206,32,Marie Jahoda Building First Floor
+lecturehall,-0.476762439,51.5328206,32,Marie Jahoda Building First Floor
+lecturehall,-0.468461418,51.53281251,32,"Clinical Kitchen, Mary Seacole Building Ground Floor"
+lecturehall,-0.472809818,51.53339978,32,Quad North Building Ground Floor
+lecturehall,-0.468566798,51.53122787,32,Russell Building First Floor
+lecturehall,-0.473840374,51.53153157,32,Tower A
+lecturehall,-0.473840374,51.53153157,32,Tower B
+lecturehall,-0.473840374,51.53153157,32,Tower B
+lecturehall,-0.473840374,51.53153157,32,Tower C
+lecturehall,-0.472820133,51.53284307,28,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,28,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,28,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,28,Lecture Centre Ground Floor
+lecturehall,-0.472820133,51.53284307,28,Lecture Centre Ground Floor
+lecturehall,-0.468461418,51.53281251,28,"Clinical Exercise Suite, Mary Seacole Building Ground Floor"
+lecturehall,-0.478355678,51.53274877,24,Games Design seminar room
+lecturehall,-0.474715589,51.53407709,24,"Sports Psychology Lab, Heinz Wolff Building Second Floor"
+lecturehall,-0.472820133,51.53284307,24,Lecture Centre Ground Floor
+lecturehall,-0.474854954,51.53267314,24,Michael Sterling Building Ground Floor
+lecturehall,-0.468566798,51.53122787,24,Russell Building First Floor
+lecturehall,-0.468566798,51.53122787,24,Russell Building Lab 005
+lecturehall,-0.468566798,51.53122787,24,Russell Building Lab 005a
+lecturehall,-0.473840374,51.53153157,24,Tower A
+lecturehall,-0.473840374,51.53153157,24,Tower C
+lecturehall,-0.473840374,51.53153157,24,Tower C
+lecturehall,-0.478355678,51.53274877,20,Gaskell Building Ground Floor
+lecturehall,-0.473840374,51.53153157,20,Tower B
+lecturehall,-0.473840374,51.53153157,20,Tower C
+lecturehall,-0.474936995,51.53093593,16,Antonin Artaud First Floor
+lecturehall,-0.474715589,51.53407709,16,Heinz Wolff Building First Floor
+lecturehall,-0.474715589,51.53407709,16,"BioSciences Lab, Heinz Wolff Building First Floor"
+lecturehall,-0.473275954,51.53194703,16,Howell Building First Floor
+lecturehall,-0.474854954,51.53267314,16,Michael Sterling Building Ground Floor
+lecturehall,-0.474854954,51.53267314,16,Michael Sterling Building First Floor
+lecturehall,-0.474854954,51.53267314,16,Michael Sterling Building First Floor
+lecturehall,-0.476762439,51.5328206,16,Mary Seacole Building Ground Floor
+lecturehall,-0.472809818,51.53339978,16,Quad North Building First Floor
+lecturehall,-0.473840374,51.53153157,16,Tower A
+lecturehall,-0.473840374,51.53153157,16,Tower A
+lecturehall,-0.473840374,51.53153157,16,Tower A
+lecturehall,-0.473840374,51.53153157,16,Tower A
+lecturehall,-0.473840374,51.53153157,16,Tower B
+lecturehall,-0.473840374,51.53153157,16,Tower D
+lecturehall,-0.473840374,51.53153157,16,Tower D
+lecturehall,-0.475326055,51.53269776,16,Wilfred Brown Building Ground FLoor
+lecturehall,-0.475326055,51.53269776,16,Wilfred Brown Building Ground FLoor
+lecturehall,-0.475326055,51.53269776,16,Wilfred Brown Building Ground FLoor
+lecturehall,-0.476762439,51.5328206,12,Mary Seacole Building Ground Floor
+lecturehall,-0.472809818,51.53339978,12,Quad North Building Ground Floor
+lecturehall,-0.473840374,51.53153157,12,Tower A
+lecturehall,-0.473840374,51.53153157,12,Tower A
+lecturehall,-0.473840374,51.53153157,12,Tower A
