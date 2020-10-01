@@ -35,8 +35,7 @@ if __name__ == "__main__":
 
     #Overwrite location types and needs in FACS.
     facs.lids = {'park':0, 'hospital':1, 'supermarket':2, 'office':3, 'school':4, 'leisure':5, 'shopping':6,
-        'academic':7,'lecturehall':8, 'house':9, 'library':10, 'sports':11,
-        'cafe':13, 'bar':14}
+        'academic':7,'lecturehall':8, 'library':9, 'sports':10, 'cafe':11, 'bar':12}
     facs.lnames = list(facs.lids.keys())
     facs.needs = facs.Needs("covid_data/needs_campus.csv")
 

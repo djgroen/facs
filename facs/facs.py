@@ -36,9 +36,10 @@ class Needs():
         if row_number == 0:
           for k,element in enumerate(row):
             if element in lids.keys():
+              print(element,k)
+              print("NC:",needs_cols)
+              
               needs_cols[lids[element]] = k
-            #print(element,k)
-          #print("NC:",needs_cols)
         else:
           for i in range(0,len(needs_cols)):
             self.needs[i,row_number-1] = int(row[needs_cols[i]])
