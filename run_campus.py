@@ -38,7 +38,8 @@ if __name__ == "__main__":
         'academic':7,'lecturehall':8, 'house':9, 'library':10, 'sports':11,
         'cafe':13, 'bar':14}
     facs.lnames = list(facs.lids.keys())
-    
+    facs.needs = facs.Needs("covid_data/needs_campus.csv")
+
     facs.avg_visit_times = [90,60,60,60,360,360,60,60,360,120,720,60,60,60,60,60,60,15,30] #average time spent per visit
 
 

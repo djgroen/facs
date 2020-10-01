@@ -28,7 +28,7 @@ class Needs():
       self.add_hardcoded_needs()
       return
     self.needs = np.zeros((len(lids),120))
-    needs_cols = [0,0,0,0,0,0,0]
+    needs_cols = [0]*len(lids)
     with open(csvfile) as csvfile:
       needs_reader = csv.reader(csvfile)
       row_number = 0
@@ -126,7 +126,8 @@ class Person():
     Takes a location type ID: return True or False
     """
     if hasattr(self, 'groups'):
-      if lid in self.groups.keys():
+      if lid in list(self.groups.keys()):
+        print(lid, list(self.groups.keys()))
         return True
     return False
 
@@ -148,7 +149,6 @@ class Person():
           location_to_visit = self.hospital
 
         elif self.location_has_grouping(k):
-          print("group")
           location_to_visit = e.get_location_by_group(k, self.groups[k])
 
         elif nearest_locs[k]: 
@@ -498,7 +498,7 @@ class Ecosystem:
     Creates a grouping for a location, and assigns agents randomly to groups.
     Agents need to have been read in *before* running this function.
     """
-    print(self.locations.keys(),loc_type)
+    print("make group:", self.locations.keys(), loc_type)
     num_locs = len(self.locations[loc_type])
     self.loc_groups[loc_type] = {}
     # Assign groups to specific locations of that type in round robin fashion.
@@ -513,6 +513,8 @@ class Ecosystem:
 
 
   def get_location_by_group(self, loc_type_id, group_num):
+    print("get loc by group")
+    print(loc_type_id, group_num, self.loc_groups[loc_type][group_num].x)
     loc_type = lnames[loc_type_id]
     return self.loc_groups[loc_type][group_num]
 
