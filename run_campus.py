@@ -115,7 +115,7 @@ if __name__ == "__main__":
     print("outfile  = %s" % (outfile))
     print("data_dir  = %s" % (data_dir))
 
-    e = facs.Ecosystem(end_time)
+    e = facs.Ecosystem(end_time, needsfile="covid_data/needs_campus.csv")
 
     e.ci_multiplier = ci_multiplier
     e.ages = read_age_csv.read_age_csv("{}/age-distr.csv".format(data_dir), location)

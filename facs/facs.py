@@ -36,8 +36,9 @@ class Needs():
         if row_number == 0:
           for k,element in enumerate(row):
             if element in lids.keys():
-              print(element,k)
-              print("NC:",needs_cols)
+              #Debug symbols in to debug custom sets of needs.
+              #print(element,k)
+              #print("NC:",needs_cols)
               
               needs_cols[lids[element]] = k
         else:
@@ -128,7 +129,7 @@ class Person():
     """
     if hasattr(self, 'groups'):
       if lid in list(self.groups.keys()):
-        print(lid, list(self.groups.keys()))
+        #print(lid, list(self.groups.keys()))
         return True
     return False
 
@@ -458,7 +459,7 @@ class Location:
 
 
 class Ecosystem:
-  def __init__(self, duration):
+  def __init__(self, duration, needsfile="covid_data/needs.csv"):
     self.locations = {}
     self.houses = []
     self.house_names = []
@@ -488,6 +489,7 @@ class Ecosystem:
     self.status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     self.enforce_masks_on_transport = False
     self.loc_groups = {}
+    self.needsfile = needsfile 
 
     #Make header for infections file
     out_inf = open("covid_out_infections.csv",'w')
@@ -514,8 +516,6 @@ class Ecosystem:
 
 
   def get_location_by_group(self, loc_type_id, group_num):
-    print("get loc by group")
-    print(loc_type_id, group_num, self.loc_groups[loc_type][group_num].x)
     loc_type = lnames[loc_type_id]
     return self.loc_groups[loc_type][group_num]
 
@@ -709,7 +709,7 @@ class Ecosystem:
     self.initialise_social_distance()
     self.reset_case_isolation()
     self.remove_closures()
-    needs = Needs("covid_data/needs.csv")
+    needs = Needs(self.needsfile)
     for k,e in enumerate(self.houses):
       for hh in e.households:
         for a in hh.agents:
