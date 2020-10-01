@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     end_time = 180
     if transition_scenario in ["extend-lockdown","dynamic-lockdown","periodic-lockdown","uk-forecast"]:
-      end_time = 730
+      end_time = 180
 
     print("Running basic Covid-19 simulation kernel.")
     print("scenario = %s" % (location))
