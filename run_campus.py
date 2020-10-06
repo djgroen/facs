@@ -167,6 +167,8 @@ if __name__ == "__main__":
         else:
             e.print_status(outfile, silent=True)
 
+    track_trace_limit = 0.2 + transition_mode*0.1
+
     # Initialize code with phase 9 of UK lockdown, as this is in effect in mid Sept.
     measures.uk_lockdown(e, phase=9)
 
@@ -184,7 +186,7 @@ if __name__ == "__main__":
         if transition_scenario in ["uk-forecast"]:
           measures.uk_lockdown_forecast(e, t_adjusted, transition_mode)
         elif transition_scenario not in ["no-measures"]:
-          measures.uk_lockdown_existing(e, t_adjusted)
+          measures.uk_lockdown_existing(e, t_adjusted, track_trace_limit=track_trace_limit)
 
         # Propagate the model by one time step.
         e.evolve()

@@ -11,7 +11,7 @@ def full_lockdown(e):
   e.add_case_isolation()
   e.add_household_isolation()
 
-def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
+def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, track_trace_limit=0.5):
   """
   Code which reflects EXISTING UK lockdown measures.
   """
@@ -77,12 +77,12 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18):
     e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.8)
     e.add_work_from_home(0.3)
     e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
-    e.track_trace_multiplier = 0.5 # 50% of cases escape track and trace.
+    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
   if phase == 10: # Enacted Sept 22nd
     e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.8)
     e.add_work_from_home(0.5) # Work from home directive reinstated by government.
     e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
-    e.track_trace_multiplier = 0.5 # 50% of cases escape track and trace.
+    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
 
 
   # mimicking a 75% reduction in social contacts.
