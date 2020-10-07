@@ -185,19 +185,19 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
   if t == 52:  # 22nd of April
     uk_lockdown(e, phase=3)
   if t == 73: # 13th of May
-    uk_lockdown(e, phase=4)
+    uk_lockdown(e, phase=4, track_trace_limit=track_trace_limit)
   if t == 92: # June 1st
-    uk_lockdown(e, phase=5)
+    uk_lockdown(e, phase=5, track_trace_limit=track_trace_limit)
   if t == 106: # June 15th
-    uk_lockdown(e, phase=6)
+    uk_lockdown(e, phase=6, track_trace_limit=track_trace_limit)
   if t == 125:  # July 4th
-    uk_lockdown(e, phase=7)
+    uk_lockdown(e, phase=7, track_trace_limit=track_trace_limit)
   if t == 136:  # July 15th
-    uk_lockdown(e, phase=8, track_trace_limit)
+    uk_lockdown(e, phase=8, track_trace_limit=track_trace_limit)
   if t == 184:  # Sept 1st
-    uk_lockdown(e, phase=9, track_trace_limit)
+    uk_lockdown(e, phase=9, track_trace_limit=track_trace_limit)
   if t == 206:  # Sept 22nd
-    uk_lockdown(e, phase=10, track_trace_limit)
+    uk_lockdown(e, phase=10, track_trace_limit=track_trace_limit)
 
 
 def uk_lockdown_forecast(e, t, mode = 0):
