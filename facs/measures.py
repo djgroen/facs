@@ -164,7 +164,7 @@ def uk_lockdown_scenarios(e, t, step, vaccine=100, track_trace_multiplier = 0.5)
   e.add_household_isolation()
   """
 
-def uk_lockdown_existing(e, t):
+def uk_lockdown_existing(e, t, track_trace_limit=0.5):
   update_hospital_protection_factor_uk(e,t)
 
   # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
@@ -193,11 +193,11 @@ def uk_lockdown_existing(e, t):
   if t == 125:  # July 4th
     uk_lockdown(e, phase=7)
   if t == 136:  # July 15th
-    uk_lockdown(e, phase=8)
+    uk_lockdown(e, phase=8, track_trace_limit)
   if t == 184:  # Sept 1st
-    uk_lockdown(e, phase=9)
+    uk_lockdown(e, phase=9, track_trace_limit)
   if t == 206:  # Sept 22nd
-    uk_lockdown(e, phase=10)
+    uk_lockdown(e, phase=10, track_trace_limit)
 
 
 def uk_lockdown_forecast(e, t, mode = 0):

@@ -153,6 +153,10 @@ if __name__ == "__main__":
         else:
             e.print_status(outfile, silent=True)
 
+
+    track_trace_limit = 0.2 + transition_mode*0.1
+
+
     for t in range(0, end_time):
 
         if t == transition_day:
@@ -184,7 +188,7 @@ if __name__ == "__main__":
         if transition_scenario in ["uk-forecast"]:
           measures.uk_lockdown_forecast(e, t, transition_mode)
         elif transition_scenario not in ["no-measures"]:
-          measures.uk_lockdown_existing(e, t)
+          measures.uk_lockdown_existing(e, t, track_trace_limit=track_trace_limit)
 
         # Propagate the model by one time step.
         e.evolve()
