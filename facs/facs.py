@@ -5,6 +5,7 @@ import sys
 import random
 import array
 import csv
+import pandas as pd
 
 # TODO: store all this in a YaML file
 lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,"shopping":6} # location ids and labels
@@ -783,6 +784,15 @@ class Ecosystem:
     # 25%*80% + 100%*20% = 40% = 0.4
     needs.household_isolation_multiplier=multiplier
     self.print_contact_rate("Household isolation with {} multiplier".format(multiplier))
+
+
+  def add_cum_column(elf, csv_file, cum_columns):
+    df = ps.read_csv(csv_file, index_col=None, header=0)
+
+    for columns in com_columns:
+      df['cum %s' % (column)] = df[column].sumsum()
+
+    df.to_csv(csvfile)
 
 
   def find_hospital(self):
