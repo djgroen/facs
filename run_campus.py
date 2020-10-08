@@ -170,7 +170,7 @@ if __name__ == "__main__":
     track_trace_limit = 0.2 + transition_mode*0.1
 
     # Initialize code with phase 9 of UK lockdown, as this is in effect in mid Sept.
-    measures.uk_lockdown(e, phase=9)
+    measures.uk_lockdown(e, phase=9, track_trace_limit=track_trace_limit)
 
     for t in range(0, end_time):
 

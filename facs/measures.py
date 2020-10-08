@@ -11,13 +11,16 @@ def full_lockdown(e):
   e.add_case_isolation()
   e.add_household_isolation()
 
-def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, track_trace_limit=0.5):
+def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, track_trace_limit=0.5, compliance=0.0):
   """
   Code which reflects EXISTING UK lockdown measures.
+  compliance = a static modified on the (social distancing) compliance rate. Should be in range -10% to +10%.
   """
   e.remove_all_measures()
   transition_fraction = max(0.0, min(1.0, transition_fraction))
   keyworker_fraction = max(0.0, min(1.0, keyworker_fraction))
+
+  track_trace_limit = 1.0 - track_trace_limit
 
   if phase == 1: # Enacted March 16th
     e.add_partial_closure("leisure", 0.5)
@@ -28,58 +31,58 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, tr
     e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6 + (transition_fraction * 0.2))
-    e.add_social_distance(compliance=0.65 + (transition_fraction * 0.1), mask_uptake=0.05, mask_uptake_shopping=0.1)
+    e.add_social_distance(compliance=0.65 + compliance + (transition_fraction * 0.1), mask_uptake=0.05, mask_uptake_shopping=0.1)
     e.add_work_from_home(0.9 - keyworker_fraction + (transition_fraction * 0.1)) # www.ifs.org.uk/publications/14763 (18% are key worker in London)
   if phase == 3: # Enacted April 22nd
     e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.8)
-    e.add_social_distance(compliance=0.8, mask_uptake=0.15, mask_uptake_shopping=0.2)
+    e.add_social_distance(compliance=0.8 + compliance, mask_uptake=0.15, mask_uptake_shopping=0.2)
     e.add_work_from_home(1.0 - keyworker_fraction) # www.ifs.org.uk/publications/14763 (18% are key worker in London)
   if phase == 4: # Enacted May 13th
     e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.3)
+    e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.3)
     e.add_work_from_home(0.7)
     e.ci_multiplier *= 0.7 # Assumption: additional directives for those with anosmia to stay home improves compliance by 30%.
   if phase == 5: # Enacted June 1st
     e.add_partial_closure("school", (1.0 - keyworker_fraction) / 2.0, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.3)
+    e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.3)
     e.add_work_from_home(0.7)
     e.track_trace_multiplier = 0.8 # 80% of cases escape track and trace.
   if phase == 6: # Enacted June 15th
     e.add_partial_closure("school", (1.0 - keyworker_fraction) / 2.0, exclude_people=True)
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.2)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.3)
+    e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.3)
     e.add_work_from_home(0.65)
     e.traffic_multiplier = 0.125 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report
     e.enforce_masks_on_transport = True
-    e.track_trace_multiplier = 0.5 # 50% of cases escape track and trace.
+    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
   if phase == 7: # Enacted July 4th
     e.add_partial_closure("school", (1.0 - keyworker_fraction) / 2.0, exclude_people=True)
     e.add_partial_closure("leisure", 0.8)
     e.add_partial_closure("shopping", 0.1)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.3)
+    e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.3)
     e.add_work_from_home(0.5)
     e.traffic_multiplier = 0.2 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report
-    e.track_trace_multiplier = 0.5 # 50% of cases escape track and trace.
+    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
   if phase == 8: # Enacted July 15th
     e.add_partial_closure("school", 0.8) # Assuming some kids go to summer camps, but 80% of school-like activities are not taking place due to holidays.
     e.add_partial_closure("leisure", 0.3)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.8)
+    e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
     e.add_work_from_home(0.5)
-    e.track_trace_multiplier = 0.5 # 50% of cases escape track and trace.
+    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
   if phase == 9: # Enacted Sept 1st
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.8)
+    e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
     e.add_work_from_home(0.3)
     e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
   if phase == 10: # Enacted Sept 22nd
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2, mask_uptake_shopping=0.8)
+    e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
     e.add_work_from_home(0.5) # Work from home directive reinstated by government.
     e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
