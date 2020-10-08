@@ -22,7 +22,7 @@ def apply_building_mapping(mapdict, label):
       return category
   return "house"
 
-def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_map.yml", house_ratio=1, workspace=12, office_size=1600, household_size=2.6, work_participation_rate=0.5, dumptypesandquit=False):
+def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_map.yml", house_ratio=1, workspace=12, office_size=1600, household_size=2.6, households_per_house=1, work_participation_rate=0.5, dumptypesandquit=False):
   """
   house_ratio = number of households per house.
   workspace = m2 of office space per worker.
@@ -30,7 +30,9 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
   household_size = average size of household.
   work_participation_rate = fraction of population that works.
   """
- 
+
+  e.household_size = household_size
+
   building_mapping = {}
   with open(building_type_map) as f:
     building_mapping = yaml.load(f, Loader=yaml.FullLoader)
@@ -41,7 +43,7 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
     print("Error: could not find csv file.")
     sys.exit()
   with open(csvfile) as csvfile:
-    needs_reader = csv.reader(csvfile)
+    building_reader = csv.reader(csvfile)
     row_number = 0
     num_locs = 0
     num_houses = 0
@@ -50,7 +52,7 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
     xbound = [99999.0,-99999.0]
     ybound = [99999.0,-99999.0]
 
-    for row in needs_reader:
+    for row in building_reader:
       if row_number == 0:
         row_number += 1
         continue
@@ -72,9 +74,9 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
 
       if location_type == "house":
         if house_csv_count % house_ratio == 0:
-          e.addHouse(num_houses, x , y, house_ratio)
+          e.addHouse(num_houses, x , y, house_ratio*households_per_house)
           num_houses += 1
-          office_sqm += workspace*household_size*work_participation_rate*house_ratio # 10 sqm per worker, 2.6 person per household, 50% in workforce
+          office_sqm += workspace*household_size*work_participation_rate*house_ratio*households_per_house # 10 sqm per worker, 2.6 person per household, 50% in workforce
         house_csv_count += 1
       else:
         #e.addLocation(num_locs, location_type, x, y, building_mapping[location_type]['default_sqm'])

@@ -143,6 +143,8 @@ if __name__ == "__main__":
     for i in range(0,10):
       e.add_infections(int(starting_num_infections/10), i-19)
 
+    print("THIS SIMULATIONS HAS {} AGENTS.".format(e.num_agents))
+
     e.time = -20
     e.print_header(outfile)
     for i in range(0, 20):

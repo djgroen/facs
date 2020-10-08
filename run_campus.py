@@ -42,7 +42,7 @@ if __name__ == "__main__":
     facs.avg_visit_times = [90,60,60,60,360,360,60,60,360,120,720,60,60,60,60,60,60,15,30] #average time spent per visit
 
 
-    house_ratio = 2
+    house_ratio = 1 # default to 1, as these simulations are small.
     if args.quicktest:
       house_ratio = 100
     location = args.location
@@ -127,10 +127,13 @@ if __name__ == "__main__":
 
     building_file = "{}/{}_buildings.csv".format(data_dir, location)
     #print(building_file)
+
+    households_per_house = 8 #Brunel has large residences, where many households reside. 59*8 ~ 4000
+
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map_campus.yml".format(data_dir),
-                                        house_ratio=house_ratio, workspace=12, office_size=1600, household_size=8, work_participation_rate=0.5)
+                                        house_ratio=house_ratio, workspace=12, office_size=1600, household_size=8, households_per_house=households_per_house, work_participation_rate=0.5)
     # house ratio: number of households per house placed (higher number adds noise, but reduces runtime
     # And then 3 parameters that ONLY affect office placement.
     # workspace: m2 per employee on average. (10 in an office setting, but we use 12 as some people work in more spacious environments)
@@ -156,6 +159,10 @@ if __name__ == "__main__":
     #print(e.locations.keys())
     # Enact class groups [type],[number of groups]
     e.make_group("lecturehall",200)
+ 
+    
+    print("THIS SIMULATIONS HAS {} AGENTS.".format(e.num_agents))
+
 
     e.time = -20
     e.print_header(outfile)

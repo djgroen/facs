@@ -292,7 +292,9 @@ class House:
     #self.find_nearest_locations(e)
     #print("nearest locs:", self.nearest_locations)
     for i in range(0, num_households):
-        self.households.append(Household(self, e.ages))
+        size = np.random.poisson(e.household_size)
+        e.num_agents += size
+        self.households.append(Household(self, e.ages, size))
 
   def IncrementNumAgents(self):
     self.num_agents += 1
