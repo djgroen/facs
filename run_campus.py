@@ -128,7 +128,7 @@ if __name__ == "__main__":
     building_file = "{}/{}_buildings.csv".format(data_dir, location)
     #print(building_file)
 
-    households_per_house = 8 #Brunel has large residences, where many households reside. 59*8 ~ 4000
+    households_per_house = 13 #Brunel has large residences, where many households reside. 38*8* ~ 4000
 
     read_building_csv.read_building_csv(e,
                                         building_file,

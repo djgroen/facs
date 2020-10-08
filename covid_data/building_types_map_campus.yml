@@ -69,7 +69,8 @@ shopping:
   - shop
   - shops
   - retail
-  default_sqm: 200
+  - pharmacy
+  default_sqm: 100
 
 academic:
   index: 7
@@ -93,6 +94,7 @@ sports:
   index: 11
   labels:
   - sports
+  - recreational
   default_sqm: 400
 
 cafe:
