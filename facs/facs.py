@@ -787,7 +787,7 @@ class Ecosystem:
 
 
   def add_cum_column(elf, csv_file, cum_columns):
-    df = ps.read_csv(csv_file, index_col=None, header=0)
+    df = pd.read_csv(csv_file, index_col=None, header=0)
 
     for columns in com_columns:
       df['cum %s' % (column)] = df[column].sumsum()
