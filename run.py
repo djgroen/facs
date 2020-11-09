@@ -30,6 +30,7 @@ if __name__ == "__main__":
     parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
     parser.add_argument('-g', '--generic_outfile', action="store_true", help="Write main output to out.csv instead of a scenario-specific named file.")
     parser.add_argument('--dbg', action="store_true", help="Write additional outputs to help debugging")
+    parser.add_argument('--simulation_period', action="store",type=int, default='-1')
     args = parser.parse_args()
     print(args)
 
@@ -95,7 +96,10 @@ if __name__ == "__main__":
     end_time = 180
     if transition_scenario in ["extend-lockdown","dynamic-lockdown","periodic-lockdown","uk-forecast"]:
       end_time = 730
-
+    
+    if args.simulation_period > 0:
+      end_time = args.simulation_period
+    
     print("Running basic Covid-19 simulation kernel.")
     print("scenario = %s" % (location))
     print("transition_scenario = %s" % (transition_scenario))
@@ -105,6 +109,7 @@ if __name__ == "__main__":
     print("output_dir  = %s" % (output_dir))
     print("outfile  = %s" % (outfile))
     print("data_dir  = %s" % (data_dir))
+
 
     e = facs.Ecosystem(end_time)
 
