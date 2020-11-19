@@ -1,0 +1,18 @@
+matrix:
+  include:
+    - stage: testing
+      language: python
+      python:
+        - "3.6"
+
+                  
+      install:
+        - pip install numpy pandas 
+
+      script:
+        - cd $TRAVIS_BUILD_DIR
+        - echo $PATH
+        - echo $PYTHONPATH
+        - python -m pytest --log-cli-level=10 tests/
+
+
