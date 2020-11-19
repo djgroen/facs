@@ -7,7 +7,7 @@ matrix:
 
                   
       install:
-        - pip install numpy pandas 
+        - pip install numpy pandas pyyaml
 
       script:
         - cd $TRAVIS_BUILD_DIR
