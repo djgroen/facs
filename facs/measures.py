@@ -86,7 +86,13 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, tr
     e.add_work_from_home(0.5) # Work from home directive reinstated by government.
     e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
-
+  if phase == 11: # Enacted Nov 5th
+    e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
+    e.add_work_from_home(0.7) # Work from home directive reinstated by government.
+    e.traffic_multiplier = 0.2 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
+    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
+    e.add_closure("leisure", 0)
+    e.add_partial_closure("shopping", 0.6)
 
   # mimicking a 75% reduction in social contacts.
   #e.add_social_distance_imp9()
@@ -201,59 +207,49 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
     uk_lockdown(e, phase=9, track_trace_limit=track_trace_limit)
   if t == 206:  # Sept 22nd
     uk_lockdown(e, phase=10, track_trace_limit=track_trace_limit)
+  if t == 250:  # November 5th
+    uk_lockdown(e, phase=11, track_trace_limit=track_trace_limit)
 
 
 def uk_lockdown_forecast(e, t, mode = 0):
 
-  # 0 = default
-  # 1 = 1 month delay
-  # 2 = september 3 month delay
-  # 3 = increased track and trace
-  # 4 = reduced track and trace
-  # 5 = 50% vaccine
-  # 6 = 25% vaccine
-  # 7 = no vaccine
-  # 8 = temporary immunity
 
+  # Define vaccinations
+  if t > 300:
+    e.vaccinations_available = 500
+  e.vac_no_symptoms = 80
+  e.vac_no_transmission = 50
+  e.vac_70plus = True
 
-  delay = 0
-  if mode == 1:
-    delay += 30
-
-  delay3 = 0
-  if mode == 2:
-    delay3 = 92
-
-  track_trace_multiplier = 0.5
-  if mode == 3:
-    track_trace_multiplier = 0.25
-  if mode == 4:
-    track_trace_multiplier = 0.75
-
-  vaccine = 100
-  if mode == 5:
-    vaccine = 50
-  if mode == 6:
-    vaccine = 25
-  if mode == 7:
-    vaccine = 0
-
-
-  if t<150:
+  if t<260:
     uk_lockdown_existing(e, t)
-  else:
-    if t == 92+delay: # June 1st
-      uk_lockdown_scenarios(e, t, 2)
-    if t == 122+delay+delay3: # July 1st
-      uk_lockdown_scenarios(e, t, 3)
-    if t == 184+delay+delay3: # September 1st
-      uk_lockdown_scenarios(e, t, 4)
-    if t == 306+delay+delay3: # January 1st 2021
-      uk_lockdown_scenarios(e, t, 5, track_trace_multiplier=track_trace_multiplier)
-    if t == 365+delay+delay3: # March 1st 2021
-      uk_lockdown_scenarios(e, t, 6, vaccine=vaccine)
-    if t == 487+delay+delay3: # July 1st 2021
-      uk_lockdown_scenarios(e, t, 7, vaccine=vaccine)
+  else: 
+    pass
+
+  #SCENARIO 1 - Weekly Testing
+
+  #SCENARIO 2 - Monthly Testing
+
+  #SCENARIO 3 - N95 Masks
+
+  #SCNEARIO 4 - Basic face covering
+
+  #SCENARIO 5 - Track and Trace +
+
+  #SCENARIO 6 - Track and Trace
+
+  #SCENARIO 7 - Track and Trace -
+
+  #SCENARIO 8 - Vaccine +
+
+  #SCENARIO 9 - Vaccine -
+
+  #SCENARIO 10 - School/Work Testing
+
+  #SCENARIO 11 - Lockdown ON-OFF
+
+  #SCENARIO 12 - NHS Full Recovery
+
 
 def work50(e):
   e.remove_all_measures()

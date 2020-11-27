@@ -104,6 +104,7 @@ class Person():
     self.work_from_home = False
     self.school_from_home = False
     self.phase_duration = 0.0 # duration to next phase.
+    self.symptoms_suppressed = False # Symptoms suppressed, e.g. due to vaccination, but still infectious.
 
     self.status = "susceptible" # states: susceptible, exposed, infectious, recovered, dead, immune.
     self.symptomatic = False # may be symptomatic if infectious
@@ -133,6 +134,14 @@ class Person():
         #print(lid, list(self.groups.keys()))
         return True
     return False
+
+
+  def vaccinate(self, vac_no_symptoms, vac_no_transmission):
+    if self.status == "susceptible":
+      if np.random.random() < vac_no_transmission:
+        self.status = "immune"
+      elif np.random.random() < vac_no_symptoms:
+        self.symptoms_suppressed = True
 
 
   def plan_visits(self, e, deterministic=False):
@@ -190,7 +199,7 @@ class Person():
     if self.status == "exposed" and t-self.status_change_time >= int(self.phase_duration):
       self.status = "infectious"
       self.status_change_time = t
-      if random.random() < self.get_hospitalisation_chance(disease): 
+      if random.random() < self.get_hospitalisation_chance(disease) and self.symptoms_suppressed==False: 
         self.mild_version = False
         #self.phase_duration = np.random.poisson(disease.period_to_hospitalisation - disease.incubation_period)
         self.phase_duration = max(1, np.random.poisson(disease.period_to_hospitalisation) - self.phase_duration)
@@ -488,6 +497,9 @@ class Ecosystem:
     self.hospital_protection_factor = 0.5 # 0 is perfect, 1 is no protection.
     self.vaccinations_available = 0 # vaccinations available per day
     self.vaccinations_today = 0
+    self.vac_no_symptoms = 1.0 # Default: 100% of people receiving vaccine have no more symptons.
+    self.vac_no_transmission = 1.0 # Default: 100% of people receiving vaccine transmit the disease as normal.
+    self.vac_70plus = False # Set to true if people over 70 are prioritized with vaccination.
     self.traffic_multiplier = 1.0
     self.status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     self.enforce_masks_on_transport = False
@@ -610,6 +622,8 @@ class Ecosystem:
       for l in self.locations[lk]:
         l.clear_visits()
 
+
+
     # collect visits for the current day
     for h in self.houses:
       for hh in h.households:
@@ -617,10 +631,21 @@ class Ecosystem:
           a.plan_visits(self, reduce_stochasticity)
           a.progress_condition(self, self.time, self.disease)
 
+          if self.vac_70plus:
+            if a.age > 69 and self.vaccinations_available - self.vaccinations_today > 0:
+              if a.status == "susceptible" and a.symptoms_suppressed==False:
+                a.vaccinate(self.vac_no_symptoms, self.vac_no_transmission)
+                self.vaccinations_today += 1
+
+
+    for h in self.houses:
+      for hh in h.households:
+        for a in hh.agents:
+          #print("VAC:",self.vaccinations_available, self.vaccinations_today, self.vac_no_symptoms, self.vac_no_transmission, file=sys.stderr)
           if self.vaccinations_available - self.vaccinations_today > 0:
-            if a.status == "susceptible":
+            if a.status == "susceptible" and a.symptoms_suppressed==False:
+              a.vaccinate(self.vac_no_symptoms, self.vac_no_transmission)
               self.vaccinations_today += 1
-              a.status = "immune"
 
     self.evolve_public_transport()
 
