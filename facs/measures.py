@@ -93,6 +93,15 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, tr
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
     e.add_closure("leisure", 0)
     e.add_partial_closure("shopping", 0.6)
+  if phase == 12: # Enacted 15th December
+    e.add_social_distance(compliance=0.5 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
+    e.add_work_from_home(0.25)
+    e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
+    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
+    e.add_closure("leisure", 0.5)
+    e.add_partial_closure("shopping", 0.1)
+
+
 
   # mimicking a 75% reduction in social contacts.
   #e.add_social_distance_imp9()
@@ -209,16 +218,31 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
     uk_lockdown(e, phase=10, track_trace_limit=track_trace_limit)
   if t == 250:  # November 5th
     uk_lockdown(e, phase=11, track_trace_limit=track_trace_limit)
-
+  if t == 350:  # December 15th
+    uk_lockdown(e, phase=12, track_trace_limit=track_trace_limit)
 
 def uk_lockdown_forecast(e, t, mode = 0):
+  if mode == 0:
+    # Define vaccinations Worst(W)
+    if t > 300:
+      e.vaccinations_available = 500
+    e.vac_no_symptoms = 30
+    e.vac_no_transmission = 30
 
+  elif mode == 1:
+    # Define vaccinations Expected(E)
+    if t > 300:
+      e.vaccinations_available = 1500
+    e.vac_no_symptoms = 50
+    e.vac_no_transmission = 50
 
-  # Define vaccinations
-  if t > 300:
-    e.vaccinations_available = 500
-  e.vac_no_symptoms = 80
-  e.vac_no_transmission = 50
+  elif mode == 2:
+    # Define vaccinations Best(B)
+    if t > 300:
+      e.vaccinations_available = 2500
+    e.vac_no_symptoms = 90
+    e.vac_no_transmission = 90
+
   e.vac_70plus = True
 
   if t<260:
