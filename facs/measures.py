@@ -245,7 +245,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
 
   e.vac_70plus = True
 
-  if t<260:
+  if t<351:
     uk_lockdown_existing(e, t)
   else: 
     pass
