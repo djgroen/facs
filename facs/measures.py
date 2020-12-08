@@ -91,14 +91,14 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, tr
     e.add_work_from_home(0.7) # Work from home directive reinstated by government.
     e.traffic_multiplier = 0.2 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
-    e.add_closure("leisure", 0)
+    e.add_partial_closure("leisure", 1.0)
     e.add_partial_closure("shopping", 0.6)
   if phase == 12: # Enacted 15th December
     e.add_social_distance(compliance=0.5 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
     e.add_work_from_home(0.25)
     e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
-    e.add_closure("leisure", 0.5)
+    e.add_partial_closure("leisure", 0.5)
     e.add_partial_closure("shopping", 0.1)
 
 
