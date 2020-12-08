@@ -57,7 +57,7 @@ if __name__ == "__main__":
                     elif row[0].lower() == "transition_mode":
                         transition_mode = int(row[1])
 
-    # transition_day = -1
+    transition_day = -1
     # if transition_mode == 1:
     #     transition_day = 77  # 15th of April
     # if transition_mode == 2:
