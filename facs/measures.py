@@ -227,21 +227,21 @@ def uk_lockdown_forecast(e, t, mode = 0):
     if t > 300:
       e.vaccinations_available = 500
     e.vac_no_symptoms = 30
-    e.vac_no_transmission = 30
+    e.vac_no_transmission = 0.30
 
   elif mode == 1:
     # Define vaccinations Expected(E)
     if t > 300:
       e.vaccinations_available = 1500
     e.vac_no_symptoms = 50
-    e.vac_no_transmission = 50
+    e.vac_no_transmission = 0.50
 
   elif mode == 2:
     # Define vaccinations Best(B)
     if t > 300:
       e.vaccinations_available = 2500
     e.vac_no_symptoms = 90
-    e.vac_no_transmission = 90
+    e.vac_no_transmission = 0.90
 
   e.vac_70plus = True
 
