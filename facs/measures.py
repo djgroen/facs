@@ -238,7 +238,27 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
   if t == 395:  # 31st March 2021
     uk_lockdown(e, phase=14, track_trace_limit=track_trace_limit)
 
+
+def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.119):
+  # Original infection rate is 0.07 (COVID-19 disease.yml)
+  # destination infection rate is "up to 70% higher", so we set it to 0.07*1.7=0.119.
+
+  if fraction > 1.0:
+    print("Error: fraction > 1.0", sys.stderr)
+    sys.exit()
+
+  return (1.0-fraction)*source + (fraction*dest)
+
+
 def uk_lockdown_forecast(e, t, mode = 0):
+
+  # add in mutation
+  # Prevalence increases linearly from Oct 22 (1%) to Jan 30th (90%)
+  if t > 235 and t < 336:
+    fraction = (t - 235) * 0.09
+    e.disease.infection_rate = calculate_mutating_infection_rate(fraction)
+
+  # vaccination modes
   if mode == 0:
     # Define vaccinations Worst(W)
     if t > 300:
