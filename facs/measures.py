@@ -255,7 +255,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
   # add in mutation
   # Prevalence increases linearly from Oct 22 (1%) to Jan 30th (90%)
   if t > 235 and t < 336:
-    fraction = (t - 235) * 0.09
+    fraction = (t - 235) * 0.009
     e.disease.infection_rate = calculate_mutating_infection_rate(fraction)
 
   # vaccination modes
@@ -282,10 +282,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
 
   e.vac_70plus = True
 
-  if t<351:
-    uk_lockdown_existing(e, t)
-  else: 
-    pass
+  uk_lockdown_existing(e, t)
 
   #SCENARIO 1 - Weekly Testing
 
