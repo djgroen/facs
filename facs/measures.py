@@ -93,21 +93,28 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, tr
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
     e.add_partial_closure("leisure", 1.0)
     e.add_partial_closure("shopping", 0.6)
-  if phase == 12: # Enacted 15th December
+  if phase == 12: # Enacted 2nd December
+    e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
+    e.add_work_from_home(0.5) # Work from home directive reinstated by government.
+    e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
+    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
+    e.add_partial_closure("leisure", 0.0)
+    e.add_partial_closure("shopping", 0.0)
+  if phase == 13: # Enacted 16th December
     e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
     e.add_work_from_home(0.25)
     e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
     e.add_partial_closure("leisure", 0.5)
     e.add_partial_closure("shopping", 0.1)
-  if phase == 13: # Enacted 20th December
+  if phase == 14: # Enacted 20th December
     e.add_social_distance(compliance=0.8 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
     e.add_work_from_home(0.7) # Work from home directive reinstated by government.
     e.traffic_multiplier = 0.2 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
     e.add_partial_closure("leisure", 1.0)
     e.add_partial_closure("shopping", 0.8)
-  if phase == 14: # Enacted 31st March 2021
+  if phase == 15: # Enacted 31st March 2021
     e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
     e.add_work_from_home(0.25)
     e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
@@ -231,12 +238,14 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
     uk_lockdown(e, phase=10, track_trace_limit=track_trace_limit)
   if t == 250:  # November 5th
     uk_lockdown(e, phase=11, track_trace_limit=track_trace_limit)
-  if t == 290:  # December 15th
+  if t == 277:  # December 2nd
     uk_lockdown(e, phase=12, track_trace_limit=track_trace_limit)
-  if t == 295:  # December 20th
+  if t == 291:  # December 16th
     uk_lockdown(e, phase=13, track_trace_limit=track_trace_limit)
-  if t == 395:  # 31st March 2021
+  if t == 295:  # December 20th
     uk_lockdown(e, phase=14, track_trace_limit=track_trace_limit)
+  if t == 395:  # 31st March 2021
+    uk_lockdown(e, phase=15, track_trace_limit=track_trace_limit)
 
 
 def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.119):
@@ -257,6 +266,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
   if t > 235 and t < 336:
     fraction = (t - 235) * 0.009
     e.disease.infection_rate = calculate_mutating_infection_rate(fraction)
+    print("infection rate adjusted to ", e.disease.infection_rate, sys.stderr)
 
   # vaccination modes
   if mode == 0:
