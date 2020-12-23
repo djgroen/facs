@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     end_time = 180
     if transition_scenario in ["extend-lockdown","dynamic-lockdown","periodic-lockdown","uk-forecast"]:
-      end_time = 730
+      end_time = 550
     
     if args.simulation_period > 0:
       end_time = args.simulation_period
