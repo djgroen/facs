@@ -111,7 +111,7 @@ class Person():
     self.status_change_time = -1
 
     self.age = np.random.choice(91, p=ages) # age in years
-
+    self.job = 0 # 0=default, 1=teacher, 2=shop worker, 3=NHS worker
 
   def assign_group(self, location_type, num_groups):
     """
@@ -159,6 +159,14 @@ class Person():
           continue
         elif k == lids["hospital"] and self.hospitalised:
           location_to_visit = self.hospital
+
+        elif k == lids["office"] and self.job > 0:
+          if self.job == 1: #teacher
+            location_to_visit = nearest_locs[lids["school"]]
+          if self.job == 2: #shop employee
+            location_to_visit = nearest_locs[lids["shopping"]]
+          if self.job == 3: #NHS worker
+            location_to_visit = nearest_locs[lids["hospital"]]
 
         elif self.location_has_grouping(k):
           location_to_visit = e.get_location_by_group(k, self.groups[k])
