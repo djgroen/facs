@@ -115,7 +115,7 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, tr
   if phase == 15: # Enacted 6th January 2021
     e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
-    e.add_work_from_home(1.0 - key_worker_fraction)
+    e.add_work_from_home(1.0 - keyworker_fraction)
     e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
     e.add_partial_closure("leisure", 1.0)
@@ -281,22 +281,22 @@ def uk_lockdown_forecast(e, t, mode = 0):
     # Define vaccinations Worst(W)
     if t > 300:
       e.vaccinations_available = 500
-    e.vac_no_symptoms = 0.3
-    e.vac_no_transmission = 0.30
+    e.vac_no_symptoms = 0.4
+    e.vac_no_transmission = 0.40
 
   elif mode == 1:
     # Define vaccinations Expected(E)
     if t > 300:
-      e.vaccinations_available = 1500
-    e.vac_no_symptoms = 0.5
-    e.vac_no_transmission = 0.50
+      e.vaccinations_available = 1000
+    e.vac_no_symptoms = 0.6
+    e.vac_no_transmission = 0.60
 
   elif mode == 2:
     # Define vaccinations Best(B)
     if t > 300:
-      e.vaccinations_available = 2500
-    e.vac_no_symptoms = 0.9
-    e.vac_no_transmission = 0.90
+      e.vaccinations_available = 1500
+    e.vac_no_symptoms = 0.8
+    e.vac_no_transmission = 0.80
 
   e.vac_70plus = True
 
