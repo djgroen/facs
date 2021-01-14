@@ -8,7 +8,7 @@ Flu And Coronavirus Simulator (FACS)
 
 FACS is an agent-based modelling code that models the spread of flu and coronaviruses in local regions. Up to now, we have used it to model the spread of Covid-19 in a range of London boroughs.
 
-The code can be repurposed to model other regions, and its current (sequential) implementation should be able to run up to 500,000 households within a reasonable time frame.
+The code can be repurposed to model other regions, and its current (sequential) implementation should be able to run up to 500,000 households within a reasonable time frame. It also supports vaccination programmes, track and trace and mutated versions of the virus.
 
 What sets FACS apart from many other codes is that we have a partially automated location extraction approach from OpenStreetMaps data (the scripts reside at https://www.github.com/djgroen/covid19-preprocess), that we resolve a wide range of different location types (e.g., supermarkets, offices, parks, schools, leisure locations and hospitals) and that we have a specific algorithm for modeling infections *within* these locations, taking into account the physical size of each location.
 
