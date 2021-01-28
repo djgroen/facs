@@ -14,14 +14,21 @@ avg_visit_times = [90,60,60,360,360,60,60] #average time spent per visit
 home_interaction_fraction = 0.2 # people are within 2m at home of a specific other person 20% of the time.
 
 
-_rnd_i = 0
-_rnd_nums = np.random.random(10000)
+# Added commented code to shift from random.random if needed
+#_rnd_i = 0
+#_rnd_nums = np.random.random(10000)
 def get_rnd():
-    _rnd_i += 1
-    if _rnd_i > 9999:
-      _rnd_i = 0
-      _rnd_nums = np.random.random(10000)
-    return _rnd_nums[_rnd_i]
+    return random.random()
+    #global _rnd_i, _rnd_nums
+    #_rnd_i += 1
+    #if _rnd_i > 9999:
+    #  _rnd_i = 0
+    #  _rnd_nums = np.random.random(10000)
+    #return _rnd_nums[_rnd_i]
+
+def get_rndint(high):
+    #return random.randrange(0, high)
+    return np.random.randint(high)
 
 class Needs():
   def __init__(self, csvfile):
@@ -132,7 +139,7 @@ class Person():
     """
     if not hasattr(self, 'groups'):
       self.groups = {}
-    self.groups[lids[location_type]] = np.random.randint(num_groups)
+    self.groups[lids[location_type]] = get_rndint(num_groups)
 
 
   def location_has_grouping(self, lid):
@@ -154,9 +161,9 @@ class Person():
       else:
         self.phase_duration = np.poisson(vac_duration)
     if self.status == "susceptible":
-      if np.random.random() < vac_no_transmission:
+      if get_rnd() < vac_no_transmission:
         self.status = "immune"
-      elif np.random.random() < vac_no_symptoms:
+      elif get_rnd() < vac_no_symptoms:
         self.symptoms_suppressed = True
 
 
@@ -230,7 +237,7 @@ class Person():
     if self.status == "exposed" and t-self.status_change_time >= int(self.phase_duration):
       self.status = "infectious"
       self.status_change_time = t
-      if random.random() < self.get_hospitalisation_chance(disease) and self.symptoms_suppressed==False: 
+      if get_rnd() < self.get_hospitalisation_chance(disease) and self.symptoms_suppressed==False: 
         self.mild_version = False
         #self.phase_duration = np.random.poisson(disease.period_to_hospitalisation - disease.incubation_period)
         self.phase_duration = max(1, np.random.poisson(disease.period_to_hospitalisation) - self.phase_duration)
@@ -256,7 +263,7 @@ class Person():
             e.num_hospitalised += 1
             log_hospitalisation(t, self.location.x, self.location.y, self.age)
             self.status_change_time = t #hospitalisation is a status change, because recovery_period is from date of hospitalisation.
-            if random.random() < self.get_mortality_chance(disease) / self.get_hospitalisation_chance(disease): # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
+            if get_rnd() < self.get_mortality_chance(disease) / self.get_hospitalisation_chance(disease): # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
               self.dying = True
               self.phase_duration = np.random.poisson(disease.mortality_period)
             else:
@@ -313,7 +320,7 @@ class Household():
           infection_chance = e.contact_rate_multiplier["house"] * disease.infection_rate * home_interaction_fraction * ic
           if needs.household_isolation_multiplier < 1.0:
             infection_chance *= 2.0 # interaction duration (and thereby infection chance) double when household isolation is incorporated (Imperial Report 9).
-          if random.random() < infection_chance:
+          if get_rnd() < infection_chance:
             self.agents[i].infect(time)
 
 def calc_dist(x1, y1, x2, y2):
@@ -379,8 +386,8 @@ class House:
   def add_infection(self, time, severity="exposed"): # used to preseed infections (could target using age later on)
     infection_pending = True
     while infection_pending:
-      hh = random.randint(0, len(self.households)-1)
-      p = random.randint(0, len(self.households[hh].agents)-1)
+      hh = get_rndint(len(self.households))
+      p = get_rndint(len(self.households[hh].agents))
       if self.households[hh].agents[p].status == "susceptible": 
         # because we do pre-seeding we need to ensure we add exactly 1 infection.
         self.households[hh].agents[p].infect(time, severity)
@@ -464,7 +471,7 @@ class Location:
         if person.status == "infectious":
           self.inf_visit_minutes += visit_time
 
-    elif random.random() < visit_probability:
+    elif get_rnd() < visit_probability:
       self.visits.append([person, visit_time])
       if person.status == "infectious":
         self.inf_visit_minutes += visit_time
@@ -497,7 +504,7 @@ class Location:
           #if ultraverbose:
           #  if infection_probability > 0.0:
           #    print("{} = {} * ({}/360.0) * ({}/{}) * ({}/{})".format(infection_probability, e.contact_rate_multiplier[self.type], e.disease.infection_rate, v[1], minutes_opened, self.inf_visit_minutes, self.sqm))
-          if random.random() < infection_probability:
+          if get_rnd() < infection_probability:
             v[0].infect(e.time, location_type=self.type)
 
 
@@ -599,7 +606,7 @@ class Ecosystem:
           # 1. if half the people use a service that has halved intervals, then the number of infection halves.
           # 2. if half the people use a service that has normal intervals, then the number of infections reduces by 75%.
           # infection_probability = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (v[1] / minutes_opened) * (self.inf_visit_minutes / self.sqm)
-          if random.random() < infection_probability:
+          if get_rnd() < infection_probability:
             a.infect(self.time, location_type="traffic")
 
   def update_nearest_locations(self):
@@ -616,7 +623,7 @@ class Ecosystem:
     Randomly add an infection.
     """
     for i in range(0, num):
-      house = random.randint(0, len(self.houses)-1)
+      house = get_rndint(len(self.houses))
       self.houses[house].add_infection(day, severity)
     print("add_infections:",num,day)
 
@@ -726,13 +733,13 @@ class Ecosystem:
       for k,e in enumerate(self.houses):
         for hh in e.households:
           for a in hh.agents:
-            if random.random() < fraction:
+            if get_rnd() < fraction:
               a.school_from_home = True
     elif loc_type == "office" and exclude_people:
       for k,e in enumerate(self.houses):
         for hh in e.households:
           for a in hh.agents:
-            if random.random() < fraction:
+            if get_rnd() < fraction:
               a.work_from_home = True
     else:
       needs.needs[lids[loc_type],:] *= (1.0 - fraction)
