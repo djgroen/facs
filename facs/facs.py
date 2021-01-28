@@ -6,6 +6,7 @@ import random
 import array
 import csv
 import pandas as pd
+#import fastrand
 
 # TODO: store all this in a YaML file
 lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,"shopping":6} # location ids and labels
@@ -28,6 +29,7 @@ def get_rnd():
 
 def get_rndint(high):
     #return random.randrange(0, high)
+    #return fastrand.pcg32bounded(high)
     return np.random.randint(high)
 
 class Needs():
