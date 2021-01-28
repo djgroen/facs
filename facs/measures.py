@@ -283,6 +283,8 @@ def uk_lockdown_forecast(e, t, mode = 0):
       e.vaccinations_available = 500
     e.vac_no_symptoms = 0.4
     e.vac_no_transmission = 0.40
+    e.vac_duration = 365
+    e.immunity_duration = 365
 
   elif mode == 1:
     # Define vaccinations Expected(E)
@@ -290,6 +292,8 @@ def uk_lockdown_forecast(e, t, mode = 0):
       e.vaccinations_available = 1000
     e.vac_no_symptoms = 0.6
     e.vac_no_transmission = 0.60
+    e.vac_duration = 730
+    e.immunity_duration = 730
 
   elif mode == 2:
     # Define vaccinations Best(B)

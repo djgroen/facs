@@ -13,6 +13,16 @@ lnames = list(lids.keys())
 avg_visit_times = [90,60,60,360,360,60,60] #average time spent per visit
 home_interaction_fraction = 0.2 # people are within 2m at home of a specific other person 20% of the time.
 
+
+_rnd_i = 0
+_rnd_nums = np.random.random(10000)
+def get_rnd():
+    _rnd_i += 1
+    if _rnd_i > 9999:
+      _rnd_i = 0
+      _rnd_nums = np.random.random(10000)
+    return _rnd_nums[_rnd_i]
+
 class Needs():
   def __init__(self, csvfile):
     self.add_needs(csvfile)
@@ -111,15 +121,7 @@ class Person():
     self.status_change_time = -1
 
     self.age = np.random.choice(91, p=ages) # age in years
-    self.job = 0 # 0=default, 1=teacher, 2=shop worker, 3=health worker
-    profession = random.random()
-    if profession < 0.015:
-      self.job = 1 # 1.5% is a teacher
-    elif profession < 0.055:
-      self.job = 3 # 4% is an health worker
-    elif profession < 0.135:
-      self.job = 2 # 8% works in shopping
-      
+    self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[0] # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
 
   def assign_group(self, location_type, num_groups):
     """
@@ -144,7 +146,13 @@ class Person():
     return False
 
 
-  def vaccinate(self, vac_no_symptoms, vac_no_transmission):
+  def vaccinate(self, time, vac_no_symptoms, vac_no_transmission, vac_duration):
+    self.status_change_time = time # necessary if vaccines give temporary immunity.
+    if vac_duration > 0:
+      if vac_duration > 100:
+        self.phase_duration = np.random.gamma(vac_duration/15, 15) # shape parameter is changed with variable, shape parameter is kept fixed at 15 (assumption).
+      else:
+        self.phase_duration = np.poisson(vac_duration)
     if self.status == "susceptible":
       if np.random.random() < vac_no_transmission:
         self.status = "immune"
@@ -209,6 +217,13 @@ class Person():
     self.hospitalised = False
     log_infection(t,self.location.x,self.location.y,location_type)
 
+  def recover(self, e, t, location):
+    if e.immunity_duration > 0:
+      self.phase_duration = np.random.gamma(e.immunity_duration/15, 15) # shape parameter is changed with variable, shape parameter is kept fixed at 15 (assumption).
+    self.status = "recovered"
+    self.status_change_time = t
+    log_recovery(t, self.location.x, self.location.y, location)
+
   def progress_condition(self, e, t, disease):
     if self.status_change_time > t:
       return
@@ -228,9 +243,7 @@ class Person():
       # mild version (may require hospital visits, but not ICU visits)
       if self.mild_version:
         if t-self.status_change_time >= self.phase_duration:
-          self.status = "recovered"
-          self.status_change_time = t
-          log_recovery(t,self.location.x,self.location.y,"house")
+          self.recover(e, t, "house")
       # non-mild version (will involve ICU visit)
       else:
         if not self.hospitalised:
@@ -260,9 +273,11 @@ class Person():
               log_death(t,self.location.x,self.location.y,"hospital")
             # hospital discharge
             else:
-              self.status = "recovered"
-              log_recovery(t,self.location.x,self.location.y,"hospital")
+              self.recover(e, t, "hospital")
 
+    elif e.immunity_duration > 0 and self.status == "recovered":
+      if t-self.status_change_time == self.phase_duration:
+        self.status = "susceptible"
 
 
 class Household():
@@ -522,6 +537,10 @@ class Ecosystem:
     self.loc_groups = {}
     self.needsfile = needsfile 
 
+    # Settings
+    self.immunity_duration = -1 # value > 0 indicates non-permanent immunity.
+    self.vac_duration = -1  # value > 0 indicates non-permanent vaccine efficacy.
+
     #Make header for infections file
     out_inf = open("covid_out_infections.csv",'w')
     print("#time,x,y,location_type", file=out_inf)
@@ -650,7 +669,7 @@ class Ecosystem:
           if self.vac_70plus:
             if a.age > 69 and self.vaccinations_available - self.vaccinations_today > 0:
               if a.status == "susceptible" and a.symptoms_suppressed==False:
-                a.vaccinate(self.vac_no_symptoms, self.vac_no_transmission)
+                a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
                 self.vaccinations_today += 1
 
 
@@ -660,7 +679,7 @@ class Ecosystem:
           #print("VAC:",self.vaccinations_available, self.vaccinations_today, self.vac_no_symptoms, self.vac_no_transmission, file=sys.stderr)
           if self.vaccinations_available - self.vaccinations_today > 0:
             if a.status == "susceptible" and a.symptoms_suppressed==False:
-              a.vaccinate(self.vac_no_symptoms, self.vac_no_transmission)
+              a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
               self.vaccinations_today += 1
 
     self.evolve_public_transport()
