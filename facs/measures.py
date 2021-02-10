@@ -276,59 +276,49 @@ def uk_lockdown_forecast(e, t, mode = 0):
     e.disease.infection_rate = calculate_mutating_infection_rate(fraction)
     print("infection rate adjusted to ", e.disease.infection_rate, sys.stderr)
 
-  # vaccination modes
-  if mode == 0:
-    # Define vaccinations Worst(W)
-    if t > 300:
-      e.vaccinations_available = 500
-    e.vac_no_symptoms = 0.4
-    e.vac_no_transmission = 0.40
-    e.vac_duration = 365
-    e.immunity_duration = 365
+  vaccine_effect_time = 25
 
-  elif mode == 1:
-    # Define vaccinations Expected(E)
-    if t > 300:
-      e.vaccinations_available = 1000
-    e.vac_no_symptoms = 0.6
-    e.vac_no_transmission = 0.60
-    e.vac_duration = 730
-    e.immunity_duration = 730
-
-  elif mode == 2:
-    # Define vaccinations Best(B)
-    if t > 300:
+  if t > 276 + vaccine_effect_time: # Dec 1st
+    e.vaccinations_available = 500
+    if t > 307 + vaccine_effect_time: # Jan 1st 
       e.vaccinations_available = 1500
-    e.vac_no_symptoms = 0.8
-    e.vac_no_transmission = 0.80
+      if t > 338 + vaccine_effect_time: #Feb 1st
+        pass # defined below based on mode value. base = 2500
+
+  e.vac_no_symptoms = 0.3
+  e.vac_no_transmission = 0.50
+  e.vac_duration = 183
+  e.immunity_duration = 365
+
+  # mode % 3 affects vaccine rollout from Feb
+  if t > 338 + vaccine_effect_time:
+      e.vaccinations_available = 1250 + (mode % 3) * 1250
+    
+
+  # mode / 3 affects vaccine efficacy.
+  if mode / 3 == 1: # reduce efficacy
+    if t > 397: # Apr 1st
+      e.vac_no_symptoms = 0.2
+      e.vac_no_transmission = 0.25
+
+  if mode / 3 == 2: # reduce efficacy and increase hosp. chance
+    if t > 397: # Apr 1st
+      e.vac_no_symptoms = 0.2
+      e.vac_no_transmission = 0.25
+      if t == 398:
+        e.disease.hospital *= 1.5
+
+  if mode / 3 == 3: # reduce efficacy for 2 months.
+    if t > 397: # Apr 1st
+      e.vac_no_symptoms = 0.2
+      e.vac_no_transmission = 0.25
+    if t > 458: # Apr 1st
+      e.vac_no_symptoms = 0.3
+      e.vac_no_transmission = 0.5
 
   e.vac_70plus = True
 
   uk_lockdown_existing(e, t)
-
-  #SCENARIO 1 - Weekly Testing
-
-  #SCENARIO 2 - Monthly Testing
-
-  #SCENARIO 3 - N95 Masks
-
-  #SCNEARIO 4 - Basic face covering
-
-  #SCENARIO 5 - Track and Trace +
-
-  #SCENARIO 6 - Track and Trace
-
-  #SCENARIO 7 - Track and Trace -
-
-  #SCENARIO 8 - Vaccine +
-
-  #SCENARIO 9 - Vaccine -
-
-  #SCENARIO 10 - School/Work Testing
-
-  #SCENARIO 11 - Lockdown ON-OFF
-
-  #SCENARIO 12 - NHS Full Recovery
 
 
 def work50(e):
