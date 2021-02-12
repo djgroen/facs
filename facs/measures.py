@@ -296,23 +296,23 @@ def uk_lockdown_forecast(e, t, mode = 0):
     
 
   # mode / 3 affects vaccine efficacy.
-  if mode / 3 == 1: # reduce efficacy
+  if int(int(mode) / 3) == 1: # reduce efficacy
     if t > 397: # Apr 1st
       e.vac_no_symptoms = 0.2
       e.vac_no_transmission = 0.25
 
-  if mode / 3 == 2: # reduce efficacy and increase hosp. chance
+  if int(int(mode) / 3) == 2: # reduce efficacy and increase hosp. chance
     if t > 397: # Apr 1st
       e.vac_no_symptoms = 0.2
       e.vac_no_transmission = 0.25
       if t == 398:
         e.disease.hospital *= 1.5
 
-  if mode / 3 == 3: # reduce efficacy for 2 months.
+  if int(int(mode) / 3) == 3: # reduce efficacy for 2 months.
     if t > 397: # Apr 1st
       e.vac_no_symptoms = 0.2
       e.vac_no_transmission = 0.25
-    if t > 458: # Apr 1st
+    if t > 458: # June 1st
       e.vac_no_symptoms = 0.3
       e.vac_no_transmission = 0.5
 
