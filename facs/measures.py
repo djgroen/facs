@@ -120,13 +120,31 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, tr
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
     e.add_partial_closure("leisure", 1.0)
     e.add_partial_closure("shopping", 0.8)
-  if phase == 16: # Enacted 31st March 2021
+  if phase == 16: # Enacted 8th March 2021
     e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
-    e.add_work_from_home(0.25)
+    e.add_work_from_home(1.0 - keyworker_fraction)
+    e.traffic_multiplier = 0.3 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
+    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
+    e.add_partial_closure("leisure", 1.0)
+    e.add_partial_closure("shopping", 0.8)
+  if phase == 17: # Enacted 12th April 2021
+    e.add_social_distance(compliance=0.68 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8) # reducing SD to reflect small indoor gatherings.
+    e.add_work_from_home(0.5)
     e.traffic_multiplier = 0.5 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
     e.add_partial_closure("leisure", 0.5)
-    e.add_partial_closure("shopping", 0.1)
+  if phase == 18: # Enacted 17th May 2021
+    e.add_social_distance(compliance=0.6 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8) # reducing SD to reflect indoor gatherings.
+    e.add_work_from_home(0.5)
+    e.traffic_multiplier = 0.5 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
+    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
+    e.add_partial_closure("leisure", 0.2)
+  if phase == 19: # Enacted 21st June 2021
+    e.add_social_distance(compliance=0.5 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8) # reducing SD to reflect large outdoor gatherings.
+    e.add_work_from_home(0.5)
+    e.traffic_multiplier = 0.5 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
+    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
+
 
 
   # mimicking a 75% reduction in social contacts.
@@ -252,8 +270,14 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
     uk_lockdown(e, phase=14, track_trace_limit=track_trace_limit)
   if t == 312:  # 6th January 2021
     uk_lockdown(e, phase=15, track_trace_limit=track_trace_limit)
-  if t == 395:  # 31st March 2021
+  if t == 372:  # 8th March 2021
     uk_lockdown(e, phase=16, track_trace_limit=track_trace_limit)
+  if t == 407:  # 12th April 2021
+    uk_lockdown(e, phase=17, track_trace_limit=track_trace_limit)
+  if t == 412:  # 17th May 2021
+    uk_lockdown(e, phase=18, track_trace_limit=track_trace_limit)
+  if t == 447:  # 21st June 2021
+    uk_lockdown(e, phase=19, track_trace_limit=track_trace_limit)
 
 
 def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.119):
