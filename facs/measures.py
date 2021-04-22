@@ -300,18 +300,19 @@ def uk_lockdown_forecast(e, t, mode = 0):
     e.disease.infection_rate = calculate_mutating_infection_rate(fraction)
     print("infection rate adjusted to ", e.disease.infection_rate, sys.stderr)
 
+  # Add in vaccination policies
   vaccine_effect_time = 25
 
   if t > 276 + vaccine_effect_time: # Dec 1st
     e.vaccinations_available = 500
-    if t > 307 + vaccine_effect_time: # Jan 1st 
-      e.vaccinations_available = 1500
-      if t > 338 + vaccine_effect_time: #Feb 1st
-        pass # defined below based on mode value. base = 2500
+    if t > 338 + vaccine_effect_time: #Feb 1st
+      e.vaccinations_available = 700
+      if t > 366 + vaccine_effect_time: #Mar 1st
+        e.vaccinations_available = 1000
 
-  e.vac_no_symptoms = 0.3
+  e.vac_no_symptoms = 0.4
   e.vac_no_transmission = 0.50
-  e.vac_duration = 183
+  e.vac_duration = 365
   e.immunity_duration = 365
 
   # mode % 3 affects vaccine rollout from Feb
