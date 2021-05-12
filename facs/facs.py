@@ -125,6 +125,8 @@ class Person():
     self.phase_duration = 0.0 # duration to next phase.
     self.symptoms_suppressed = False # Symptoms suppressed, e.g. due to vaccination, but still infectious.
     self.antivax = False # Refuses vaccines if true.
+    if np.random.rand() < 0.05: # 5% are antivaxxers.
+      self.antivax = True
 
     self.status = "susceptible" # states: susceptible, exposed, infectious, recovered, dead, immune.
     self.symptomatic = False # may be symptomatic if infectious
