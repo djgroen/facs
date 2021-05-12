@@ -124,6 +124,7 @@ class Person():
     self.school_from_home = False
     self.phase_duration = 0.0 # duration to next phase.
     self.symptoms_suppressed = False # Symptoms suppressed, e.g. due to vaccination, but still infectious.
+    self.antivax = False # Refuses vaccines if true.
 
     self.status = "susceptible" # states: susceptible, exposed, infectious, recovered, dead, immune.
     self.symptomatic = False # may be symptomatic if infectious
@@ -509,6 +510,11 @@ class Location:
           if get_rnd() < infection_probability:
             v[0].infect(e.time, location_type=self.type)
 
+def check_vac_eligibility(agent):
+  if a.status == "susceptible" and a.symptoms_suppressed==False and a.antivax==False:
+    return True
+  return False
+
 
 class Ecosystem:
   def __init__(self, duration, needsfile="covid_data/needs.csv"):
@@ -539,7 +545,8 @@ class Ecosystem:
     self.vaccinations_today = 0
     self.vac_no_symptoms = 1.0 # Default: 100% of people receiving vaccine have no more symptons.
     self.vac_no_transmission = 1.0 # Default: 100% of people receiving vaccine transmit the disease as normal.
-    self.vac_70plus = False # Set to true if people over 70 are prioritized with vaccination.
+    self.vaccinations_age_limit = 70 # Age limit for priority group. Can be changed at runtime.
+    self.vaccinations_legal_age_limit = 16 # Minimum age to be allowed vaccines.
     self.traffic_multiplier = 1.0
     self.status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     self.enforce_masks_on_transport = False
@@ -675,21 +682,21 @@ class Ecosystem:
           a.plan_visits(self, reduce_stochasticity)
           a.progress_condition(self, self.time, self.disease)
 
-          if self.vac_70plus:
-            if a.age > 69 and self.vaccinations_available - self.vaccinations_today > 0:
-              if a.status == "susceptible" and a.symptoms_suppressed==False:
-                a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
-                self.vaccinations_today += 1
-
-
-    for h in self.houses:
-      for hh in h.households:
-        for a in hh.agents:
-          #print("VAC:",self.vaccinations_available, self.vaccinations_today, self.vac_no_symptoms, self.vac_no_transmission, file=sys.stderr)
-          if self.vaccinations_available - self.vaccinations_today > 0:
-            if a.status == "susceptible" and a.symptoms_suppressed==False:
+          if a.age > self.vaccinations_age_limit and self.vaccinations_available - self.vaccinations_today > 0:
+            if check_vac_eligibility(agent):
               a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
               self.vaccinations_today += 1
+
+
+    if self.vaccinations_available - self.vaccinations_today > 0:
+      for h in self.houses:
+        for hh in h.households:
+          for a in hh.agents:
+            #print("VAC:",self.vaccinations_available, self.vaccinations_today, self.vac_no_symptoms, self.vac_no_transmission, file=sys.stderr)
+            if self.vaccinations_available - self.vaccinations_today > 0:
+              if a.age > self.vaccinations_legal_age_limit and check_vac_eligibility(agent):
+                a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
+                self.vaccinations_today += 1
 
     self.evolve_public_transport()
 

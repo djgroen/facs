@@ -134,15 +134,15 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, tr
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
     e.add_partial_closure("leisure", 0.5)
   if phase == 18: # Enacted 17th May 2021
-    e.add_social_distance(compliance=0.6 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8) # reducing SD to reflect indoor gatherings.
+    e.add_social_distance(compliance=0.5 + compliance, mask_uptake=0.15, mask_uptake_shopping=0.8) # reducing SD to reflect indoor gatherings.
     e.add_work_from_home(0.5)
-    e.traffic_multiplier = 0.5 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
+    e.traffic_multiplier = 0.55 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
     e.add_partial_closure("leisure", 0.2)
   if phase == 19: # Enacted 21st June 2021
-    e.add_social_distance(compliance=0.5 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8) # reducing SD to reflect large outdoor gatherings.
-    e.add_work_from_home(0.5)
-    e.traffic_multiplier = 0.5 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
+    e.add_social_distance(compliance=0.3 + compliance, mask_uptake=0.1, mask_uptake_shopping=0.8) # reducing SD to reflect large outdoor gatherings.
+    e.add_work_from_home(0.25)
+    e.traffic_multiplier = 0.75 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
 
 
@@ -304,11 +304,15 @@ def uk_lockdown_forecast(e, t, mode = 0):
   vaccine_effect_time = 25
 
   if t > 276 + vaccine_effect_time: # Dec 1st
-    e.vaccinations_available = 500
+    e.vaccinations_available = 500 # 62*500 = 31k vaccines (10%) by Feb 1st
     if t > 338 + vaccine_effect_time: #Feb 1st
-      e.vaccinations_available = 700
+      e.vaccinations_available = 1000 # 31k + 28*1000 = 59k by Mar 1st
+      e.vaccinations_age_limit = 60
       if t > 366 + vaccine_effect_time: #Mar 1st
-        e.vaccinations_available = 1000
+        e.vaccinations_available = 1500 # 59 + 92*1500 = 197k by July 1st
+        e.vaccinations_age_limit = 16
+
+
 
   e.vac_no_symptoms = 0.4
   e.vac_no_transmission = 0.50
@@ -341,7 +345,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
       e.vac_no_symptoms = 0.3
       e.vac_no_transmission = 0.5
 
-  e.vac_70plus = True
+  e.vaccinations_age_limit = 70
 
   uk_lockdown_existing(e, t)
 
