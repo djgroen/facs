@@ -93,9 +93,9 @@ if __name__ == "__main__":
     if args.generic_outfile:
       outfile = "{}/out.csv".format(output_dir)
 
-    end_time = 180
+    end_time = 1100
     if transition_scenario in ["extend-lockdown","dynamic-lockdown","periodic-lockdown","uk-forecast"]:
-      end_time = 550
+      end_time = 1100
     
     if args.simulation_period > 0:
       end_time = args.simulation_period
