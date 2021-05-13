@@ -696,7 +696,7 @@ class Ecosystem:
           for a in hh.agents:
             #print("VAC:",self.vaccinations_available, self.vaccinations_today, self.vac_no_symptoms, self.vac_no_transmission, file=sys.stderr)
             if self.vaccinations_available - self.vaccinations_today > 0:
-              if a.age > self.vaccinations_legal_age_limit and check_vac_eligibility(agent):
+              if a.age > self.vaccinations_legal_age_limit and check_vac_eligibility(a):
                 a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
                 self.vaccinations_today += 1
 
