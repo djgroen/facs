@@ -306,10 +306,10 @@ def uk_lockdown_forecast(e, t, mode = 0):
   if t > 276 + vaccine_effect_time: # Dec 1st
     e.vaccinations_available = 500 # 62*500 = 31k vaccines (10%) by Feb 1st
     if t > 338 + vaccine_effect_time: #Feb 1st
-      e.vaccinations_available = 1000 # 31k + 28*1000 = 59k by Mar 1st
+      e.vaccinations_available = 1200 # 31k + 28*1000 = 59k by Mar 1st
       e.vaccinations_age_limit = 60
       if t > 366 + vaccine_effect_time: #Mar 1st
-        e.vaccinations_available = 1500 # 59 + 92*1500 = 197k by July 1st
+        e.vaccinations_available = 1800 # 59 + 92*1500 = 197k by July 1st
         e.vaccinations_age_limit = 16
 
 

@@ -290,6 +290,7 @@ class Person():
     elif e.immunity_duration > 0 and self.status == "recovered":
       if t-self.status_change_time == self.phase_duration:
         self.status = "susceptible"
+        self.symptoms_suppressed=False
 
 
 class Household():
@@ -685,7 +686,7 @@ class Ecosystem:
           a.progress_condition(self, self.time, self.disease)
 
           if a.age > self.vaccinations_age_limit and self.vaccinations_available - self.vaccinations_today > 0:
-            if check_vac_eligibility(a):
+            if check_vac_eligibility(a) == True:
               a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
               self.vaccinations_today += 1
 
@@ -696,7 +697,7 @@ class Ecosystem:
           for a in hh.agents:
             #print("VAC:",self.vaccinations_available, self.vaccinations_today, self.vac_no_symptoms, self.vac_no_transmission, file=sys.stderr)
             if self.vaccinations_available - self.vaccinations_today > 0:
-              if a.age > self.vaccinations_legal_age_limit and check_vac_eligibility(a):
+              if a.age > self.vaccinations_legal_age_limit and check_vac_eligibility(a) == True:
                 a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
                 self.vaccinations_today += 1
 
