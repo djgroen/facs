@@ -512,7 +512,7 @@ class Location:
           if get_rnd() < infection_probability:
             v[0].infect(e.time, location_type=self.type)
 
-def check_vac_eligibility(agent):
+def check_vac_eligibility(a):
   if a.status == "susceptible" and a.symptoms_suppressed==False and a.antivax==False:
     return True
   return False
@@ -685,7 +685,7 @@ class Ecosystem:
           a.progress_condition(self, self.time, self.disease)
 
           if a.age > self.vaccinations_age_limit and self.vaccinations_available - self.vaccinations_today > 0:
-            if check_vac_eligibility(agent):
+            if check_vac_eligibility(a):
               a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
               self.vaccinations_today += 1
 
