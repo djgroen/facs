@@ -229,6 +229,9 @@ def uk_lockdown_scenarios(e, t, step, vaccine=100, track_trace_multiplier = 0.5)
 def uk_lockdown_existing(e, t, track_trace_limit=0.5):
   update_hospital_protection_factor_uk(e,t)
 
+  e.vac_duration = 365
+  e.immunity_duration = 365
+
   # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
   # Traffic: Mar 10: 90% (estimate), Mar 16: 60%, Mar 20: 20%, Mar 28: 10%
   # Service: Mar 20: 80%, Mar 28: 50%
@@ -305,6 +308,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
 
   if t > 276 + vaccine_effect_time: # Dec 1st
     e.vaccinations_available = 500 # 62*500 = 31k vaccines (10%) by Feb 1st
+    e.vaccinations_age_limit = 70
     if t > 338 + vaccine_effect_time: #Feb 1st
       e.vaccinations_available = 1200 # 31k + 28*1000 = 59k by Mar 1st
       e.vaccinations_age_limit = 60
@@ -314,15 +318,8 @@ def uk_lockdown_forecast(e, t, mode = 0):
 
 
 
-  e.vac_no_symptoms = 0.4
-  e.vac_no_transmission = 0.50
-  e.vac_duration = 365
-  e.immunity_duration = 365
-
-  # mode % 3 affects vaccine rollout from Feb
-  if t > 338 + vaccine_effect_time:
-      e.vaccinations_available = 1250 + (mode % 3) * 1250
-    
+  e.vac_no_symptoms = 0.5
+  e.vac_no_transmission = 0.60
 
   # mode / 3 affects vaccine efficacy.
   if int(int(mode) / 3) == 1: # reduce efficacy
@@ -345,7 +342,6 @@ def uk_lockdown_forecast(e, t, mode = 0):
       e.vac_no_symptoms = 0.3
       e.vac_no_transmission = 0.5
 
-  e.vaccinations_age_limit = 70
 
   uk_lockdown_existing(e, t)
 

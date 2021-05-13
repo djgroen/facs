@@ -200,7 +200,7 @@ if __name__ == "__main__":
         # Propagate the model by one time step.
         e.evolve()
 
-        print(t)
+        print(t, e.vac_no_symptoms, e.vac_no_transmission)
         e.print_status(outfile)
 
     # calculate cumulative sums.

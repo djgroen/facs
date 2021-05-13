@@ -170,6 +170,7 @@ class Person():
         self.status = "immune"
       elif get_rnd() < vac_no_symptoms:
         self.symptoms_suppressed = True
+    #print("vac", self.status, self.symptoms_suppressed, self.phase_duration)
 
 
   def plan_visits(self, e, deterministic=False):
@@ -259,7 +260,7 @@ class Person():
       # non-mild version (will involve ICU visit)
       else:
         if not self.hospitalised:
-          if t-self.status_change_time == self.phase_duration:
+          if t-self.status_change_time >= self.phase_duration:
             self.hospitalised = True
             self.hospital = e.find_hospital()
             if self.hospital == None:
@@ -287,8 +288,9 @@ class Person():
             else:
               self.recover(e, t, "hospital")
 
-    elif e.immunity_duration > 0 and self.status == "recovered":
-      if t-self.status_change_time == self.phase_duration:
+    elif e.immunity_duration > 0 and (self.status == "recovered" or self.status == "immune"):
+      if t-self.status_change_time >= self.phase_duration:
+        #print("susc.", self.status, self.phase_duration)
         self.status = "susceptible"
         self.symptoms_suppressed=False
 
