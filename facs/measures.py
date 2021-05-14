@@ -321,6 +321,12 @@ def uk_lockdown_forecast(e, t, mode = 0):
   e.vac_no_symptoms = 0.6 # 80% less hospitalisation (100*(1-0.5))*(1-0.6)
   e.vac_no_transmission = 0.50 # 50% less transmission
 
+  if t == 397: # majority of jabs here are 2nd dose, so rates should increase
+    # https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/986361/Vaccine_surveillance__report__week_19.pdf
+    e.vac_no_symptoms = 0.75 # 90% less hospitalisation (100*(1-0.5))*(1-0.6)
+    e.vac_no_transmission = 0.60 # 60% less transmission
+
+
   # mode / 3 affects vaccine efficacy.
   if int(int(mode) / 3) == 1: # reduce efficacy
     if t > 397: # Apr 1st
