@@ -106,7 +106,7 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, tr
     e.add_partial_closure("leisure", 0.5)
     e.add_partial_closure("shopping", 0.1)
   if phase == 14: # Enacted 20th December
-    e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
+    e.add_social_distance(compliance=0.6 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8) # reduced social distance by 0.1 due to holidays.
     e.add_work_from_home(0.7) # Work from home directive reinstated by government.
     e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
     e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
@@ -283,9 +283,9 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
     uk_lockdown(e, phase=19, track_trace_limit=track_trace_limit)
 
 
-def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.119):
+def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.105):
   # Original infection rate is 0.07 (COVID-19 disease.yml)
-  # destination infection rate is "up to 70% higher", so we set it to 0.07*1.7=0.119.
+  # destination infection rate is "up to 70% higher", so we set it to 0.07*1.5=0.105.
 
   if fraction > 1.0:
     print("Error: fraction > 1.0", sys.stderr)
@@ -304,7 +304,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
     print("infection rate adjusted to ", e.disease.infection_rate, sys.stderr)
 
   # Add in vaccination policies
-  vaccine_effect_time = 25
+  vaccine_effect_time = 21
 
   if t > 276 + vaccine_effect_time: # Dec 1st
     e.vaccinations_available = 500 # 62*500 = 31k vaccines (10%) by Feb 1st
@@ -317,9 +317,9 @@ def uk_lockdown_forecast(e, t, mode = 0):
         e.vaccinations_age_limit = 16
 
 
-
-  e.vac_no_symptoms = 0.5
-  e.vac_no_transmission = 0.60
+  # https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/986361/Vaccine_surveillance__report__week_19.pdf
+  e.vac_no_symptoms = 0.6 # 80% less hospitalisation (100*(1-0.5))*(1-0.6)
+  e.vac_no_transmission = 0.50 # 50% less transmission
 
   # mode / 3 affects vaccine efficacy.
   if int(int(mode) / 3) == 1: # reduce efficacy
