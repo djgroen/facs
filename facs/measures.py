@@ -237,7 +237,7 @@ def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.105):
   # destination infection rate is "up to 70% higher", so we set it to 0.07*1.5=0.105.
 
   if fraction > 1.0:
-    print("Error: fraction > 1.0", sys.stderr)
+    print("Error: fraction > 1.0", file=sys.stderr)
     sys.exit()
 
   return (1.0-fraction)*source + (fraction*dest)
@@ -250,7 +250,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
   if t > 235 and t < 336:
     fraction = (t - 235) * 0.01
     e.disease.infection_rate = calculate_mutating_infection_rate(fraction)
-    print("infection rate adjusted to ", e.disease.infection_rate, sys.stderr)
+    print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
 
   # Add in vaccination policies
   vaccine_effect_time = 21
