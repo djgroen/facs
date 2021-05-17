@@ -108,16 +108,16 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, tr
   if phase == 14: # Enacted 20th December
     e.add_social_distance(compliance=0.6 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8) # reduced social distance by 0.1 due to holidays.
     e.add_work_from_home(0.7) # Work from home directive reinstated by government.
-    e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
-    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
+    e.traffic_multiplier = 0.3 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
+    e.track_trace_multiplier = 0.6 # 60% of cases escape track and trace due to surge.
     e.add_partial_closure("leisure", 1.0)
     e.add_partial_closure("shopping", 0.8)
   if phase == 15: # Enacted 6th January 2021
     e.add_partial_closure("school", 1.0 - keyworker_fraction, exclude_people=True)
     e.add_social_distance(compliance=0.7 + compliance, mask_uptake=0.2, mask_uptake_shopping=0.8)
     e.add_work_from_home(1.0 - keyworker_fraction)
-    e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate)
-    e.track_trace_multiplier = track_trace_limit # 50% of cases escape track and trace.
+    e.traffic_multiplier = 0.25 # https://data.london.gov.uk/dataset/coronavirus-covid-19-mobility-report (estimate) # drop because holidays ended
+    e.track_trace_multiplier = 0.6 # 60% of cases escape track and trace due to surge.
     e.add_partial_closure("leisure", 1.0)
     e.add_partial_closure("shopping", 0.8)
   if phase == 16: # Enacted 8th March 2021
@@ -174,57 +174,6 @@ def update_hospital_protection_factor_uk(e, t):
   if t == 120:
     e.hospital_protection_factor = 0.08
 
-
-def uk_lockdown_scenarios(e, t, step, vaccine=100, track_trace_multiplier = 0.5):
-  pass
-
-  """
-  e.remove_all_measures()
-
-  if step == 2: # June 1st, planned school opening
-    e.add_partial_closure("school", 0.5) #school times halved
-    e.add_partial_closure("school", 0.75, exclude_people=True) #25% of students go.
-    e.add_closure("leisure", 0)
-    e.add_partial_closure("shopping", 0.6)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.2)
-    e.add_work_from_home(0.7)
-
-  if step == 3: # 70% of students go to  school, first leisure locs open
-    e.add_partial_closure("school", 0.5)
-    e.add_partial_closure("school", 0.3, exclude_people=True) #70% of students go.
-    e.add_partial_closure("leisure", 0.75)
-    e.add_partial_closure("shopping", 0.4)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.3)
-    e.add_work_from_home(0.4)
-
-  if step == 4: # all schools open
-    e.add_partial_closure("school", 0.5)
-    e.add_partial_closure("leisure", 0.5)
-    e.add_partial_closure("shopping", 0.2)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.3)
-    e.add_work_from_home(0.3)
-
-  if step == 5: # track and trace in place.
-    e.add_partial_closure("school", 0.5)
-    e.add_partial_closure("leisure", 0.5)
-    e.add_social_distance(compliance=0.7, mask_uptake=0.3)
-    e.add_work_from_home(0.25)
-    # Assumption: track and trace will render case isolation twice as effective.
-    e.ci_multiplier *= track_trace_multiplier
-
-  if step == 6: # vaccine in place. Schools fully open.
-    e.add_social_distance(compliance=0.7, mask_uptake=0.3)
-    e.add_work_from_home(0.25)
-    e.vaccinations_available += vaccine
-
-  if step == 7: # 50% vaccination coverage.
-    e.add_social_distance(compliance=0.7, mask_uptake=0.3)
-    e.add_work_from_home(0.25)
-    e.vaccinations_available += vaccine*10
-
-  e.add_case_isolation()
-  e.add_household_isolation()
-  """
 
 def uk_lockdown_existing(e, t, track_trace_limit=0.5):
   update_hospital_protection_factor_uk(e,t)
@@ -299,7 +248,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
   # add in mutation
   # Prevalence increases linearly from Oct 22 (1%) to Jan 30th (90%)
   if t > 235 and t < 336:
-    fraction = (t - 235) * 0.009
+    fraction = (t - 235) * 0.01
     e.disease.infection_rate = calculate_mutating_infection_rate(fraction)
     print("infection rate adjusted to ", e.disease.infection_rate, sys.stderr)
 
