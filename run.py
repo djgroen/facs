@@ -12,6 +12,8 @@ import argparse
 import csv
 from pprint import pprint
 
+from datetime import datetime, timedelta
+
 
 if __name__ == "__main__":
 
@@ -151,6 +153,8 @@ if __name__ == "__main__":
     print("THIS SIMULATIONS HAS {} AGENTS.".format(e.num_agents))
 
     e.time = -20
+    e.date = datetime.strptime(args.start_date, date_format="%m/%d/%Y")
+    e.date = e.date - timedelta(days=20)
     e.print_header(outfile)
     for i in range(0, 20):
         e.evolve(reduce_stochasticity=False)

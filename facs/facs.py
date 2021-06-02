@@ -7,6 +7,7 @@ import array
 import csv
 import pandas as pd
 #import fastrand
+from datetime import datetime, timedelta
 
 # TODO: store all this in a YaML file
 lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,"shopping":6} # location ids and labels
@@ -527,6 +528,7 @@ class Ecosystem:
     self.houses = []
     self.house_names = []
     self.time = 0
+    self.date = None
     self.num_hospitalised = 0 # currently in hospital (ICU)
     self.disease = None
     self.closures = {}
@@ -718,6 +720,7 @@ class Ecosystem:
       h.evolve(self, self.time, self.disease)
     
     self.time += 1
+    self.date = self.date + timedelta(days=1)
 
   def addHouse(self, name, x, y, num_households=1):
     h = House(self, x, y, num_households)
