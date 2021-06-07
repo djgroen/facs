@@ -28,7 +28,7 @@ if __name__ == "__main__":
     parser.add_argument('--output_dir', action="store", default=".")
     parser.add_argument('--data_dir', action="store", default="covid_data")
     parser.add_argument('-s','--starting_infections', action="store", default="500")
-    parser.add_argument('--start_date', action="store", default="3/1/2020")
+    parser.add_argument('--start_date', action="store", default="1/3/2020")
     parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
     parser.add_argument('-g', '--generic_outfile', action="store_true", help="Write main output to out.csv instead of a scenario-specific named file.")
     parser.add_argument('--dbg', action="store_true", help="Write additional outputs to help debugging")
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     print("THIS SIMULATIONS HAS {} AGENTS.".format(e.num_agents))
 
     e.time = -20
-    e.date = datetime.strptime(args.start_date, date_format="%m/%d/%Y")
+    e.date = datetime.strptime(args.start_date, date_format="%d/%m/%Y")
     e.date = e.date - timedelta(days=20)
     e.print_header(outfile)
     for i in range(0, 20):
