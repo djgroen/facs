@@ -569,6 +569,13 @@ class Ecosystem:
     print("#time,x,y,location_type", file=out_inf)
 
 
+  def get_date_string():
+    """
+    Return the simulation date as a short string.
+    """
+    return self.date.strftime('%-d/%-m/%Y')
+
+
   def make_group(self, loc_type, max_groups):
     """
     Creates a grouping for a location, and assigns agents randomly to groups.

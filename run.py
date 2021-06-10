@@ -153,7 +153,7 @@ if __name__ == "__main__":
     print("THIS SIMULATIONS HAS {} AGENTS.".format(e.num_agents))
 
     e.time = -20
-    e.date = datetime.strptime(args.start_date, date_format="%d/%m/%Y")
+    e.date = datetime.strptime(args.start_date, "%d/%m/%Y")
     e.date = e.date - timedelta(days=20)
     e.print_header(outfile)
     for i in range(0, 20):
@@ -204,7 +204,7 @@ if __name__ == "__main__":
         # Propagate the model by one time step.
         e.evolve()
 
-        print(t, e.vac_no_symptoms, e.vac_no_transmission)
+        print(t, e.get_date_string(),  e.vac_no_symptoms, e.vac_no_transmission)
         e.print_status(outfile)
 
     # calculate cumulative sums.

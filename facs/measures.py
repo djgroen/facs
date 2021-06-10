@@ -1,4 +1,5 @@
 import sys
+import yaml
 
 def full_lockdown(e):
   e.remove_all_measures()
@@ -10,6 +11,24 @@ def full_lockdown(e):
   e.add_work_from_home()
   e.add_case_isolation()
   e.add_household_isolation()
+
+def uk_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
+  measures = {}
+  with open(ymlfile) as f:
+    m = yaml.load(f, Loader=yaml.FullLoader)
+
+  if date in m:
+    e.remove_all_measures()
+    if(m["case_isolation"]):
+      e.add_case_isolation()
+    if(m["household_isolation"]):
+      e.add_household_isolation()
+
+    dm = m[date]
+
+    print(date)
+    print(dm)
+
 
 def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, track_trace_limit=0.5, compliance=0.0):
   """
@@ -181,6 +200,9 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
   e.vac_duration = 365
   e.immunity_duration = 365
 
+  uk_lockdown_yml(e, e.get_date_string())
+
+  """
   # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
   # Traffic: Mar 10: 90% (estimate), Mar 16: 60%, Mar 20: 20%, Mar 28: 10%
   # Service: Mar 20: 80%, Mar 28: 50%
@@ -230,6 +252,7 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
     uk_lockdown(e, phase=18, track_trace_limit=track_trace_limit)
   if t == 447:  # 21st June 2021
     uk_lockdown(e, phase=19, track_trace_limit=track_trace_limit)
+  """
 
 
 def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.105):
