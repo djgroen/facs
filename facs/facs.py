@@ -569,7 +569,7 @@ class Ecosystem:
     print("#time,x,y,location_type", file=out_inf)
 
 
-  def get_date_string():
+  def get_date_string(self):
     """
     Return the simulation date as a short string.
     """
