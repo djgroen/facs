@@ -36,7 +36,7 @@ def uk_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
 
     if("closure" in dm):
       for loc_name in dm["closure"]:
-        e.add_closure(loc_name)
+        e.add_closure(loc_name, 0) # add closure starting immediately (indicated by the 0)
 
     if("work_from_home" in dm):
       e.add_work_from_home(float(dm["work_from_home"]))
