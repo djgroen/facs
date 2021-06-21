@@ -17,14 +17,46 @@ def uk_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
   with open(ymlfile) as f:
     m = yaml.load(f, Loader=yaml.FullLoader)
 
+  keyworker_fraction = 0.2
+  if(m["keyworker_fraction"]):
+    keyworker_fraction = float(m["keyworker_fraction"])
+
   if date in m:
     e.remove_all_measures()
-    if(m["case_isolation"]):
+    if("case_isolation" in m):
       e.add_case_isolation()
-    if(m["household_isolation"]):
+    if("household_isolation" in m):
       e.add_household_isolation()
 
     dm = m[date]
+
+    if("partial_closure" in dm):
+      for pc_key in dm["partial_closure"]:
+        e.add_partial_closure(pc_key, dm["partial_closure"][pc_key])
+
+    if("closure" in dm):
+      for loc_name in dm["closure"]:
+        e.add_closure(loc_name)
+
+    if("work_from_home" in dm):
+      e.add_work_from_home(float(dm["work_from_home"]))
+
+    mask_uptake = 0.0
+    if("mask_uptake" in dm):
+      mask_uptake = float(dm["mask_uptake"])
+
+    mask_uptake_shopping = 0.0
+    if("mask_uptake_shopping" in dm):
+      mask_uptake_shopping = float(dm["mask_uptake_shopping"])
+
+    if("social_distance" in dm):
+      e.add_social_distance(compliance = float(dm["social_distance"]), mask_uptake=mask_uptake, mask_uptake_shopping=mask_uptake_shopping)
+
+    if("traffic_multiplier" in dm):
+      e.traffic_multiplier = float(dm["traffic_multiplier"])
+
+    if("track_trace_efficiency" in dm):
+      e.track_trace__multiplier = 1.0 - float(dm["track_trace_efficiency"])
 
     print(date)
     print(dm)
