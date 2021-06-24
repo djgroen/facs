@@ -12,8 +12,35 @@ def full_lockdown(e):
   e.add_case_isolation()
   e.add_household_isolation()
 
+
+def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations_example.yml"):
+  with open(ymlfile) as f:
+    v = yaml.load(f, Loader=yaml.FullLoader)
+  
+    vaccine_effect_time = 21
+    if "vaccine_effect_time" in v:
+      vaccine_effect_time = m["vaccine_effect_time"]
+    else:
+      print("warning, {} does not contain field vaccine_effect time.".format(ymlfile))
+
+    if date in v:
+      dv = v[date]
+      if "vaccines_per_day" in dv:
+        e.vaccinations_available = int(dv["vaccines_per_day"])
+        e.vaccinations_age_limit = int(dv["vaccines_age_limit"])
+        e.vac_no_symptoms = float(dv["no_symptoms"])
+        e.vac_no_transmission = float(dv["no_transmission"])
+
+
+      dvb = v[date]["booster"]:
+      # fields:
+      # boosters_per_day: 10 # this number is SUBTRACTED from vaccines_per_day.
+      # booster_age_limit: 70
+      # no_symptoms: 0.75
+      # no_transmission: 0.6
+      # TO BE IMPLEMENTED
+
 def uk_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
-  measures = {}
   with open(ymlfile) as f:
     m = yaml.load(f, Loader=yaml.FullLoader)
 
