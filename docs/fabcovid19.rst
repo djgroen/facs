@@ -141,5 +141,9 @@ To perform the post-processing on the ouput results from a single or ensemble ru
 	fab localhost facs_postprocess:<results_dir_name>
 
 
+Once you have run this, if everything has been configured correctly, you should get a web page that shows a plot like this:
+
+.. image:: validateplot.png        
+
 .. note::
 	Before the execution of `facs_postprocess`, you should fetch the results.
