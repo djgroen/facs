@@ -35,7 +35,7 @@ def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations_example.yml"):
         e.vac_no_transmission = float(dv["no_transmission"])
 
 
-      dvb = v[date]["booster"]
+      #dvb = v[date]["booster"]
       # fields:
       # boosters_per_day: 10 # this number is SUBTRACTED from vaccines_per_day.
       # booster_age_limit: 70
