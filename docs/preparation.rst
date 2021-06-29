@@ -87,10 +87,17 @@ The exact format may still be subject to change, but among others we have fields
 5. Defining the exact public health interventions undertaken
 ============================================================
 
-This is perhaps the most complicated step, and will require some Python coding at this stage. We have implemented a range of measures, which can be viewed in the facs/measures.py (or flacs/measures.py if I didn't update the repo yet).
+Detailed documentation for this step has yet to be developed, as the format is still subject to change. However, by default FACS will look at the file in `covid_data/measures_uk.yml` to extract the exact interventions required for the run.
 
-The main run file, run.py, shows examples on how we raise and release various measures as part of different scenarios.
+You can find a realistic example of this file in this repository.
 
-Because the interventions are a moving target, we will not provide static documentation here. However, we are happy to provide advice, or implement customized measures on request. To do so, simply raise a GitHub issue.
+Lastly, note that interventions related to public transport are not yet incorporated into this format. However, we hope to do this in Q2/Q3 2021.
 
-Within FACS, most public health interventions are straightforward to implement, as the code base is relatively small, and Python3 makes modification relatively easy. However, one still needs to have expertise in Python3 and a reasonably good understanding of the working of the code.
+6. Defining the vaccination strategy
+====================================
+
+Similarly, FACS is also able to read the vaccination strategy from a file. By default, the file in `covid_date/vaccinations_example.yml` will be read to extract the vaccination strategy.
+
+You can find a realistic example of this file in this repository.
+
+Booster vaccine mechanisms are not yet supported in this file format, but the effect of boosters can be mimicked by modifying the vaccine efficacy over time.
