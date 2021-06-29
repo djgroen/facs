@@ -19,7 +19,7 @@ def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations_example.yml"):
   
     vaccine_effect_time = 21
     if "vaccine_effect_time" in v:
-      vaccine_effect_time = m["vaccine_effect_time"]
+      vaccine_effect_time = v["vaccine_effect_time"]
     else:
       print("warning, {} does not contain field vaccine_effect time.".format(ymlfile))
 
@@ -27,12 +27,15 @@ def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations_example.yml"):
       dv = v[date]
       if "vaccines_per_day" in dv:
         e.vaccinations_available = int(dv["vaccines_per_day"])
-        e.vaccinations_age_limit = int(dv["vaccines_age_limit"])
+      if "vaccine_age_limit" in dv:
+        e.vaccinations_age_limit = int(dv["vaccine_age_limit"])
+      if "no_symptoms" in dv:
         e.vac_no_symptoms = float(dv["no_symptoms"])
+      if "no_transmission" in dv:
         e.vac_no_transmission = float(dv["no_transmission"])
 
 
-      dvb = v[date]["booster"]:
+      dvb = v[date]["booster"]
       # fields:
       # boosters_per_day: 10 # this number is SUBTRACTED from vaccines_per_day.
       # booster_age_limit: 70
@@ -40,7 +43,7 @@ def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations_example.yml"):
       # no_transmission: 0.6
       # TO BE IMPLEMENTED
 
-def uk_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
+def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
   with open(ymlfile) as f:
     m = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -259,9 +262,9 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
   e.vac_duration = 365
   e.immunity_duration = 365
 
-  uk_lockdown_yml(e, e.get_date_string())
+  read_lockdown_yml(e, e.get_date_string())
 
-  """
+  
   # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
   # Traffic: Mar 10: 90% (estimate), Mar 16: 60%, Mar 20: 20%, Mar 28: 10%
   # Service: Mar 20: 80%, Mar 28: 50%
@@ -272,6 +275,7 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
   if t > 20 and t <= 28:
     e.traffic_multiplier = ((0.2 - (0.0125*(t-20)))**2) / 0.5
 
+  """
   # Recording of existing measures
   if t > 10 and t <= 20:  # 16th of March (range 11-21)
     uk_lockdown(e, phase=1, transition_fraction=((t-10)*1.0)/100.0)
@@ -334,6 +338,10 @@ def uk_lockdown_forecast(e, t, mode = 0):
     e.disease.infection_rate = calculate_mutating_infection_rate(fraction)
     print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
 
+
+  read_vaccine_yml(e, e.get_date_string())
+
+  """
   # Add in vaccination policies
   vaccine_effect_time = 21
 
@@ -378,7 +386,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
     if t > 458: # June 1st
       e.vac_no_symptoms = 0.3
       e.vac_no_transmission = 0.5
-
+  """
 
   uk_lockdown_existing(e, t)
 
