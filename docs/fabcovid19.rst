@@ -141,9 +141,23 @@ To perform the post-processing on the ouput results from a single or ensemble ru
 	fab localhost facs_postprocess:<results_dir_name>
 
 
-Once you have run this, if everything has been configured correctly, you should get a web page that shows a plot like this:
+Here results dir is the name of the subdirectory only (e.g. brent_localhost_1), not the full path. Once you have run this, if everything has been configured correctly, you should get a web page that shows a plot like this:
 
 .. image:: validateplot.png        
 
+
+Similarly, you can now perform a comparison on infectious spread by location type. To do so, type:
+
+
+.. code-block:: sh
+
+	fab localhost facs_locationplot:<results_dir_name>
+
+
+Once you have run this, if everything has been configured correctly, you should get a web page that shows a plot like this:
+
+.. image:: locationplot.png        
+
+
 .. note::
-	Before the execution of `facs_postprocess`, you should fetch the results.
+	Before you execute `facs_postprocess` or `facs_locationplot`, you should fetch the results using `fab <machine_name> fetch_results`.
