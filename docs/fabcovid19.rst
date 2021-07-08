@@ -86,6 +86,8 @@ Examples:
 
 .. code-block:: sh
 
+        fabsim localhost covid19_ensemble:location='test',TS='uk-forecast',TM='0',cores=1,replicas=1,starting_infections=10,job_wall_time=0:15:00
+
 	fabsim localhost covid19_ensemble:location=harrow
 
 	fabsim localhost covid19_ensemble:location='brent;harrow;hillingdon'

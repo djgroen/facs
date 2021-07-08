@@ -15,7 +15,7 @@ def full_lockdown(e):
 
 def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations_example.yml"):
   with open(ymlfile) as f:
-    v = yaml.load(f, Loader=yaml.FullLoader)
+    v = yaml.safe_load(f)
   
     vaccine_effect_time = 21
     if "vaccine_effect_time" in v:
@@ -45,7 +45,7 @@ def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations_example.yml"):
 
 def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
   with open(ymlfile) as f:
-    m = yaml.load(f, Loader=yaml.FullLoader)
+    m = yaml.safe_load(f)
 
   keyworker_fraction = 0.2
   if(m["keyworker_fraction"]):
