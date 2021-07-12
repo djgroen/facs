@@ -35,7 +35,7 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
 
   building_mapping = {}
   with open(building_type_map) as f:
-    building_mapping = yaml.load(f, Loader=yaml.FullLoader)
+    building_mapping = yaml.safe_load(f)
 
   house_csv_count = 0
 
