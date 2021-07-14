@@ -22,7 +22,7 @@ def apply_building_mapping(mapdict, label):
       return category
   return "house"
 
-def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_map.yml", house_ratio=1, workspace=12, office_size=1600, household_size=2.6, households_per_house=1, work_participation_rate=0.5, dumptypesandquit=False):
+def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_map.yml", house_ratio=1, workspace=12, office_size=1600, household_size=2.6, households_per_house=1, work_participation_rate=0.5, dumptypesandquit=False, dumpnearest=False):
   """
   house_ratio = number of households per house.
   workspace = m2 of office space per worker.
@@ -105,7 +105,7 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
       f.write("office,{},{},{}\n".format(x, y, office_size))
       office_sqm_red -= office_size
 
-    e.update_nearest_locations()
+    e.update_nearest_locations(dumpnearest)
 
   print("Read in {} houses and {} other locations.".format(num_houses, num_locs))
   print("Office sqm = {}".format(office_sqm))

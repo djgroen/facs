@@ -344,10 +344,6 @@ class House:
     self.y = y
     self.households = []
     self.num_agents = 0
-    #Find nearest locations now needs to be called separately after
-    #all locations have been added.
-    #self.find_nearest_locations(e)
-    #print("nearest locs:", self.nearest_locations)
     for i in range(0, num_households):
         size = 1 + np.random.poisson(e.household_size-1)
         e.num_agents += size
@@ -371,6 +367,7 @@ class House:
     Takes into account distance, and to a lesser degree size.
     """
     n = []
+    ni = []
     for l in lids.keys():
       if l not in e.locations.keys():
         n.append(None)
@@ -384,12 +381,13 @@ class House:
             min_score = d
             nearest_loc_index = k
         n.append(e.locations[l][nearest_loc_index])
+        ni.append(nearest_loc_index)
 
     #for i in n:
     #  if i:  
     #    print(i.name, i.type)
     self.nearest_locations = n
-    return n
+    return ni
 
 
   def add_infection(self, time, severity="exposed"): # used to preseed infections (could target using age later on)
@@ -632,14 +630,48 @@ class Ecosystem:
           if get_rnd() < infection_probability:
             a.infect(self.time, location_type="traffic")
 
-  def update_nearest_locations(self):
+
+  def load_nearest_from_file(self, fname):
+      """
+      Load nearest locations from CSV file.
+      """
+      try:
+          f = open(fname, "r")
+          near_reader = csv.reader(f)
+          i = 0
+          for row in near_reader:
+              #print(row)
+              self.houses[i].nearest_locations = row
+              n = []
+              for j in range(0, len(lids.keys())):
+                  n.append(self.locations[lnames[j]][int(row[j])])
+              self.houses[i].nearest_locations = n
+              #print(self.houses[i].nearest_locations)
+              i += 1
+      except IOError:
+          return False
+
+
+  def update_nearest_locations(self, dump_and_exit=False):
+    f = None
+    read_from_file = False
+    if dump_and_exit == True:
+      f = open('nearest_locations.csv', "w")
+    else:
+      self.load_nearest_from_file('nearest_locations.csv')
+
     count = 0
     for h in self.houses:
-      h.find_nearest_locations(self)
+      ni = h.find_nearest_locations(self)
+      if dump_and_exit == True:
+        print(",".join(f"{x}" for x in ni), file=f)
       count += 1
       if count % 1000 == 0:
         print(count, "houses scanned.", file=sys.stderr)
     print(count, "houses scanned.", file=sys.stderr)
+
+    if dump_and_exit == True:
+      sys.exit()
 
   def add_infections(self, num, day, severity="exposed"):
     """
