@@ -659,6 +659,7 @@ class Ecosystem:
       f = open('nearest_locations.csv', "w")
     else:
       self.load_nearest_from_file('nearest_locations.csv')
+      return
 
     count = 0
     for h in self.houses:
