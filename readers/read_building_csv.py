@@ -105,7 +105,6 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
       f.write("office,{},{},{}\n".format(x, y, office_size))
       office_sqm_red -= office_size
 
-    e.update_nearest_locations(dumpnearest)
 
   print("Read in {} houses and {} other locations.".format(num_houses, num_locs))
   print("Office sqm = {}".format(office_sqm))
@@ -115,6 +114,8 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
     print(lt, len(e.locations[lt]))
   print("raw types are:")
   pp.pprint(building_types)
+
+  e.update_nearest_locations(dumpnearest)
   if dumptypesandquit:
     sys.exit()
 
