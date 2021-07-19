@@ -388,9 +388,10 @@ class House:
     """
     n = []
     ni = []
-    for l in lids.keys():
+    for l in lnames:
       if l not in e.locations.keys():
         n.append(None)
+        print("WARNING: location type missing")
       else:
         min_score = 99999.0
         nearest_loc_index = 0
@@ -659,21 +660,25 @@ class Ecosystem:
           f = open(fname, "r")
           near_reader = csv.reader(f)
           i = 0
+
+          header_row = next(near_reader)
+          #print(header_row)
+          #print(lnames)
+          #sys.exit()
+
           for row in near_reader:
               #print(row)
               self.houses[i].nearest_locations = row
               n = []
-              j = 0
-              for l in lids.keys():
+              for j in range(0,len(header_row)):
                   try:
-                    n.append(self.locations[l][int(row[j])])
-                    j += 1
+                    n.append(self.locations[header_row[j]][int(row[j])])
                   except:
                     print("ERROR: nearest building lookup from file failed:")
                     print("row in CSV: ", i)
-                    print("lnames index: ",j," len:", len(lnames))
-                    print("self.locations [key][]: ", lnames[j], " [][index]", int(row[j]))
-                    print("self.locations [keys][]", self.locations.keys(), " [][len]", len(self.locations[lnames[j]]))
+                    print("lnames index: ",j," len:", len(header_row))
+                    print("self.locations [key][]: ", header_row[j], " [][index]", int(row[j]))
+                    print("self.locations [keys][]", self.locations.keys(), " [][len]", len(self.locations[header_row[j]]))
                     sys.exit()
               self.houses[i].nearest_locations = n
               #print(self.houses[i].nearest_locations)
@@ -690,6 +695,9 @@ class Ecosystem:
     else:
       self.load_nearest_from_file('nearest_locations.csv')
       return
+
+    # print header row
+    print(",".join(f"{x}" for x in lnames), file=f)
 
     count = 0
     for h in self.houses:
