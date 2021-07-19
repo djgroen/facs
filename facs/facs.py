@@ -87,28 +87,48 @@ num_deaths_today = 0
 num_recoveries_today = 0
 log_prefix = "."
 
+
+class OUTPUT_FILES():
+
+    def __init__(self):
+        self.files = {}
+
+    def open(self, file_name):
+        if not file_name in self.files:
+            self.files[file_name] = open(file_name, "a")
+
+        return self.files[file_name]
+
+    def __del__(self) -> None:
+        for out_file in self.files:
+            self.files[file_name].close()
+
+
+out_files = OUTPUT_FILES()
+
+
 def log_infection(t, x, y, loc_type):
   global num_infections_today
-  out_inf = open("{}/covid_out_infections.csv".format(log_prefix),'a')
-  print("{},{},{},{}".format(t, x, y, loc_type), file=out_inf)
+  out_inf = out_files.open("{}/covid_out_infections.csv".format(log_prefix))
+  print("{},{},{},{}".format(t, x, y, loc_type), file=out_inf, flush=True)
   num_infections_today += 1
 
 def log_hospitalisation(t, x, y, age):
   global num_hospitalisations_today
-  out_inf = open("{}/covid_out_hospitalisations.csv".format(log_prefix),'a')
-  print("{},{},{},{}".format(t, x, y, age), file=out_inf)
+  out_inf = out_files.open("{}/covid_out_hospitalisations.csv".format(log_prefix))
+  print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
   num_hospitalisations_today += 1
 
 def log_death(t, x, y, age):
   global num_deaths_today
-  out_inf = open("{}/covid_out_deaths.csv".format(log_prefix),'a')
-  print("{},{},{},{}".format(t, x, y, age), file=out_inf)
+  out_inf = out_files.open("{}/covid_out_deaths.csv".format(log_prefix))
+  print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
   num_deaths_today += 1
 
 def log_recovery(t, x, y, age):
   global num_recoveries_today
-  out_inf = open("{}/covid_out_recoveries.csv".format(log_prefix),'a')
-  print("{},{},{},{}".format(t, x, y, age), file=out_inf)
+  out_inf = out_files.open("{}/covid_out_recoveries.csv".format(log_prefix))
+  print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
   num_recoveries_today += 1
 
 
@@ -953,18 +973,18 @@ class Ecosystem:
           print(k, a.get_needs())
 
   def print_header(self, outfile):
-    out = open(outfile,'w')
-    print("#time,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,num hospitalisations today (data),hospital bed occupancy",file=out)
+    out = out_files.open(outfile)
+    print("#time,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,num hospitalisations today (data),hospital bed occupancy",file=out, flush=True)
 
-  def print_status(self, outfile, silent=False):
-    out = open(outfile,'a')
+  def print_status(self, outfile, silent=False):    
     status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     for k,e in enumerate(self.houses):
       for hh in e.households:
         for a in hh.agents:
           status[a.status] += 1
     if not silent:
-      print("{},{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],status["immune"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out)
+      out = out_files.open(outfile)
+      print("{},{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],status["immune"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out, flush=True)
     self.status = status
 
 
