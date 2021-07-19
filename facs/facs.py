@@ -663,9 +663,11 @@ class Ecosystem:
               #print(row)
               self.houses[i].nearest_locations = row
               n = []
-              for j in range(0, len(lids.keys())):
+              j = 0
+              for l in lids.keys():
                   try:
-                    n.append(self.locations[lnames[j]][int(row[j])])
+                    n.append(self.locations[l][int(row[j])])
+                    j += 1
                   except:
                     print("ERROR: nearest building lookup from file failed:")
                     print("row in CSV: ", i)
