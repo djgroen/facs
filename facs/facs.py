@@ -101,7 +101,7 @@ class OUTPUT_FILES():
 
     def __del__(self) -> None:
         for out_file in self.files:
-            self.files[file_name].close()
+            self.files[out_file].close()
 
 
 out_files = OUTPUT_FILES()
