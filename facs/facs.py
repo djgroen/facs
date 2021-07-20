@@ -6,6 +6,7 @@ import random
 import array
 import csv
 import pandas as pd
+import os
 #import fastrand
 from datetime import datetime, timedelta
 
@@ -95,6 +96,8 @@ class OUTPUT_FILES():
 
     def open(self, file_name):
         if not file_name in self.files:
+            if os.path.exists(file_name):
+                os.remove(file_name)            
             self.files[file_name] = open(file_name, "a")
 
         return self.files[file_name]
