@@ -478,15 +478,17 @@ class Location:
     visit_time = self.avg_visit_time
     if person.status == "dead":
       return
-    if person.status == "infectious":
+    elif person.status == "infectious":
       visit_time *= e.self_isolation_multiplier # implementing case isolation (CI)
+      if self.type == "hospital":
+        if person.hospitalised:
+          self.inf_visit_minutes += need/7 * e.hospital_protection_factor
+          return
+
     elif person.household.is_infected(): # person is in household quarantine, but not subject to CI.
       visit_time *= needs.household_isolation_multiplier
 
-    if person.hospitalised and self.type == "hospital":
-      self.inf_visit_minutes += need/7 * e.hospital_protection_factor
-      return
-
+    visit_probability = 0.0
     if visit_time > 0.0:
       visit_probability = need/(visit_time * 7) # = minutes per week / (average visit time * days in the week)
       #if ultraverbose:
