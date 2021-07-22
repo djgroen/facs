@@ -22,7 +22,7 @@ def apply_building_mapping(mapdict, label):
       return category
   return "house"
 
-def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_map.yml", house_ratio=1, workspace=12, office_size=1600, household_size=2.6, households_per_house=1, work_participation_rate=0.5, dumptypesandquit=False, dumpnearest=False):
+def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_map.yml", house_ratio=1, workspace=12, office_size=1600, household_size=2.6, work_participation_rate=0.5, dumptypesandquit=False, dumpnearest=False):
   """
   house_ratio = number of households per house.
   workspace = m2 of office space per worker.
@@ -74,9 +74,8 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
 
       if location_type == "house":
         if house_csv_count % house_ratio == 0:
-          e.addHouse(num_houses, x , y, house_ratio*households_per_house)
+          e.addHouse(num_houses, x , y, house_ratio)
           num_houses += 1
-          office_sqm += workspace*household_size*work_participation_rate*house_ratio*households_per_house # 10 sqm per worker, 2.6 person per household, 50% in workforce
         house_csv_count += 1
       else:
         #e.addLocation(num_locs, location_type, x, y, building_mapping[location_type]['default_sqm'])
@@ -94,6 +93,7 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
         print(row_number, "read", file=sys.stderr)
     print(row_number, "read", file=sys.stderr)
     print("bounds:", xbound, ybound, file=sys.stderr)
+    office_sqm = workspace*house_csv_count*work_participation_rate # 10 sqm per worker, 2.6 person per household, 50% in workforce
     office_sqm_red = office_sqm
     
     f = open("offices.csv","w")
@@ -105,7 +105,6 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
       f.write("office,{},{},{}\n".format(x, y, office_size))
       office_sqm_red -= office_size
 
-    e.update_nearest_locations(dumpnearest)
 
   print("Read in {} houses and {} other locations.".format(num_houses, num_locs))
   print("Office sqm = {}".format(office_sqm))
@@ -115,6 +114,8 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
     print(lt, len(e.locations[lt]))
   print("raw types are:")
   pp.pprint(building_types)
+
+  e.update_nearest_locations(dumpnearest)
   if dumptypesandquit:
     sys.exit()
 

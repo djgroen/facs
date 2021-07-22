@@ -54,9 +54,11 @@ def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
   if date in m:
     e.remove_all_measures()
     if("case_isolation" in m):
-      e.add_case_isolation()
+      if(m["case_isolation"]):
+        e.add_case_isolation()
     if("household_isolation" in m):
-      e.add_household_isolation()
+      if(m["household_isolation"]):
+        e.add_household_isolation()
 
     dm = m[date]
 
@@ -237,13 +239,13 @@ def uk_lockdown(e, phase=1, transition_fraction=1.0, keyworker_fraction=0.18, tr
 
 def update_hospital_protection_factor_uk(e, t):
   if t == 10:
-    e.hospital_protection_factor = 0.4
+    e.hospital_protection_factor = 0.75
   if t == 20:
-    e.hospital_protection_factor = 0.37
+    e.hospital_protection_factor = 0.5
   if t == 30: # start of testing ramp up in early april.
-    e.hospital_protection_factor = 0.34
+    e.hospital_protection_factor = 0.4
   if t == 40:
-    e.hospital_protection_factor = 0.29
+    e.hospital_protection_factor = 0.3
   if t == 50:
     e.hospital_protection_factor = 0.23
   if t == 60: # testing ramped up considerably by the end of April.

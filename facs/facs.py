@@ -6,6 +6,7 @@ import random
 import array
 import csv
 import pandas as pd
+import os
 #import fastrand
 from datetime import datetime, timedelta
 
@@ -87,28 +88,50 @@ num_deaths_today = 0
 num_recoveries_today = 0
 log_prefix = "."
 
+
+class OUTPUT_FILES():
+
+    def __init__(self):
+        self.files = {}
+
+    def open(self, file_name):
+        if not file_name in self.files:
+            if os.path.exists(file_name):
+                os.remove(file_name)            
+            self.files[file_name] = open(file_name, "a")
+
+        return self.files[file_name]
+
+    def __del__(self) -> None:
+        for out_file in self.files:
+            self.files[out_file].close()
+
+
+out_files = OUTPUT_FILES()
+
+
 def log_infection(t, x, y, loc_type):
   global num_infections_today
-  out_inf = open("{}/covid_out_infections.csv".format(log_prefix),'a')
-  print("{},{},{},{}".format(t, x, y, loc_type), file=out_inf)
+  out_inf = out_files.open("{}/covid_out_infections.csv".format(log_prefix))
+  print("{},{},{},{}".format(t, x, y, loc_type), file=out_inf, flush=True)
   num_infections_today += 1
 
 def log_hospitalisation(t, x, y, age):
   global num_hospitalisations_today
-  out_inf = open("{}/covid_out_hospitalisations.csv".format(log_prefix),'a')
-  print("{},{},{},{}".format(t, x, y, age), file=out_inf)
+  out_inf = out_files.open("{}/covid_out_hospitalisations.csv".format(log_prefix))
+  print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
   num_hospitalisations_today += 1
 
 def log_death(t, x, y, age):
   global num_deaths_today
-  out_inf = open("{}/covid_out_deaths.csv".format(log_prefix),'a')
-  print("{},{},{},{}".format(t, x, y, age), file=out_inf)
+  out_inf = out_files.open("{}/covid_out_deaths.csv".format(log_prefix))
+  print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
   num_deaths_today += 1
 
 def log_recovery(t, x, y, age):
   global num_recoveries_today
-  out_inf = open("{}/covid_out_recoveries.csv".format(log_prefix),'a')
-  print("{},{},{},{}".format(t, x, y, age), file=out_inf)
+  out_inf = out_files.open("{}/covid_out_recoveries.csv".format(log_prefix))
+  print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
   num_recoveries_today += 1
 
 
@@ -368,9 +391,10 @@ class House:
     """
     n = []
     ni = []
-    for l in lids.keys():
+    for l in lnames:
       if l not in e.locations.keys():
         n.append(None)
+        print("WARNING: location type missing")
       else:
         min_score = 99999.0
         nearest_loc_index = 0
@@ -454,15 +478,17 @@ class Location:
     visit_time = self.avg_visit_time
     if person.status == "dead":
       return
-    if person.status == "infectious":
+    elif person.status == "infectious":
       visit_time *= e.self_isolation_multiplier # implementing case isolation (CI)
+      if self.type == "hospital":
+        if person.hospitalised:
+          self.inf_visit_minutes += need/7 * e.hospital_protection_factor
+          return
+
     elif person.household.is_infected(): # person is in household quarantine, but not subject to CI.
       visit_time *= needs.household_isolation_multiplier
 
-    if person.hospitalised and self.type == "hospital":
-      self.inf_visit_minutes += need/7 * e.hospital_protection_factor
-      return
-
+    visit_probability = 0.0
     if visit_time > 0.0:
       visit_probability = need/(visit_time * 7) # = minutes per week / (average visit time * days in the week)
       #if ultraverbose:
@@ -639,12 +665,26 @@ class Ecosystem:
           f = open(fname, "r")
           near_reader = csv.reader(f)
           i = 0
+
+          header_row = next(near_reader)
+          #print(header_row)
+          #print(lnames)
+          #sys.exit()
+
           for row in near_reader:
               #print(row)
               self.houses[i].nearest_locations = row
               n = []
-              for j in range(0, len(lids.keys())):
-                  n.append(self.locations[lnames[j]][int(row[j])])
+              for j in range(0,len(header_row)):
+                  try:
+                    n.append(self.locations[header_row[j]][int(row[j])])
+                  except:
+                    print("ERROR: nearest building lookup from file failed:")
+                    print("row in CSV: ", i)
+                    print("lnames index: ",j," len:", len(header_row))
+                    print("self.locations [key][]: ", header_row[j], " [][index]", int(row[j]))
+                    print("self.locations [keys][]", self.locations.keys(), " [][len]", len(self.locations[header_row[j]]))
+                    sys.exit()
               self.houses[i].nearest_locations = n
               #print(self.houses[i].nearest_locations)
               i += 1
@@ -658,7 +698,13 @@ class Ecosystem:
     if dump_and_exit == True:
       f = open('nearest_locations.csv', "w")
     else:
-      self.load_nearest_from_file('nearest_locations.csv')
+      loaded = self.load_nearest_from_file('nearest_locations.csv')
+      if loaded == True:
+        return
+      
+    if dump_and_exit == True:
+      # print header row
+      print(",".join(f"{x}" for x in lnames), file=f)
 
     count = 0
     for h in self.houses:
@@ -945,18 +991,18 @@ class Ecosystem:
           print(k, a.get_needs())
 
   def print_header(self, outfile):
-    out = open(outfile,'w')
-    print("#time,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,num hospitalisations today (data),hospital bed occupancy",file=out)
+    out = out_files.open(outfile)
+    print("#time,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,num hospitalisations today (data),hospital bed occupancy",file=out, flush=True)
 
-  def print_status(self, outfile, silent=False):
-    out = open(outfile,'a')
+  def print_status(self, outfile, silent=False):    
     status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     for k,e in enumerate(self.houses):
       for hh in e.households:
         for a in hh.agents:
           status[a.status] += 1
     if not silent:
-      print("{},{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],status["immune"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out)
+      out = out_files.open(outfile)
+      print("{},{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],status["immune"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out, flush=True)
     self.status = status
 
 
