@@ -698,11 +698,13 @@ class Ecosystem:
     if dump_and_exit == True:
       f = open('nearest_locations.csv', "w")
     else:
-      self.load_nearest_from_file('nearest_locations.csv')
-      return
-
-    # print header row
-    print(",".join(f"{x}" for x in lnames), file=f)
+      loaded = self.load_nearest_from_file('nearest_locations.csv')
+      if loaded == True:
+        return
+      
+    if dump_and_exit == True:
+      # print header row
+      print(",".join(f"{x}" for x in lnames), file=f)
 
     count = 0
     for h in self.houses:
