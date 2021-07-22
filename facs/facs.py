@@ -879,7 +879,6 @@ class Ecosystem:
   def remove_all_measures(self):
     global needs
     self.initialise_social_distance()
-    self.reset_case_isolation()
     self.remove_closures()
     needs = Needs(self.needsfile)
     for k,e in enumerate(self.houses):
@@ -943,6 +942,11 @@ class Ecosystem:
     self.print_isolation_rate("CI with multiplier {}".format(self.self_isolation_multiplier))
 
 
+  def reset_household_isolation(self):
+    needs.household_isolation_multiplier=1.0
+    self.print_isolation_rate("Household isolation with multiplier {}".format(self.self_isolation_multiplier))
+
+
   def add_household_isolation(self, multiplier=0.625):
     # compulsory household isolation
     # assumption: 50% of household members complying
@@ -952,7 +956,7 @@ class Ecosystem:
     # 80% of household complying. (Imp Report 9)
     # 25%*80% + 100%*20% = 40% = 0.4
     needs.household_isolation_multiplier=multiplier
-    self.print_contact_rate("Household isolation with {} multiplier".format(multiplier))
+    self.print_isolation_rate("Household isolation with {} multiplier".format(multiplier))
 
 
   def add_cum_column(elf, csv_file, cum_columns):

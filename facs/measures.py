@@ -53,14 +53,19 @@ def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
 
   if date in m:
     e.remove_all_measures()
-    if("case_isolation" in m):
-      if(m["case_isolation"]):
-        e.add_case_isolation()
-    if("household_isolation" in m):
-      if(m["household_isolation"]):
-        e.add_household_isolation()
 
     dm = m[date]
+
+    if("case_isolation" in dm):
+      if(dm["case_isolation"] == True):
+        e.add_case_isolation()
+      if(dm["case_isolation"] == False):
+        e.reset_case_isolation()
+    if("household_isolation" in dm):
+      if(dm["household_isolation"] == True):
+        e.add_household_isolation()
+      if(dm["household_isolation"] == False):
+        e.reset_household_isolation()
 
     if("partial_closure" in dm):
       for pc_key in dm["partial_closure"]:
