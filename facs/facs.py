@@ -186,7 +186,7 @@ class Person():
     self.status_change_time = time # necessary if vaccines give temporary immunity.
     if vac_duration > 0:
       if vac_duration > 100:
-        self.phase_duration = np.random.gamma(vac_duration/15, 15) # shape parameter is changed with variable, shape parameter is kept fixed at 15 (assumption).
+        self.phase_duration = np.random.gamma(10, vac_duration/10.0) # shape parameter is changed with variable, shape parameter is kept fixed at 15 (assumption).
       else:
         self.phase_duration = np.poisson(vac_duration)
     if self.status == "susceptible":
