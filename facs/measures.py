@@ -140,7 +140,7 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
     e.traffic_multiplier = ((0.2 - (0.0125*(t-20)))**2) / 0.5
 
 
-def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.105):
+def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.1):
   # Original infection rate is 0.07 (COVID-19 disease.yml)
   # destination infection rate is "up to 70% higher", so we set it to 0.07*1.5=0.105.
 
@@ -164,7 +164,7 @@ def uk_lockdown_forecast(e, t, mode = 0):
   # Prevalence increases linearly from Apr 1 (1%) to July 10th (100%)
   if t > 396 and t < 497:
     fraction = (t - 396) * 0.01
-    e.disease.infection_rate = calculate_mutating_infection_rate(fraction, 0.105, 1.5) # https://www.ecdc.europa.eu/en/publications-data/threat-assessment-emergence-and-impact-sars-cov-2-delta-variant
+    e.disease.infection_rate = calculate_mutating_infection_rate(fraction, 0.1, 0.14) # https://www.ecdc.europa.eu/en/publications-data/threat-assessment-emergence-and-impact-sars-cov-2-delta-variant
     # our estimate is 40-45% assuming that Delta gets 80-90% dominance.
     print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
 
