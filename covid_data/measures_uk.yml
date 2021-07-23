@@ -1,14 +1,11 @@
 date_format: "%d/%m/%Y"
 keyworker_fraction: 0.18 # percentage workers that are keyworkers
-case_isolation: True
-household_isolation: True
 
-1/3/2020:
-  case_isolation: True
-  household_isolation: True
 12/3/2020:
   work_from_home: 0.1
   social_distance: 0.1
+  case_isolation: True
+  household_isolation: True
 16/3/2020:
   partial_closure: 
     leisure: 0.3
