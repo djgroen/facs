@@ -400,10 +400,15 @@ class House:
         nearest_loc_index = 0
         for k,element in enumerate(e.locations[l]): # using 'element' to avoid clash with Ecosystem e.
           #d = calc_dist_cheap(self.x, self.y, element.x, element.y)
-          d = calc_dist(self.x, self.y, element.x, element.y) / np.sqrt(element.sqm)
-          if d < min_score:
-            min_score = d
-            nearest_loc_index = k
+          if element.sqm > 0:
+            d = calc_dist(self.x, self.y, element.x, element.y) / np.sqrt(element.sqm)
+            if d < min_score:
+              min_score = d
+              nearest_loc_index = k
+          else:
+            print("ERROR: location found with 0 sqm area.")
+            print("name: {}, x: {}, y: {}, position in array: {}, type: {}".format(element.name, element.x, element.y, k, l))
+            sys.exit()
         n.append(e.locations[l][nearest_loc_index])
         ni.append(nearest_loc_index)
 

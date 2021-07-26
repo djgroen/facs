@@ -161,11 +161,12 @@ def uk_lockdown_forecast(e, t, mode = 0):
     print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
 
   # add in Delta mutation
-  # Prevalence increases linearly from Apr 1 (1%) to July 10th (100%)
-  if t > 396 and t < 497:
-    fraction = (t - 396) * 0.01
-    e.disease.infection_rate = calculate_mutating_infection_rate(fraction, 0.1, 0.14) # https://www.ecdc.europa.eu/en/publications-data/threat-assessment-emergence-and-impact-sars-cov-2-delta-variant
-    # our estimate is 40-45% assuming that Delta gets 80-90% dominance.
+  # Prevalence increases linearly from Apr 21 (1%) to June 10th (100%)
+  if t > 416 and t < 467:
+    fraction = (t - 416) * 0.02
+    e.disease.infection_rate = calculate_mutating_infection_rate(fraction, 0.1, 0.15) # https://www.ecdc.europa.eu/en/publications-data/threat-assessment-emergence-and-impact-sars-cov-2-delta-variant
+    # our estimate is 50% here, as Delta gains full dominance in this period.
+    # https://www.gov.uk/government/news/confirmed-cases-of-covid-19-variants-identified-in-uk#:~:text=The%20Delta%20variant%20currently%20accounts,of%20cases%20across%20the%20UK.&text=In%20total%2C%203%2C692%20people%20have,the%20Delta%20and%20Beta%20variants.l
     print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
 
   read_vaccine_yml(e, e.get_date_string())
