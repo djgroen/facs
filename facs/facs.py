@@ -408,6 +408,9 @@ class House:
           else:
             print("ERROR: location found with 0 sqm area.")
             print("name: {}, x: {}, y: {}, position in array: {}, type: {}".format(element.name, element.x, element.y, k, l))
+            print("These errors are commonly caused by corruptions in the <building>.csv file.")
+            print("To detect these, you can use the following command:")
+            print("cat <buildings file name>.csv | grep -v house | grep \",0$\"")
             sys.exit()
         n.append(e.locations[l][nearest_loc_index])
         ni.append(nearest_loc_index)
