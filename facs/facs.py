@@ -461,12 +461,12 @@ class Location:
     self.closed_links = [] #paths connecting to other locations that are closed.
     self.type = loc_type # supermarket, park, hospital, shopping, school, office, leisure? (home is a separate class, to conserve memory)
     self.sqm = sqm # size in square meters.
+    self.loc_inf_minutes_id = -1 #id of minutes tracking in global array.
 
     if loc_type == "park":
       self.sqm *= 10 # https://www.medrxiv.org/content/10.1101/2020.02.28.20029272v2 (I took a factor of 10 instead of 19 due to the large error bars)
 
     self.visits = []
-    self.inf_visit_minutes = 0 # aggregate number of visit minutes by infected people.
     #print(loc_type, len(lids), lids[loc_type], len(avg_visit_times))
     self.avg_visit_time = avg_visit_times[lids[loc_type]] # using averages for all visits for now. Can replace with a distribution later.
     #print(self.avg_visit_time)
@@ -482,7 +482,7 @@ class Location:
     self.visits = []
     self.visit_minutes = 0 # total number of minutes of all visits aggregated.
 
-  def register_visit(self, e, person, need, deterministic):
+  def register_visit(self, e,  person, need, deterministic):
     visit_time = self.avg_visit_time
     if person.status == "dead":
       return
@@ -490,7 +490,7 @@ class Location:
       visit_time *= e.self_isolation_multiplier # implementing case isolation (CI)
       if self.type == "hospital":
         if person.hospitalised:
-          self.inf_visit_minutes += need/7 * e.hospital_protection_factor
+          e.loc_inf_minutes[self.loc_inf_minutes_id] += need/7 * e.hospital_protection_factor
           return
 
     elif person.household.is_infected(): # person is in household quarantine, but not subject to CI.
@@ -510,17 +510,17 @@ class Location:
         self.visit_probability_counter -= 1.0
         self.visits.append([person, visit_time])
         if person.status == "infectious":
-          self.inf_visit_minutes += visit_time
+          e.loc_inf_minutes[self.loc_inf_minutes_id] += visit_time
 
     elif get_rnd() < visit_probability:
       self.visits.append([person, visit_time])
       if person.status == "infectious":
-        self.inf_visit_minutes += visit_time
+        e.loc_inf_minutes[self.loc_inf_minutes_id] += visit_time
 
   def evolve(self, e, deterministic=False):
     minutes_opened = 12*60
 
-    base_rate = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (1.0 / minutes_opened) * (self.inf_visit_minutes / self.sqm)
+    base_rate = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (1.0 / minutes_opened) * (e.loc_inf_minutes[self.loc_inf_minutes_id] / self.sqm)
     # For Covid-19 this should be 0.07 (infection rate) for 1 infectious person, and 1 susceptible person within 2m for a full day.
     # I assume they can do this in a 4m^2 area.
     # So 0.07 = x * (24*60/24*60) * (24*60/4) -> 0.07 = x * 360 -> x = 0.07/360 = 0.0002
@@ -555,7 +555,7 @@ def check_vac_eligibility(a):
 
 
 class Ecosystem:
-  def __init__(self, duration, needsfile="covid_data/needs.csv"):
+  def __init__(self, duration, needsfile="covid_data/needs.csv", mode="parallel"):
     self.locations = {}
     self.houses = []
     self.house_names = []
@@ -599,6 +599,34 @@ class Ecosystem:
     #Make header for infections file
     out_inf = open("covid_out_infections.csv",'w')
     print("#time,x,y,location_type", file=out_inf)
+
+
+    if mode == "parallel":
+      from mpi4py import MPI
+
+      self.comm = MPI.COMM_WORLD
+      self.rank = self.comm.Get_rank()
+      self.size = self.comm.Get_size()
+
+      print('Hello from process {} out of {}'.format(self.rank, self.size))
+
+
+  def init_loc_inf_minutes(self):
+    print('Hello from process {} out of {}'.format(self.rank, self.size))
+    number_of_non_house_locations = 0
+    offset = 0
+    self.loc_offsets = {}
+    for lt in self.locations:
+      if lt != "house":
+        for i in range(0, len(self.locations[lt])):
+          self.locations[lt][i].loc_inf_minutes_id = offset + i
+
+        print(lt, len(self.locations[lt]))
+        number_of_non_house_locations += len(self.locations[lt])
+        self.loc_offsets[lt] = offset
+        offset += len(self.locations[lt])
+    self.loc_inf_minutes = np.zeros(number_of_non_house_locations)
+    print("# of non-house locations: ", number_of_non_house_locations)
 
 
   def get_date_string(self):
