@@ -10,6 +10,7 @@ import os
 #import fastrand
 from datetime import datetime, timedelta
 
+
 # TODO: store all this in a YaML file
 lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,"shopping":6} # location ids and labels
 lnames = list(lids.keys())
@@ -33,6 +34,38 @@ def get_rndint(high):
     #return random.randrange(0, high)
     #return fastrand.pcg32bounded(high)
     return np.random.randint(high)
+
+
+class MPIManager:
+
+    def __init__(self):
+        if not MPI.Is_initialized():
+            print("Manual MPI_Init performed.")
+            MPI.Init()
+        self.comm = MPI.COMM_WORLD
+        self.rank = self.comm.Get_rank()
+        self.size = self.comm.Get_size()
+
+    def CalcCommWorldTotalSingle(self, i):
+
+        total = np.array([-1])
+        # If you want this number on rank 0, just use Reduce.
+        self.comm.Allreduce(np.array([i]), total, op=MPI.SUM)
+        return total[0]
+
+    def CalcCommWorldTotal(self, np_array):
+        assert np_array.size > 0
+
+        total = np.zeros(np_array.size, dtype='i')
+
+        #print(self.rank, type(total), type(np_array), total, np_array, np_array.size)
+        # If you want this number on rank 0, just use Reduce.
+        self.comm.Allreduce([np_array, MPI.INT], [total, MPI.INT], op=MPI.SUM)
+
+        return total
+
+
+
 
 class Needs():
   def __init__(self, csvfile):
@@ -601,12 +634,13 @@ class Ecosystem:
     print("#time,x,y,location_type", file=out_inf)
 
 
+    self.size = 1 # number of processes
+    self.rank = 0 # rank of current process
     if mode == "parallel":
       from mpi4py import MPI
-
-      self.comm = MPI.COMM_WORLD
-      self.rank = self.comm.Get_rank()
-      self.size = self.comm.Get_size()
+      self.mpi = MPIManager()
+      self.rank = self.mpi.comm.Get_rank() # this is stored outside of the MPI manager, to have one code for seq and parallel.
+      self.size = self.comm.Get_size()     # this is stored outside of the MPI manager, to have one code for seq and parallel.
 
       print('Hello from process {} out of {}'.format(self.rank, self.size))
 
@@ -670,6 +704,7 @@ class Ecosystem:
     print("isolation rate multipliers set to:")
     print(self.self_isolation_multiplier)
 
+
   def evolve_public_transport(self):
     num_agents = 0
 
@@ -677,20 +712,26 @@ class Ecosystem:
     if self.enforce_masks_on_transport:
       base_rate *= 0.44 # 56% reduction when masks are widely used: https://www.medrxiv.org/content/10.1101/2020.04.17.20069567v4.full.pdf
 
-    for k,e in enumerate(self.houses):
-      num_agents += e.num_agents
+    for k,elem in enumerate(self.houses):
+      num_agents += elem.num_agents
 
-    for k,e in enumerate(self.houses):
-      for hh in e.households:
-        for a in hh.agents:
-          infection_probability = base_rate * ((self.status["infectious"] * 20 * self.self_isolation_multiplier) / num_agents * 1)
-          # assume average of 40-50 minutes travel per day per travelling person (5 million people travel, so I reduced it to 20 minutes per person), transport open of 900 minutes/day (15h), self_isolation further reduces use of transport, and each agent has 1 m^2 of space in public transport.
-          # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
-          # 1. if half the people use a service that has halved intervals, then the number of infection halves.
-          # 2. if half the people use a service that has normal intervals, then the number of infections reduces by 75%.
-          # infection_probability = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (v[1] / minutes_opened) * (self.inf_visit_minutes / self.sqm)
-          if get_rnd() < infection_probability:
-            a.infect(self.time, location_type="traffic")
+    if self.mode == "parallel":
+      # Sum up num_agents values across processes.
+      num_agents = self.CalcCommWorldTotalSingle(num_agents)
+
+    for i in range(0, len(self.houses)):
+      h = self.houses[i]
+      if i % self.size == self.rank: # parallelisation across houses.
+        for hh in h.households:
+          for a in hh.agents:
+            infection_probability = base_rate * ((self.status["infectious"] * 20 * self.self_isolation_multiplier) / num_agents * 1)
+            # assume average of 40-50 minutes travel per day per travelling person (5 million people travel, so I reduced it to 20 minutes per person), transport open of 900 minutes/day (15h), self_isolation further reduces use of transport, and each agent has 1 m^2 of space in public transport.
+            # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
+            # 1. if half the people use a service that has halved intervals, then the number of infection halves.
+            # 2. if half the people use a service that has normal intervals, then the number of infections reduces by 75%.
+            # infection_probability = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (v[1] / minutes_opened) * (self.inf_visit_minutes / self.sqm)
+            if get_rnd() < infection_probability:
+              a.infect(self.time, location_type="traffic")
 
 
   def load_nearest_from_file(self, fname):
@@ -804,27 +845,34 @@ class Ecosystem:
 
 
     # collect visits for the current day
-    for h in self.houses:
-      for hh in h.households:
-        for a in hh.agents:
-          a.plan_visits(self, reduce_stochasticity)
-          a.progress_condition(self, self.time, self.disease)
+    for i in range(0, len(self.houses)):
+      h = self.houses[i]
+      if i % self.size == self.rank: # parallelisation across houses.
+        for hh in h.households:
+          for a in hh.agents:
+            a.plan_visits(self, reduce_stochasticity)
+            a.progress_condition(self, self.time, self.disease)
 
-          if a.age > self.vaccinations_age_limit and self.vaccinations_available - self.vaccinations_today > 0:
-            if check_vac_eligibility(a) == True:
-              a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
-              self.vaccinations_today += 1
+            
+            if a.age > self.vaccinations_age_limit and self.vaccinations_available - self.vaccinations_today > 0:
+              if check_vac_eligibility(a) == True:
+                a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
+                self.vaccinations_today += 1
 
 
     if self.vaccinations_available - self.vaccinations_today > 0:
-      for h in self.houses:
-        for hh in h.households:
-          for a in hh.agents:
-            #print("VAC:",self.vaccinations_available, self.vaccinations_today, self.vac_no_symptoms, self.vac_no_transmission, file=sys.stderr)
-            if self.vaccinations_available - self.vaccinations_today > 0:
-              if a.age > self.vaccinations_legal_age_limit and check_vac_eligibility(a) == True:
-                a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
-                self.vaccinations_today += 1
+      for i in range(0, len(self.houses)):
+        h = self.houses[i]
+        if i % self.size == self.rank: # parallelisation across houses.
+          for hh in h.households:
+            for a in hh.agents:
+              #print("VAC:",self.vaccinations_available, self.vaccinations_today, self.vac_no_symptoms, self.vac_no_transmission, file=sys.stderr)
+              if self.vaccinations_available - self.vaccinations_today > 0:
+                if a.age > self.vaccinations_legal_age_limit and check_vac_eligibility(a) == True:
+                  a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
+                  self.vaccinations_today += 1
+
+    aggregate_loc_inf_minutes()
 
     self.evolve_public_transport()
 
