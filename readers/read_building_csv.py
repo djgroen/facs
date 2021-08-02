@@ -106,6 +106,8 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
       office_sqm_red -= office_size
 
 
+  e.mpi.bcast_houses(e)
+
   print("Read in {} houses and {} other locations.".format(num_houses, num_locs))
   print("Office sqm = {}".format(office_sqm))
   print("Type distribution:")

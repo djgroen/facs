@@ -9,6 +9,10 @@ import pandas as pd
 import os
 #import fastrand
 from datetime import datetime, timedelta
+try:
+    from mpi4py import MPI
+except ImportError:
+    print("MPI4Py module is not loaded, mode=parallel will not work.")
 
 
 # TODO: store all this in a YaML file
@@ -53,19 +57,39 @@ class MPIManager:
         self.comm.Allreduce(np.array([i]), total, op=MPI.SUM)
         return total[0]
 
-    def CalcCommWorldTotal(self, np_array):
+    def CalcCommWorldTotalFloat(self, np_array):
         assert np_array.size > 0
 
-        total = np.zeros(np_array.size, dtype='i')
+        total = np.zeros(np_array.size, dtype='f')
 
         #print(self.rank, type(total), type(np_array), total, np_array, np_array.size)
         # If you want this number on rank 0, just use Reduce.
-        self.comm.Allreduce([np_array, MPI.INT], [total, MPI.INT], op=MPI.SUM)
+        self.comm.Allreduce([np_array, MPI.DOUBLE], [total, MPI.DOUBLE], op=MPI.SUM)
 
         return total
 
+    def gather_houses(self, e, house_array):
+        #self.comm.allgatherv([self.houses, self.house_slice_sizes, self.house_slice_offsets, type(House)])
+        #print(house_array)
+        #sys.exit()
+        a = self.comm.allgather(house_array)
 
+        flat_list = []
+        for sublist in a:
+          if isinstance(sublist, list):
+            for item in sublist:
+              flat_list.append(item)
+          else:
+            flat_list.append(sublist)
 
+        print(flat_list, "HOUSES", e.rank)
+        sys.exit()
+        e.houses = flat_list
+
+    
+    def bcast_houses(self, e):
+        a = self.comm.bcast(e.houses, root=0)
+        e.houses = a
 
 class Needs():
   def __init__(self, csvfile):
@@ -589,6 +613,7 @@ def check_vac_eligibility(a):
 
 class Ecosystem:
   def __init__(self, duration, needsfile="covid_data/needs.csv", mode="parallel"):
+    self.mode = mode # "serial" or "parallel"
     self.locations = {}
     self.houses = []
     self.house_names = []
@@ -636,11 +661,10 @@ class Ecosystem:
 
     self.size = 1 # number of processes
     self.rank = 0 # rank of current process
-    if mode == "parallel":
-      from mpi4py import MPI
+    if self.mode == "parallel":
       self.mpi = MPIManager()
       self.rank = self.mpi.comm.Get_rank() # this is stored outside of the MPI manager, to have one code for seq and parallel.
-      self.size = self.comm.Get_size()     # this is stored outside of the MPI manager, to have one code for seq and parallel.
+      self.size = self.mpi.comm.Get_size()     # this is stored outside of the MPI manager, to have one code for seq and parallel.
 
       print('Hello from process {} out of {}'.format(self.rank, self.size))
 
@@ -659,7 +683,7 @@ class Ecosystem:
         number_of_non_house_locations += len(self.locations[lt])
         self.loc_offsets[lt] = offset
         offset += len(self.locations[lt])
-    self.loc_inf_minutes = np.zeros(number_of_non_house_locations)
+    self.loc_inf_minutes = np.zeros(number_of_non_house_locations, dtype='f')
     print("# of non-house locations: ", number_of_non_house_locations)
 
 
@@ -717,7 +741,7 @@ class Ecosystem:
 
     if self.mode == "parallel":
       # Sum up num_agents values across processes.
-      num_agents = self.CalcCommWorldTotalSingle(num_agents)
+      num_agents = self.mpi.CalcCommWorldTotalSingle(num_agents)
 
     for i in range(0, len(self.houses)):
       h = self.houses[i]
@@ -796,6 +820,18 @@ class Ecosystem:
     if dump_and_exit == True:
       sys.exit()
 
+    if self.mode == "parallel":
+      # Assign houses to ranks for parallelisation.
+
+      # count: the size of each sub-task
+      ave, res = divmod(len(self.houses), self.size)
+      counts = [ave + 1 if p < res else ave for p in range(self.size)]
+      self.house_slice_sizes = np.array(counts)
+
+      # offset: the starting index of each sub-task
+      offsets = [sum(counts[:p]) for p in range(self.size)]
+      self.house_slice_offsets = np.array(offsets)
+
   def add_infections(self, num, day, severity="exposed"):
     """
     Randomly add an infection.
@@ -828,6 +864,24 @@ class Ecosystem:
     #  day = -int(self.disease.recovery_period)
       
     selected_house.add_infection_by_age(day, age)
+
+  def _aggregate_loc_inf_minutes(self):
+    if self.mode == "parallel":
+      self.loc_inf_minutes = self.mpi.CalcCommWorldTotalFloat(self.loc_inf_minutes)
+
+  def _get_house_rank(i):
+    rank = -1
+    while i >= self.house_slice_offsets[i]:
+      rank += 1
+    return rank
+  
+
+  def _sync_infections(self):
+    if self.mode == "parallel":
+      #print(self.house_slice_sizes, self.house_slice_offsets)
+      self.mpi.gather_houses(self, self.houses[self.house_slice_offsets[self.rank]:self.house_slice_offsets[self.rank] + self.house_slice_sizes[self.rank]])
+
+    
 
 
   def evolve(self, reduce_stochasticity=False):
@@ -872,7 +926,7 @@ class Ecosystem:
                   a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
                   self.vaccinations_today += 1
 
-    aggregate_loc_inf_minutes()
+    self._aggregate_loc_inf_minutes()
 
     self.evolve_public_transport()
 
@@ -885,9 +939,13 @@ class Ecosystem:
         l.evolve(self, reduce_stochasticity)
 
     # process intra-household infection spread.
-    for h in self.houses:
-      h.evolve(self, self.time, self.disease)
+    for i in range(0, len(self.houses)):
+      h = self.houses[i]
+      if i % self.size == self.rank: # parallelisation across houses.
+        h.evolve(self, self.time, self.disease)
     
+    self._sync_infections()
+
     self.time += 1
     self.date = self.date + timedelta(days=1)
 
@@ -1085,6 +1143,7 @@ class Ecosystem:
   def print_status(self, outfile, silent=False):    
     status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     for k,e in enumerate(self.houses):
+      print(self.houses)
       for hh in e.households:
         for a in hh.agents:
           status[a.status] += 1
