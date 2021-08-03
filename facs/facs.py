@@ -76,20 +76,21 @@ class MPIManager:
 
         flat_list = []
         for sublist in a:
-          if isinstance(sublist, list):
-            for item in sublist:
-              flat_list.append(item)
-          else:
-            flat_list.append(sublist)
+          #if isinstance(sublist, list):
+          for item in sublist:
+            flat_list.append(item)
+          #else:
+          #  flat_list.append(sublist)
 
-        print(flat_list, "HOUSES", e.rank)
-        sys.exit()
+        #print(flat_list, "HOUSES", e.rank)
+        #sys.exit()
         e.houses = flat_list
 
     
     def bcast_houses(self, e):
         a = self.comm.bcast(e.houses, root=0)
         e.houses = a
+        e.num_agents = self.comm.bcast(e.num_agents, root=0)
 
 class Needs():
   def __init__(self, csvfile):
@@ -817,8 +818,13 @@ class Ecosystem:
         print(count, "houses scanned.", file=sys.stderr)
     print(count, "houses scanned.", file=sys.stderr)
 
+ 
+    print(dump_and_exit)
+  
+
     if dump_and_exit == True:
       sys.exit()
+
 
     if self.mode == "parallel":
       # Assign houses to ranks for parallelisation.
@@ -832,6 +838,7 @@ class Ecosystem:
       offsets = [sum(counts[:p]) for p in range(self.size)]
       self.house_slice_offsets = np.array(offsets)
 
+  
   def add_infections(self, num, day, severity="exposed"):
     """
     Randomly add an infection.
@@ -877,9 +884,10 @@ class Ecosystem:
   
 
   def _sync_infections(self):
-    if self.mode == "parallel":
-      #print(self.house_slice_sizes, self.house_slice_offsets)
-      self.mpi.gather_houses(self, self.houses[self.house_slice_offsets[self.rank]:self.house_slice_offsets[self.rank] + self.house_slice_sizes[self.rank]])
+    pass
+    #if self.mode == "parallel":
+    #print(self.house_slice_sizes, self.house_slice_offsets)
+    #self.mpi.gather_houses(self, self.houses[self.house_slice_offsets[self.rank]:self.house_slice_offsets[self.rank] + self.house_slice_sizes[self.rank]])
 
     
 
@@ -1143,7 +1151,6 @@ class Ecosystem:
   def print_status(self, outfile, silent=False):    
     status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     for k,e in enumerate(self.houses):
-      print(self.houses)
       for hh in e.households:
         for a in hh.agents:
           status[a.status] += 1
