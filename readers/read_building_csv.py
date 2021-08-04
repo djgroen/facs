@@ -74,7 +74,8 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
 
       if location_type == "house":
         if house_csv_count % house_ratio == 0:
-          e.addHouse(num_houses, x , y, house_ratio)
+          if num_houses % e.size == e.rank:
+            e.addHouse(num_houses, x , y, house_ratio)
           num_houses += 1
         house_csv_count += 1
       else:
@@ -105,8 +106,6 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
       f.write("office,{},{},{}\n".format(x, y, office_size))
       office_sqm_red -= office_size
 
-
-  e.mpi.bcast_houses(e)
 
   print("Read in {} houses and {} other locations.".format(num_houses, num_locs))
   print("Office sqm = {}".format(office_sqm))

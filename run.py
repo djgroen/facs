@@ -141,6 +141,8 @@ if __name__ == "__main__":
     #                              start_date=args.start_date,
     #                              date_format="%m/%d/%Y")
 
+    e.print_status(outfile, silent=True) # silent print to initialise log data structures.
+
     starting_num_infections = 500
     if args.starting_infections:
       starting_num_infections = int(args.starting_infections)
