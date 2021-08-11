@@ -568,14 +568,88 @@ class Location:
   def evolve(self, e, deterministic=False):
     minutes_opened = 12*60
 
-    base_rate = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (1.0 / minutes_opened) * (e.loc_inf_minutes[self.loc_inf_minutes_id] / self.sqm)
+    #base_rate = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (1.0 / minutes_opened) * (e.loc_inf_minutes[self.loc_inf_minutes_id] / self.sqm)
     # For Covid-19 this should be 0.07 (infection rate) for 1 infectious person, and 1 susceptible person within 2m for a full day.
     # I assume they can do this in a 4m^2 area.
     # So 0.07 = x * (24*60/24*60) * (24*60/4) -> 0.07 = x * 360 -> x = 0.07/360 = 0.0002
     # "1.0" is a place holder for v[1] (visited minutes).
 
-    #if e.rank == 0:
-    #  print(base_rate, e.loc_inf_minutes[self.loc_inf_minutes_id], self.loc_inf_minutes_id)
+    """
+    (i)
+    Pinf =
+    Contact rate multiplier [dimensionless]
+    *
+    Infection rate [dimensionless] / airflow coefficient [dimensionless, 2.5 by default for indoors]
+    *
+    Duration of susceptible person visit [minutes] / 1 day [minutes]
+    *
+    (Average number of infectious person visiting today [#] * physical area of a single standing person [m^2]) /
+    (Area of space [m^2] * max number of persons that can fit within 4 m^2 [#]) 
+    * 
+    Average infectious person visit duration [minutes] / minutes_opened [minutes]
+   
+    Pinf is a dimensionless quantity (a probability) which must never exceed one.
+
+    (ii)
+    if we define Pinf = Duration of susceptible person visit [minutes] * base_rate, then
+    base_rate = 
+    Contact rate multiplier [dimensionless]
+    *
+    Infection rate [dimensionless] / airflow coefficient [dimensionless, 2.5 by default for indoors]
+    *
+    1.0 / 1 day [minutes]
+    *
+    (Average number of infectious person visiting today [#] * physical area of a single standing person [m^2]) /
+    (Area of space [m^2] * max number of persons that can fit within 4 m^2 [#]) 
+    * 
+    Average infectious person visit duration [minutes] / minutes_opened [minutes]
+
+    base_rate has a quantity of [minutes^-1].
+
+    (iii)
+    Furthermore, we have a merged quantity infected_minutes:
+    infected_minutes = Average number of infectious person visiting today [#] * Average infectious person visit duration [minutes]
+    And we define two constants:
+    1. physical area of a single standing person [m^2], which we set to 1 m^2.
+    2. max number of persons that can fit within 4 m^2 as a constant, which we set to 4. (one person per m^2).
+
+    So we rewrite base_rate at:
+    base_rate =
+    Contact rate multiplier [dimensionless]
+    *
+    Infection rate [dimensionless] / airflow coefficient [dimensionless, 2.5 by default for indoors]
+    *
+    1.0 / 1 day [minutes]
+    *
+    1 [m^2] /
+    (Area of space [m^2] * 4 [#])
+    *
+    Total infectious person minutes [minutes] / minutes_opened [minutes]
+
+    (iv)
+    Lastly, we simplify the equation for easier coding to:
+
+    base_rate =
+    ( Contact rate multiplier [dimensionless]
+    *
+    Infection rate [dimensionless] 
+    *
+    Total infectious person minutes [minutes] )
+    / 
+    ( airflow coefficient [dimensionless, 2.5 by default for indoors]
+    *
+    24*60 [minutes]
+    *
+    Area of space [m^2] * 4 [#]
+    *
+    minutes_opened [minutes] (
+
+    in code this then becomes:
+    """
+    base_rate =  (e.contact_rate_multiplier[self.type] * e.disease.infection_rate * e.loc_inf_minutes[self.loc_inf_minutes_id]) / (2.5 * 24*60 * 4 * minutes_opened)
+
+    if e.rank == 0:
+        print(base_rate, e.loc_inf_minutes[self.loc_inf_minutes_id], self.loc_inf_minutes_id)
 
     # Deterministic mode: only used for warmup.
     if deterministic:
