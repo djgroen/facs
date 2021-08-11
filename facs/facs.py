@@ -527,6 +527,7 @@ class Location:
   def clear_visits(self, e):
     self.visits = []
     self.visit_minutes = 0 # total number of minutes of all visits aggregated.
+    #print("Total inf minutes:", np.sum(e.loc_inf_minutes))
     e.loc_inf_minutes[self.loc_inf_minutes_id] = 0.0
 
   def register_visit(self, e,  person, need, deterministic):
