@@ -2,7 +2,9 @@ import numpy as np
 
 class Disease():
   def __init__(self, infection_rate, incubation_period, mild_recovery_period, recovery_period, mortality_period, period_to_hospitalisation):
-    self.infection_rate = infection_rate
+    self.infection_rate = min(1.0, infection_rate * 2.0) 
+    # infection rate is doubled because the default setting has 50% infectious persons, whereas the baseline we use for our calculations is
+    # 100% infectious persons. However, since it's a probability the value should never be higher than 1.0.
     self.incubation_period = incubation_period
     self.mild_recovery_period = mild_recovery_period
     self.recovery_period = recovery_period

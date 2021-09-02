@@ -238,7 +238,7 @@ class Person():
     self.status_change_time = time # necessary if vaccines give temporary immunity.
     if vac_duration > 0:
       if vac_duration > 100:
-        self.phase_duration = np.random.gamma(10, vac_duration/10.0) # shape parameter is changed with variable, shape parameter is kept fixed at 15 (assumption).
+        self.phase_duration = np.random.gamma(vac_duration/20.0, 20.0) # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
       else:
         self.phase_duration = np.poisson(vac_duration)
     if self.status == "susceptible":
@@ -297,42 +297,45 @@ class Person():
     age = int(min(self.age, len(disease.hospital)-1))
     return disease.mortality[age]
 
-  def infect(self, e, t, severity="exposed", location_type="house"):
+  def infect(self, e, severity="exposed", location_type="house"):
     # severity can be overridden to infectious when rigidly inserting cases.
     # but by default, it should be exposed.
     self.status = severity
-    self.status_change_time = t
+    self.status_change_time = e.time
     self.mild_version = True
     self.hospitalised = False
-    log_infection(t,self.location.x,self.location.y,location_type, e.rank)
+    self.phase_duration = max(1, np.random.poisson(e.disease.incubation_period))
+    log_infection(e.time,self.location.x,self.location.y,location_type, e.rank)
 
-  def recover(self, e, t, location):
+  def recover(self, e, location):
     if e.immunity_duration > 0:
-      self.phase_duration = np.random.gamma(e.immunity_duration/15, 15) # shape parameter is changed with variable, shape parameter is kept fixed at 15 (assumption).
+      self.phase_duration = np.random.gamma(e.immunity_duration/20.0, 20.0) # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
     self.status = "recovered"
-    self.status_change_time = t
-    log_recovery(t, self.location.x, self.location.y, location, e.rank)
+    self.status_change_time = e.time
+    log_recovery(e.time, self.location.x, self.location.y, location, e.rank)
 
   def progress_condition(self, e, t, disease):
     if self.status_change_time > t:
       return
-    if self.status == "exposed" and t-self.status_change_time >= int(self.phase_duration):
-      self.status = "infectious"
-      self.status_change_time = t
-      if get_rnd() < self.get_hospitalisation_chance(disease) and self.symptoms_suppressed==False: 
-        self.mild_version = False
-        #self.phase_duration = np.random.poisson(disease.period_to_hospitalisation - disease.incubation_period)
-        self.phase_duration = max(1, np.random.poisson(disease.period_to_hospitalisation) - self.phase_duration)
-      else:
-        self.mild_version = True
-        #self.phase_duration = np.random.poisson(disease.mild_recovery_period - disease.incubation_period)
-        self.phase_duration = max(1, np.random.poisson(disease.mild_recovery_period) - self.phase_duration)
+    if self.status == "exposed":
+      #print("exposed", t, self.status_change_time, self.phase_duration)
+      if t-self.status_change_time >= int(self.phase_duration):
+        self.status = "infectious"
+        self.status_change_time = t
+        if get_rnd() < self.get_hospitalisation_chance(disease) and self.symptoms_suppressed==False: 
+          self.mild_version = False
+          #self.phase_duration = np.random.poisson(disease.period_to_hospitalisation - disease.incubation_period)
+          self.phase_duration = max(1, np.random.poisson(disease.period_to_hospitalisation) - self.phase_duration)
+        else:
+          self.mild_version = True
+          #self.phase_duration = np.random.poisson(disease.mild_recovery_period - disease.incubation_period)
+          self.phase_duration = max(1, np.random.poisson(disease.mild_recovery_period) - self.phase_duration)
 
     elif self.status == "infectious":
       # mild version (may require hospital visits, but not ICU visits)
       if self.mild_version:
         if t-self.status_change_time >= self.phase_duration:
-          self.recover(e, t, "house")
+          self.recover(e, "house")
       # non-mild version (will involve ICU visit)
       else:
         if not self.hospitalised:
@@ -362,7 +365,7 @@ class Person():
               log_death(t,self.location.x,self.location.y,"hospital", e.rank)
             # hospital discharge
             else:
-              self.recover(e, t, "hospital")
+              self.recover(e, "hospital")
 
     elif e.immunity_duration > 0 and (self.status == "recovered" or self.status == "immune"):
       if t-self.status_change_time >= self.phase_duration:
@@ -396,16 +399,16 @@ class Household():
     return self.get_infectious_count() > 0
 
 
-  def evolve(self, e, time, disease):
+  def evolve(self, e, disease):
     ic = self.get_infectious_count()
     for i in range(0,self.size):
       if self.agents[i].status == "susceptible":
         if ic > 0:
-          infection_chance = e.contact_rate_multiplier["house"] * disease.infection_rate * home_interaction_fraction * ic
+          infection_chance = e.contact_rate_multiplier["house"] * disease.infection_rate * home_interaction_fraction * ic / e.airflow_indoors_small
           if needs.household_isolation_multiplier < 1.0:
             infection_chance *= 2.0 # interaction duration (and thereby infection chance) double when household isolation is incorporated (Imperial Report 9).
           if get_rnd() < infection_chance:
-            self.agents[i].infect(e, time)
+            self.agents[i].infect(e)
 
 def calc_dist(x1, y1, x2, y2):
     return (np.abs(x1-x2)**2 + np.abs(y1-y2)**2)**0.5
@@ -432,7 +435,7 @@ class House:
 
   def evolve(self, e, time, disease):
     for hh in self.households:
-      hh.evolve(e, time, disease)
+      hh.evolve(e, disease)
 
   def find_nearest_locations(self, e):
     """
@@ -474,14 +477,14 @@ class House:
     return ni
 
 
-  def add_infection(self, e, time, severity="exposed"): # used to preseed infections (could target using age later on)
+  def add_infection(self, e, severity="exposed"): # used to preseed infections (could target using age later on)
     infection_pending = True
     while infection_pending:
       hh = get_rndint(len(self.households))
       p = get_rndint(len(self.households[hh].agents))
       if self.households[hh].agents[p].status == "susceptible": 
         # because we do pre-seeding we need to ensure we add exactly 1 infection.
-        self.households[hh].agents[p].infect(e, time, severity)
+        self.households[hh].agents[p].infect(e, severity)
         infection_pending = False
 
   def has_age(self, age):
@@ -492,12 +495,12 @@ class House:
             return True
     return False
 
-  def add_infection_by_age(self, e, time, age):
+  def add_infection_by_age(self, e, age):
     for hh in self.households:
       for a in hh.agents:
         if a.age == age:
           if a.status == "susceptible":
-            a.infect(e, time, severity="exposed")
+            a.infect(e, severity="exposed")
 
 class Location:
   def __init__(self, name, loc_type="park", x=0.0, y=0.0, sqm=400):
@@ -568,18 +571,12 @@ class Location:
   def evolve(self, e, deterministic=False):
     minutes_opened = 12*60
 
-    #base_rate = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (1.0 / minutes_opened) * (e.loc_inf_minutes[self.loc_inf_minutes_id] / self.sqm)
-    # For Covid-19 this should be 0.07 (infection rate) for 1 infectious person, and 1 susceptible person within 2m for a full day.
-    # I assume they can do this in a 4m^2 area.
-    # So 0.07 = x * (24*60/24*60) * (24*60/4) -> 0.07 = x * 360 -> x = 0.07/360 = 0.0002
-    # "1.0" is a place holder for v[1] (visited minutes).
-
     """
     (i)
     Pinf =
     Contact rate multiplier [dimensionless]
     *
-    Infection rate [dimensionless] / airflow coefficient [dimensionless, 2.5 by default for indoors]
+    Infection rate [dimensionless] / airflow coefficient [dimensionless, 200 by default for indoors]
     *
     Duration of susceptible person visit [minutes] / 1 day [minutes]
     *
@@ -595,12 +592,12 @@ class Location:
     base_rate = 
     Contact rate multiplier [dimensionless]
     *
-    Infection rate [dimensionless] / airflow coefficient [dimensionless, 2.5 by default for indoors]
+    Infection rate [dimensionless] / airflow coefficient [dimensionless]
     *
     1.0 / 1 day [minutes]
     *
     (Average number of infectious person visiting today [#] * physical area of a single standing person [m^2]) /
-    (Area of space [m^2] * max number of persons that can fit within 4 m^2 [#]) 
+    (Area of space [m^2]) 
     * 
     Average infectious person visit duration [minutes] / minutes_opened [minutes]
 
@@ -611,18 +608,17 @@ class Location:
     infected_minutes = Average number of infectious person visiting today [#] * Average infectious person visit duration [minutes]
     And we define two constants:
     1. physical area of a single standing person [m^2], which we set to 1 m^2.
-    2. max number of persons that can fit within 4 m^2 as a constant, which we set to 4. (one person per m^2).
 
     So we rewrite base_rate at:
     base_rate =
     Contact rate multiplier [dimensionless]
     *
-    Infection rate [dimensionless] / airflow coefficient [dimensionless, 2.5 by default for indoors]
+    Infection rate [dimensionless] / airflow coefficient [dimensionless]
     *
     1.0 / 1 day [minutes]
     *
     1 [m^2] /
-    (Area of space [m^2] * 4 [#])
+    (Area of space [m^2])
     *
     Total infectious person minutes [minutes] / minutes_opened [minutes]
 
@@ -636,20 +632,26 @@ class Location:
     *
     Total infectious person minutes [minutes] )
     / 
-    ( airflow coefficient [dimensionless, 2.5 by default for indoors]
+    ( airflow coefficient [dimensionless]
     *
     24*60 [minutes]
     *
-    Area of space [m^2] * 4 [#]
+    Area of space [m^2] 
     *
     minutes_opened [minutes] (
 
     in code this then becomes:
     """
-    base_rate =  (e.contact_rate_multiplier[self.type] * e.disease.infection_rate * e.loc_inf_minutes[self.loc_inf_minutes_id]) / (2.5 * 24*60 * 4 * minutes_opened)
+    
+    #supermarket, park, hospital, shopping, school, office, leisure
+    airflow = e.airflow_indoors_large
+    if self.type == "park":
+      airflow = e.airflow_outdoors
 
-    if e.rank == 0:
-        print(base_rate, e.loc_inf_minutes[self.loc_inf_minutes_id], self.loc_inf_minutes_id)
+    base_rate =  (e.contact_rate_multiplier[self.type] * e.disease.infection_rate * e.loc_inf_minutes[self.loc_inf_minutes_id]) / (airflow * 24*60 * minutes_opened)
+
+    #if e.rank == 0:
+    #  print("RATES:", base_rate, e.loc_inf_minutes[self.loc_inf_minutes_id], self.loc_inf_minutes_id)
 
     # Deterministic mode: only used for warmup.
     if deterministic:
@@ -660,7 +662,7 @@ class Location:
           inf_counter += min(infection_probability, 1.0)
           if inf_counter > 1.0:
             inf_counter -= 1.0
-            v[0].infect(e, e.time, location_type=self.type)
+            v[0].infect(e, location_type=self.type)
 
     # Used everywhere else
     else:
@@ -670,7 +672,7 @@ class Location:
           if infection_probability > 0.0:
             #print("{} = {} * ({}/360.0) * ({}/{}) * ({}/{})".format(infection_probability, e.contact_rate_multiplier[self.type], e.disease.infection_rate, v[1], minutes_opened, e.loc_inf_minutes[self.loc_inf_minutes_id], self.sqm))
             if get_rnd() < infection_probability:
-              v[0].infect(e, e.time, location_type=self.type)
+              v[0].infect(e, location_type=self.type)
 
 def check_vac_eligibility(a):
   if a.status == "susceptible" and a.symptoms_suppressed==False and a.antivax==False:
@@ -715,7 +717,15 @@ class Ecosystem:
     self.status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     self.enforce_masks_on_transport = False
     self.loc_groups = {}
-    self.needsfile = needsfile 
+    self.needsfile = needsfile
+
+    self.airflow_indoors_small = 25
+    self.airflow_indoors_large = 100.0
+    self.airflow_outdoors = 500.0
+
+    self.external_travel_multiplier = 1.0 # Can be adjusted to introduce peaks in external travel, e.g. during holiday returns or major events (Euros).
+    self.external_infection_ratio = 0.5 # May be changed at runtime. Base assumption is that there are 300% extra external visitors, and that 1% of them have COVID. Only applies to transport for now.
+    # The external visitor ratio is inflated for now to also reflect external visitors in other settings (which could be implemented later).
 
     # Settings
     self.immunity_duration = -1 # value > 0 indicates non-permanent immunity.
@@ -798,25 +808,55 @@ class Ecosystem:
 
   def evolve_public_transport(self):
 
-    base_rate = self.traffic_multiplier * self.disease.infection_rate * (20 / 900)
-    if self.enforce_masks_on_transport:
-      base_rate *= 0.44 # 56% reduction when masks are widely used: https://www.medrxiv.org/content/10.1101/2020.04.17.20069567v4.full.pdf
+    """  
+    Pinf =
+    Contact rate multiplier [dimensionless] (Term 1)
+    *
+    Infection rate [dimensionless] / airflow coefficient [dimensionless] (Term 2)
+    *
+    Duration of susceptible person visit [minutes] / 1 day [minutes] (Term 3)
+    *
+    (Average number of infectious person visiting today [#] * physical area of a single standing person [m^2]) /
+    (Area of space [m^2]) (Term 4)
+    * 
+    Average infectious person visit duration [minutes] / minutes_opened [minutes] (Term 5)
+
+    """
+
+    if self.time < 0: # do not model transport during warmup phase!
+      return
 
     num_agents = self.global_stats[0] + self.global_stats[1] + self.global_stats[2] + self.global_stats[3] + self.global_stats[5] #leaving out [4] because dead people don't travel.
+    infected_external_passengers = num_agents * self.external_infection_ratio * self.external_travel_multiplier
+    
+    infection_probability = self.traffic_multiplier # we use travel uptake rate as contact rate multiplier (it implicity has case isolation multiplier in it)
+    if self.enforce_masks_on_transport:
+      infection_probability *= 0.44 # 56% reduction when masks are widely used: https://www.medrxiv.org/content/10.1101/2020.04.17.20069567v4.full.pdf
+    #print(infection_probability)
+    infection_probability *= self.disease.infection_rate # Term 2: Airflow coefficient set to 1, as setting mimics confined spaces from infection rate literature (prison, cruiseship).
+    #print(infection_probability)
+    infection_probability *= 30.0 / 1440.0 # Term 3: visit duration assumed to be 30 minutes per day on average / length of full day.
+    #print(infection_probability)
+    infection_probability *=  (self.global_stats[2] + infected_external_passengers) * 1.0 / num_agents # Term 4, space available is equal to number of agents.
+    #print(infection_probability)
+    infection_probability *= 30.0 / 900.0 # visit duration assumed to be 30 minutes per day / transport services assumed to be operational for 15 hours per day. 
 
+
+    # assume average of 40-50 minutes travel per day per travelling person (5 million people travel, so I reduced it to 30 minutes per person), transport open of 900 minutes/day (15h), self_isolation further reduces use of transport, and each agent has 1 m^2 of space in public transport.
+    # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
+    # 1. if half the people use a service that has halved intervals, then the number of infection halves.
+    # 2. if half the people use a service that has normal intervals, then the number of infections reduces by 75%.
+
+    num_inf = 0
     for i in range(0, len(self.houses)):
       h = self.houses[i]
       for hh in h.households:
         for a in hh.agents:
-          infection_probability = base_rate * ((self.global_stats[2] * 20 * self.self_isolation_multiplier) / num_agents * 1)
-          # global_stats[2] = infectious
-          # assume average of 40-50 minutes travel per day per travelling person (5 million people travel, so I reduced it to 20 minutes per person), transport open of 900 minutes/day (15h), self_isolation further reduces use of transport, and each agent has 1 m^2 of space in public transport.
-          # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
-          # 1. if half the people use a service that has halved intervals, then the number of infection halves.
-          # 2. if half the people use a service that has normal intervals, then the number of infections reduces by 75%.
-          # infection_probability = e.contact_rate_multiplier[self.type] * (e.disease.infection_rate/360.0) * (v[1] / minutes_opened) * (self.inf_visit_minutes / self.sqm)
           if get_rnd() < infection_probability:
-            a.infect(self, self.time, location_type="traffic")
+            a.infect(self, location_type="traffic")
+            num_inf += 1
+    
+    print("Transport: t {} p_inf {}, inf_ext_pas {}, # of infections {}.".format(self.time, infection_probability, infected_external_passengers, num_inf))
 
 
   def load_nearest_from_file(self, fname):
@@ -899,16 +939,16 @@ class Ecosystem:
       self.house_slice_offsets = np.array(offsets)
 
   
-  def add_infections(self, num, day, severity="exposed"):
+  def add_infections(self, num, severity="exposed"):
     """
     Randomly add an infection.
     """
     for i in range(0, num):
       house = get_rndint(len(self.houses))
-      self.houses[house].add_infection(self, day, severity)
-    print("add_infections:",num,day)
+      self.houses[house].add_infection(self, severity)
+    print("add_infections:",num,self.time)
 
-  def add_infection(self, x, y, age, day):
+  def add_infection(self, x, y, age):
     """
     Add an infection to the nearest person of that age.
     """
@@ -917,7 +957,7 @@ class Ecosystem:
 
     selected_house = None
     min_dist = 99999
-    print("add_infection:",x,y,age,len(self.houses),day)
+    print("add_infection:",x,y,age,len(self.houses))
     for h in self.houses:
       dist_h = calc_dist(h.x, h.y, x, y)
       if dist_h < min_dist:
@@ -930,7 +970,7 @@ class Ecosystem:
     #if day < -self.disease.recovery_period:
     #  day = -int(self.disease.recovery_period)
       
-    selected_house.add_infection_by_age(self, day, age)
+    selected_house.add_infection_by_age(self, age)
 
   def _aggregate_loc_inf_minutes(self):
     if self.mode == "parallel":
@@ -1203,9 +1243,10 @@ class Ecosystem:
 
   def print_status(self, outfile, silent=False):
     local_stats = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0,"num_infections_today":num_infections_today,"num_hospitalisations_today":num_hospitalisations_today,"num_hospitalised":self.num_hospitalised}
-    for k,e in enumerate(self.houses):
-      for hh in e.households:
+    for k,elem in enumerate(self.houses):
+      for hh in elem.households:
         for a in hh.agents:
+          #print(hh,a, a.status)
           local_stats[a.status] += 1
     self.mpi.gather_stats(self, list(local_stats.values()))
     if not silent:

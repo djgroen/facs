@@ -149,9 +149,6 @@ if __name__ == "__main__":
     if location == "test":
       starting_num_infections = 10
 
-    for i in range(0,10):
-      e.add_infections(int(starting_num_infections/10), i-19)
-
     print("THIS SIMULATIONS HAS {} AGENTS.".format(e.num_agents))
 
     e.time = -20
@@ -159,6 +156,9 @@ if __name__ == "__main__":
     e.date = e.date - timedelta(days=20)
     e.print_header(outfile)
     for i in range(0, 20):
+        e.add_infections(int(starting_num_infections/20))
+
+        measures.uk_lockdown_forecast(e, e.time, transition_mode)
         e.evolve(reduce_stochasticity=False)
         print(e.time)
         if args.dbg:
@@ -172,32 +172,6 @@ if __name__ == "__main__":
 
     for t in range(0, end_time):
 
-        if t == transition_day:
-            if transition_scenario == "extend-lockdown":
-                pass
-            elif transition_scenario == "open-all":
-                e.remove_all_measures()
-            elif transition_scenario == "open-schools":
-                e.remove_closure("school")
-            elif transition_scenario == "open-shopping":
-                e.undo_partial_closure("shopping", 0.8)
-            elif transition_scenario == "open-leisure":
-                e.remove_closure("leisure")
-            elif transition_scenario == "work50":
-                measures.work50(e)
-            elif transition_scenario == "work75":
-                measures.work75(e)
-            elif transition_scenario == "work100":
-                measures.work100(e)
-
-        if t>77 and transition_scenario == "dynamic-lockdown" and t%7 == 0:
-            print("Dynamic lockdown test: {}/100".format(e.num_hospitalised), file=sys.stderr)
-            measures.enact_dynamic_lockdown(e, measures.work50, e.num_hospitalised, 100)
-        if t>77 and transition_scenario == "periodic-lockdown" and t%61 == 0:
-            print("Periodic lockdown with 61 day interval.")
-            measures.enact_periodic_lockdown(e, measures.work50)
-
-        # Recording of existing measures
         if transition_scenario in ["uk-forecast"]:
           measures.uk_lockdown_forecast(e, t, transition_mode)
         elif transition_scenario not in ["no-measures"]:
@@ -210,6 +184,6 @@ if __name__ == "__main__":
         e.print_status(outfile)
 
     # calculate cumulative sums.
-    e.add_cum_column(outfile, ["dead", "num hospitalisations today", "infectious", "num infections today"])
+    e.add_cum_column(outfile, ["num hospitalisations today", "num infections today"])
 
     print("Simulation complete.", file=sys.stderr)

@@ -67,6 +67,9 @@ def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
       if(dm["household_isolation"] == False):
         e.reset_household_isolation()
 
+    if("external_multiplier" in dm):
+      e.external_travel_multiplier = float(dm["external_multiplier"])
+
     if("partial_closure" in dm):
       for pc_key in dm["partial_closure"]:
         e.add_partial_closure(pc_key, dm["partial_closure"][pc_key])
@@ -100,12 +103,11 @@ def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
 
 
 def update_hospital_protection_factor_uk(e, t):
-  if t == 10:
-    e.hospital_protection_factor = 0.75
+  e.hospital_protection_factor = 0.5
   if t == 20:
-    e.hospital_protection_factor = 0.5
-  if t == 30: # start of testing ramp up in early april.
     e.hospital_protection_factor = 0.4
+  if t == 30: # start of testing ramp up in early april.
+    e.hospital_protection_factor = 0.35
   if t == 40:
     e.hospital_protection_factor = 0.3
   if t == 50:
@@ -123,8 +125,8 @@ def update_hospital_protection_factor_uk(e, t):
 def uk_lockdown_existing(e, t, track_trace_limit=0.5):
   update_hospital_protection_factor_uk(e,t)
 
-  e.vac_duration = 365
-  e.immunity_duration = 365
+  e.vac_duration = 273
+  e.immunity_duration = 273
 
   read_lockdown_yml(e, e.get_date_string())
 
