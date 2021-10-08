@@ -1,10 +1,10 @@
-import facs.facs as facs
-import facs.measures as measures
-from readers import read_age_csv
+from facs.base import facs as facs
+from facs.base import measures as measures
+from facs.readers import read_age_csv
 import numpy as np
-from readers import read_building_csv
-from readers import read_cases_csv
-from readers import read_disease_yml
+from facs.readers import read_building_csv
+from facs.readers import read_cases_csv
+from facs.readers import read_disease_yml
 import sys
 
 from os import makedirs, path
