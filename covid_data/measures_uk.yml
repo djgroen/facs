@@ -27,6 +27,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
   partial_closure: 
     school: 1.0
     shopping: 0.7 #indicates full school closure, but partial_closure is used to allow keyworkers to be added.
+  closure: ["leisure"]
   social_distance: 0.75
   mask_uptake: 0.05
   mask_uptake_shopping: 0.1
@@ -60,7 +61,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
   mask_uptake: 0.2
   mask_uptake_shopping: 0.3
   work_from_home: 0.65
-  track_trace_efficacy: 0.8 #Track and trace is assumed to catch 80% of the cases.
+  track_trace_efficacy: 0.5 #Track and trace is assumed to catch 50% of the cases.
   traffic_multiplier: 0.25
 15/6/2020:
   partial_closure: 
@@ -81,6 +82,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
     leisure: 0.8 
   social_distance: 0.7
   work_from_home: 0.5
+  track_trace_efficacy: 0.4
   traffic_multiplier: 0.3
 15/7/2020:
   partial_closure: 
@@ -91,6 +93,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
   traffic_multiplier: 0.4
   mask_uptake: 0.2
   mask_uptake_shopping: 0.8
+  external_multiplier: 2.0 # some travel possible again.
 22/8/2020:
   partial_closure: 
     school: 0.8
@@ -100,7 +103,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
   traffic_multiplier: 0.4
   mask_uptake: 0.2
   mask_uptake_shopping: 0.8
-  external_multiplier: 3.0 # returns from holidays.
+  external_multiplier: 4.0 # returns from holidays.
 1/9/2020:
   social_distance: 0.6
   work_from_home: 0.3
@@ -113,7 +116,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
   traffic_multiplier: 0.45
   mask_uptake: 0.2
   mask_uptake_shopping: 0.8
-  external_multiplier: 1.0 # school year starts again.
+  external_multiplier: 2.0 # school year starts again.
 22/9/2020:
   social_distance: 0.6
   work_from_home: 0.5

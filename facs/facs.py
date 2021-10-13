@@ -89,8 +89,7 @@ class MPIManager:
 class Needs():
   def __init__(self, csvfile):
     self.add_needs(csvfile)
-    self.household_isolation_multiplier = 1.0
-    print("Needs created. Household isolation multiplier set to {}.".format(self.household_isolation_multiplier))
+    print("Needs created.")
 
   def i(self, name):
     for k,e in enumerate(self.labels):
@@ -405,7 +404,7 @@ class Household():
       if self.agents[i].status == "susceptible":
         if ic > 0:
           infection_chance = e.contact_rate_multiplier["house"] * disease.infection_rate * home_interaction_fraction * ic / e.airflow_indoors_small
-          if needs.household_isolation_multiplier < 1.0:
+          if e.household_isolation_multiplier < 1.0:
             infection_chance *= 2.0 # interaction duration (and thereby infection chance) double when household isolation is incorporated (Imperial Report 9).
           if get_rnd() < infection_chance:
             self.agents[i].infect(e)
@@ -545,7 +544,7 @@ class Location:
           return
 
     elif person.household.is_infected(): # person is in household quarantine, but not subject to CI.
-      visit_time *= needs.household_isolation_multiplier
+      visit_time *= e.household_isolation_multiplier
 
     visit_probability = 0.0
     if visit_time > 0.0:
@@ -695,6 +694,7 @@ class Ecosystem:
     self.contact_rate_multiplier = {}
     self.initialise_social_distance() # default: no social distancing.
     self.self_isolation_multiplier = 1.0
+    self.household_isolation_multiplier = 1.0
     self.track_trace_multiplier = 1.0
     self.ci_multiplier = 0.625 # default multiplier for case isolation mode 
     self.num_agents = 0
@@ -719,9 +719,9 @@ class Ecosystem:
     self.loc_groups = {}
     self.needsfile = needsfile
 
-    self.airflow_indoors_small = 25
-    self.airflow_indoors_large = 100.0
-    self.airflow_outdoors = 500.0
+    self.airflow_indoors_small = 20
+    self.airflow_indoors_large = 80.0
+    self.airflow_outdoors = 400.0
 
     self.external_travel_multiplier = 1.0 # Can be adjusted to introduce peaks in external travel, e.g. during holiday returns or major events (Euros).
     self.external_infection_ratio = 0.5 # May be changed at runtime. Base assumption is that there are 300% extra external visitors, and that 1% of them have COVID. Only applies to transport for now.
@@ -1184,7 +1184,7 @@ class Ecosystem:
 
 
   def reset_household_isolation(self):
-    needs.household_isolation_multiplier=1.0
+    self.household_isolation_multiplier=1.0
     self.print_isolation_rate("Household isolation with multiplier {}".format(self.self_isolation_multiplier))
 
 
@@ -1196,7 +1196,7 @@ class Ecosystem:
     # old assumption: a reduction in contacts by 75%, and 
     # 80% of household complying. (Imp Report 9)
     # 25%*80% + 100%*20% = 40% = 0.4
-    needs.household_isolation_multiplier=multiplier
+    self.household_isolation_multiplier=multiplier
     self.print_isolation_rate("Household isolation with {} multiplier".format(multiplier))
 
 
