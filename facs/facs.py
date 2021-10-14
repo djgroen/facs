@@ -20,6 +20,7 @@ lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,
 lnames = list(lids.keys())
 avg_visit_times = [90,60,60,360,360,60,60] #average time spent per visit
 home_interaction_fraction = 0.2 # people are within 2m at home of a specific other person 20% of the time.
+log_prefix = "."
 
 
 # Added commented code to shift from random.random if needed
@@ -43,12 +44,18 @@ def get_rndint(high):
 class MPIManager:
 
     def __init__(self):
+        global log_prefix
         if not MPI.Is_initialized():
             print("Manual MPI_Init performed.")
             MPI.Init()
         self.comm = MPI.COMM_WORLD
         self.rank = self.comm.Get_rank()
         self.size = self.comm.Get_size()
+
+        #Make header for infections file
+        out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, self.rank))
+        print("#time,x,y,location_type", file=out_inf, flush=True)
+
 
     def CalcCommWorldTotalSingle(self, i):
 
@@ -137,7 +144,6 @@ num_infections_today = 0
 num_hospitalisations_today = 0
 num_deaths_today = 0
 num_recoveries_today = 0
-log_prefix = "."
 
 
 class OUTPUT_FILES():
@@ -732,10 +738,6 @@ class Ecosystem:
     self.immunity_duration = -1 # value > 0 indicates non-permanent immunity.
     self.vac_duration = -1  # value > 0 indicates non-permanent vaccine efficacy.
 
-    #Make header for infections file
-    out_inf = open("covid_out_infections.csv",'w')
-    print("#time,x,y,location_type", file=out_inf)
-
 
     self.size = 1 # number of processes
     self.rank = 0 # rank of current process
@@ -773,9 +775,9 @@ class Ecosystem:
 
   def get_seasonal_effect(self):
     month = int(self.date.month)
-    multipliers = [2,2,1.7,1.4,1.1,0.8,0.5,0.5,0.8,1.1,1.4,1.7]
+    multipliers = [2,1.7,1.4,1.1,0.8,0.5,0.5,0.8,1.1,1.4,1.7,2]
     #print("Seasonal effect month: ",month,", multiplier: ",multipliers[month])
-    return multipliers[month]
+    return multipliers[month-1]
     
 
   def make_group(self, loc_type, max_groups):

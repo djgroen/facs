@@ -119,7 +119,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
   external_multiplier: 2.0 # school year starts again.
 22/9/2020:
   social_distance: 0.6
-  work_from_home: 0.5
+  work_from_home: 0.4
   traffic_multiplier: 0.5
   mask_uptake: 0.2
   mask_uptake_shopping: 0.8
@@ -128,7 +128,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
     shopping: 0.6
   closure: ["leisure"]
   social_distance: 0.6
-  work_from_home: 0.7
+  work_from_home: 0.5
   traffic_multiplier: 0.35
   mask_uptake: 0.2
   mask_uptake_shopping: 0.8
@@ -161,7 +161,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
     leisure: 1.0
     shopping: 0.8
   social_distance: 0.6
-  work_from_home: 1.0
+  work_from_home: 0.8
   traffic_multiplier: 0.25
   mask_uptake: 0.2
   mask_uptake_shopping: 0.8
@@ -171,7 +171,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
     leisure: 1.0
     shopping: 0.8
   social_distance: 0.6
-  work_from_home: 1.0
+  work_from_home: 0.8
   traffic_multiplier: 0.3
   mask_uptake: 0.2
   mask_uptake_shopping: 0.8
