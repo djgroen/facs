@@ -403,7 +403,7 @@ class Household():
     for i in range(0,self.size):
       if self.agents[i].status == "susceptible":
         if ic > 0:
-          infection_chance = e.contact_rate_multiplier["house"] * disease.infection_rate * home_interaction_fraction * ic / e.airflow_indoors_small
+          infection_chance = e.seasonal_effect * e.contact_rate_multiplier["house"] * disease.infection_rate * home_interaction_fraction * ic / e.airflow_indoors_small
           if e.household_isolation_multiplier < 1.0:
             infection_chance *= 2.0 # interaction duration (and thereby infection chance) double when household isolation is incorporated (Imperial Report 9).
           if get_rnd() < infection_chance:
@@ -647,7 +647,7 @@ class Location:
     if self.type == "park":
       airflow = e.airflow_outdoors
 
-    base_rate =  (e.contact_rate_multiplier[self.type] * e.disease.infection_rate * e.loc_inf_minutes[self.loc_inf_minutes_id]) / (airflow * 24*60 * minutes_opened)
+    base_rate =  e.seasonal_effect * (e.contact_rate_multiplier[self.type] * e.disease.infection_rate * e.loc_inf_minutes[self.loc_inf_minutes_id]) / (airflow * 24*60 * minutes_opened)
 
     #if e.rank == 0:
     #  print("RATES:", base_rate, e.loc_inf_minutes[self.loc_inf_minutes_id], self.loc_inf_minutes_id)
@@ -687,6 +687,7 @@ class Ecosystem:
     self.house_names = []
     self.time = 0
     self.date = None
+    self.seasonal_effect = 1.0 #multiplies infection rate due to seasonal effect.
     self.num_hospitalised = 0 # currently in hospital (ICU)
     self.disease = None
     self.closures = {}
@@ -770,6 +771,12 @@ class Ecosystem:
     """
     return self.date.strftime('%-d/%-m/%Y')
 
+  def get_seasonal_effect(self):
+    month = int(self.date.month)
+    multipliers = [2,2,1.7,1.4,1.1,0.8,0.5,0.5,0.8,1.1,1.4,1.7]
+    #print("Seasonal effect month: ",month,", multiplier: ",multipliers[month])
+    return multipliers[month]
+    
 
   def make_group(self, loc_type, max_groups):
     """
@@ -1047,6 +1054,7 @@ class Ecosystem:
     
     self.time += 1
     self.date = self.date + timedelta(days=1)
+    self.seasonal_effect = self.get_seasonal_effect()
 
   def addHouse(self, name, x, y, num_households=1):
     h = House(self, x, y, num_households)
@@ -1239,7 +1247,7 @@ class Ecosystem:
   def print_header(self, outfile):
     if self.rank == 0:
       out = out_files.open(outfile)
-      print("#time,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,hospital bed occupancy,num hospitalisations today (data)",file=out, flush=True)
+      print("#time,date,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,hospital bed occupancy,num hospitalisations today (data)",file=out, flush=True)
 
   def print_status(self, outfile, silent=False):
     local_stats = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0,"num_infections_today":num_infections_today,"num_hospitalisations_today":num_hospitalisations_today,"num_hospitalised":self.num_hospitalised}
@@ -1253,7 +1261,7 @@ class Ecosystem:
       if self.rank == 0:
         out = out_files.open(outfile)
         t = max(0, self.time)
-        print(self.time, *self.global_stats, self.validation[t], sep=",", file=out, flush=True)
+        print(self.time, self.get_date_string(), *self.global_stats, self.validation[t], sep=",", file=out, flush=True)
 
         #print("{},{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],status["immune"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out, flush=True)
 

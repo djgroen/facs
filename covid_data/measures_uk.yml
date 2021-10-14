@@ -127,13 +127,13 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
   partial_closure: 
     shopping: 0.6
   closure: ["leisure"]
-  social_distance: 0.7
+  social_distance: 0.6
   work_from_home: 0.7
   traffic_multiplier: 0.35
   mask_uptake: 0.2
   mask_uptake_shopping: 0.8
 2/12/2020:
-  social_distance: 0.7
+  social_distance: 0.6
   work_from_home: 0.5
   traffic_multiplier: 0.5
   mask_uptake: 0.2
@@ -160,7 +160,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
     school: 1.0
     leisure: 1.0
     shopping: 0.8
-  social_distance: 0.7
+  social_distance: 0.6
   work_from_home: 1.0
   traffic_multiplier: 0.25
   mask_uptake: 0.2
@@ -170,7 +170,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
   partial_closure: 
     leisure: 1.0
     shopping: 0.8
-  social_distance: 0.7
+  social_distance: 0.6
   work_from_home: 1.0
   traffic_multiplier: 0.3
   mask_uptake: 0.2
@@ -179,7 +179,7 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
 12/4/2021:
   partial_closure: 
     leisure: 0.5
-  social_distance: 0.7
+  social_distance: 0.6
   work_from_home: 0.5
   traffic_multiplier: 0.55
   mask_uptake: 0.2
@@ -188,21 +188,21 @@ keyworker_fraction: 0.18 # percentage workers that are keyworkers
 17/5/2021:
   partial_closure: 
     leisure: 0.2
-  social_distance: 0.6
+  social_distance: 0.5
   work_from_home: 0.5
   traffic_multiplier: 0.55
   mask_uptake: 0.15
   mask_uptake_shopping: 0.8
   track_trace_efficacy: 0.5 # assuming track and trace loses efficacy during this surge.
 21/6/2021:
-  social_distance: 0.5
+  social_distance: 0.4
   work_from_home: 0.25
   traffic_multiplier: 0.75
   mask_uptake: 0.1
   mask_uptake_shopping: 0.8
   track_trace_efficacy: 0.5 # assuming track and trace loses efficacy during this surge.
 19/7/2021:
-  social_distance: 0.1
+  social_distance: 0.3
   work_from_home: 0.2
   traffic_multiplier: 0.9
   mask_uptake: 0.05
