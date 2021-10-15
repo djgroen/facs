@@ -148,7 +148,7 @@ def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.1):
     print("Error: fraction > 1.0", file=sys.stderr)
     sys.exit()
 
-  return (1.0-fraction)*source + (fraction*dest)
+  return 2.0*(1.0-fraction)*source + (fraction*dest) #always return double of the base infection rate value, as FACS assumes 100% infectious persons (not 50%), see disease.py.
 
 
 def uk_lockdown_forecast(e, t, mode = 0):
@@ -156,9 +156,10 @@ def uk_lockdown_forecast(e, t, mode = 0):
   # add in Alpha mutation
   # Prevalence increases linearly from Oct 22 (1%) to Jan 30th (100%)
   if t > 235 and t < 336:
+    a = e.disease.infection_rate
     fraction = (t - 235) * 0.01
     e.disease.infection_rate = calculate_mutating_infection_rate(fraction, 0.07, 0.11) # https://cmmid.github.io/topics/covid19/uk-novel-variant.html
-    print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
+    print("infection rate adjusted from ",a," to ", e.disease.infection_rate, file=sys.stderr)
 
   # add in Delta mutation
   # Prevalence increases linearly from Apr 21 (1%) to June 10th (100%)

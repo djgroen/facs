@@ -775,7 +775,7 @@ class Ecosystem:
 
   def get_seasonal_effect(self):
     month = int(self.date.month)
-    multipliers = [2,1.7,1.4,1.1,0.8,0.5,0.5,0.8,1.1,1.4,1.7,2]
+    multipliers = [1.4,1.25,1.1,0.95,0.8,0.7,0.7,0.8,0.95,1.1,1.25,1.4]
     #print("Seasonal effect month: ",month,", multiplier: ",multipliers[month])
     return multipliers[month-1]
     
