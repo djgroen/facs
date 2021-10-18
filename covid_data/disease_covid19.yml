@@ -39,4 +39,4 @@ incubation_period: 4 # https://www.ams.edu.sg/view-pdf.aspx?file=media%5c5558_fi
 # 5 days of incubation, infectiousness starts 36 hours before the end of incubation.
 # Clinical course and risk factors for mortality of adult inpatients with Covid-19 in Wuhan, China: a retrospective cohort study
 # Fei Zhou et al. The Lancet vol. 395.
-period_to_hospitalisation: 12.0 #this is period to ICU.
+period_to_hospitalisation: 14.0 #this is period to ICU.

@@ -148,7 +148,7 @@ def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.1):
     print("Error: fraction > 1.0", file=sys.stderr)
     sys.exit()
 
-  return 2.0*(1.0-fraction)*source + (fraction*dest) #always return double of the base infection rate value, as FACS assumes 100% infectious persons (not 50%), see disease.py.
+  return 2.0*((1.0-fraction)*source + (fraction*dest)) #always return double of the base infection rate value, as FACS assumes 100% infectious persons (not 50%), see disease.py.
 
 
 def uk_lockdown_forecast(e, t, mode = 0):
