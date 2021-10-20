@@ -11,6 +11,9 @@ Full documentation can be found at: http://facs.readthedocs.io
 To run a simple simulation of a basic test dataset, type:
 `python3 run.py --location=test --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
 
+To run it in parallel, type (for four core runs):
+`mpirun -np 4 python3 run.py --location=test --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
+
 To run a simulation of the Borough of Brent, type:
 `python3 run.py --location=brent --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
 

@@ -983,8 +983,11 @@ class Ecosystem:
 
   def _aggregate_loc_inf_minutes(self):
     if self.mode == "parallel":
-      #print(len(self.loc_inf_minutes), type(self.loc_inf_minutes[0]))
+      print("loc inf min local: ", self.mpi.rank, self.loc_inf_minutes, type(self.loc_inf_minutes[0]))
       self.loc_inf_minutes = self.mpi.CalcCommWorldTotalDouble(self.loc_inf_minutes)
+    print("loc inf min:", self.loc_inf_minutes, type(self.loc_inf_minutes[0]))
+    if sum(self.loc_inf_minutes) > 0:
+      sys.exit()
 
   def _get_house_rank(i):
     rank = -1
