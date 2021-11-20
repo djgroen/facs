@@ -748,6 +748,15 @@ class Ecosystem:
 
       print('Hello from process {} out of {}'.format(self.rank, self.size))
 
+  def get_partition_size(self, num):
+    """
+    get process-specific partition of a number.
+    """
+    part = int(num/self.size)
+    if num % self.size > self.rank:
+      part += 1
+    return part
+
 
   def init_loc_inf_minutes(self):
     print('Hello from process {} out of {}'.format(self.rank, self.size))
@@ -950,9 +959,12 @@ class Ecosystem:
   
   def add_infections(self, num, severity="exposed"):
     """
-    Randomly add an infection.
+    Randomly add infections.
     """
-    for i in range(0, num):
+    #if num > 0:
+    #  print("new infections: ", self.rank, num, self.get_partition_size(num))
+    #  sys.exit()
+    for i in range(0, self.get_partition_size(num)):
       house = get_rndint(len(self.houses))
       self.houses[house].add_infection(self, severity)
     print("add_infections:",num,self.time)

@@ -144,7 +144,7 @@ if __name__ == "__main__":
     starting_num_infections = 500
     if args.starting_infections:
       starting_num_infections = int(args.starting_infections)
-    if location == "test":
+    elif location == "test":
       starting_num_infections = 10
 
     print("THIS SIMULATIONS HAS {} AGENTS.".format(e.num_agents))
@@ -154,7 +154,13 @@ if __name__ == "__main__":
     e.date = e.date - timedelta(days=20)
     e.print_header(outfile)
     for i in range(0, 20):
-        e.add_infections(int(starting_num_infections/20))
+        
+        # Roughly evenly spread infections over the days.
+        num = int(starting_num_infections/20)
+        if starting_num_infections % 20 > i:
+          num += 1
+        
+        e.add_infections(num)
 
         measures.uk_lockdown_forecast(e, e.time, transition_mode)
         e.evolve(reduce_stochasticity=False)
