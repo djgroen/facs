@@ -167,6 +167,18 @@ class OUTPUT_FILES():
 out_files = OUTPUT_FILES()
 
 
+def write_log_headers(rank):
+  out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, rank))
+  print("#t,x,y,location_type", file=out_inf, flush=True)
+  out_inf = out_files.open("{}/covid_out_hospitalisations_{}.csv".format(log_prefix, rank))
+  print("#t,x, y,age", file=out_inf, flush=True)
+  out_inf = out_files.open("{}/covid_out_deaths_{}.csv".format(log_prefix, rank))
+  print("#t,x,y,age", file=out_inf, flush=True)
+  out_inf = out_files.open("{}/covid_out_recoveries_{}.csv".format(log_prefix, rank))
+  print("#t,x,y,age", file=out_inf, flush=True)
+  
+
+
 def log_infection(t, x, y, loc_type, rank):
   global num_infections_today
   out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, rank))
@@ -1261,6 +1273,7 @@ class Ecosystem:
           print(k, a.get_needs())
 
   def print_header(self, outfile):
+    write_log_headers(self.rank) # also write headers for process-specific log files.
     if self.rank == 0:
       out = out_files.open(outfile)
       print("#time,date,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,hospital bed occupancy,num hospitalisations today (data)",file=out, flush=True)
