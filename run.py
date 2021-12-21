@@ -32,7 +32,7 @@ if __name__ == "__main__":
     parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
     parser.add_argument('-g', '--generic_outfile', action="store_true", help="Write main output to out.csv instead of a scenario-specific named file.")
     parser.add_argument('--dbg', action="store_true", help="Write additional outputs to help debugging")
-    parser.add_argument('--simulation_period', action="store",type=int, default='-1')
+    parser.add_argument('-t', '--simulation_period', action="store",type=int, default='-1')
     args = parser.parse_args()
     print(args)
 

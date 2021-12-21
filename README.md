@@ -14,6 +14,9 @@ To run a simple simulation of a basic test dataset, type:
 To run it in parallel, type (for four core runs):
 `mpirun -np 4 python3 run.py --location=test --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
 
+To do a run of custom length (with -t flag), and with a generically named out.csv output file, type:
+`mpirun -np 1 python3 run.py -t=10 -g --location=test --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
+
 To run a simulation of the Borough of Brent, type:
 `python3 run.py --location=brent --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
 

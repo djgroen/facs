@@ -552,7 +552,6 @@ class Location:
   def clear_visits(self, e):
     self.visits = []
     self.visit_minutes = 0 # total number of minutes of all visits aggregated.
-    #print("Total inf minutes:", np.sum(e.loc_inf_minutes))
     e.loc_inf_minutes[self.loc_inf_minutes_id] = 0.0
 
   def register_visit(self, e,  person, need, deterministic):
@@ -776,7 +775,6 @@ class Ecosystem:
 
 
   def init_loc_inf_minutes(self):
-    print('Hello from process {} out of {}'.format(self.rank, self.size))
     number_of_non_house_locations = 0
     offset = 0
     self.loc_offsets = {}
@@ -790,7 +788,6 @@ class Ecosystem:
         self.loc_offsets[lt] = offset
         offset += len(self.locations[lt])
     self.loc_inf_minutes = np.zeros(number_of_non_house_locations, dtype='f8')
-    print("# of non-house locations: ", number_of_non_house_locations)
 
 
   def get_date_string(self):
@@ -1012,9 +1009,9 @@ class Ecosystem:
 
   def _aggregate_loc_inf_minutes(self):
     if self.mode == "parallel":
-      print("loc inf min local: ", self.mpi.rank, self.loc_inf_minutes, type(self.loc_inf_minutes[0]))
+      #print("loc inf min local: ", self.mpi.rank, self.loc_inf_minutes, type(self.loc_inf_minutes[0]))
       self.loc_inf_minutes = self.mpi.CalcCommWorldTotalDouble(self.loc_inf_minutes)
-    print("loc inf min:", self.loc_inf_minutes, type(self.loc_inf_minutes[0]))
+    #print("loc inf min:", self.loc_inf_minutes, type(self.loc_inf_minutes[0]))
 
 
   def _get_house_rank(i):
@@ -1033,6 +1030,10 @@ class Ecosystem:
 
     # remove visits from the previous day
     total_visits = 0
+
+    if self.mpi.rank == 0:
+      print(self.mpi.size, self.time, "total_inf_minutes", np.sum(self.loc_inf_minutes), sep=",")
+
     for lk in self.locations.keys():
       for l in self.locations[lk]:
         total_visits += len(l.visits)
@@ -1066,11 +1067,10 @@ class Ecosystem:
               if a.age > self.vaccinations_legal_age_limit and check_vac_eligibility(a) == True:
                 a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
                 self.vaccinations_today += 1
+
     self._aggregate_loc_inf_minutes()
     if self.rank == 0: 
       print(self.rank, np.sum(self.loc_inf_minutes))
-
-    self.evolve_public_transport()
 
     # process visits for the current day (spread infection).
     for lk in self.locations:
@@ -1085,6 +1085,9 @@ class Ecosystem:
       h = self.houses[i]
       h.evolve(self, self.time, self.disease)
     
+    # process infection via public transport.
+    self.evolve_public_transport()
+
     self.time += 1
     self.date = self.date + timedelta(days=1)
     self.seasonal_effect = self.get_seasonal_effect()
