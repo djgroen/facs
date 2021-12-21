@@ -1248,7 +1248,7 @@ class Ecosystem:
       for column in cum_columns:
         df['cum %s' % (column)] = df[column].cumsum()
 
-      df.to_csv(csv_file)
+      df.to_csv(csv_file, index=False)
 
 
   def find_hospital(self):
