@@ -496,6 +496,7 @@ class House:
 
   def add_infection(self, e, severity="exposed"): # used to preseed infections (could target using age later on)
     infection_pending = True
+    attempts = 0
     while infection_pending:
       hh = get_rndint(len(self.households))
       p = get_rndint(len(self.households[hh].agents))
@@ -503,6 +504,10 @@ class House:
         # because we do pre-seeding we need to ensure we add exactly 1 infection.
         self.households[hh].agents[p].infect(e, severity)
         infection_pending = False
+      attempts += 1
+      if attempts > 500:
+        print("WARNING: failed to correctly seed initial infection due to excessive active cases.")
+        return
 
   def has_age(self, age):
     for hh in self.households:
@@ -1290,9 +1295,8 @@ class Ecosystem:
       if self.rank == 0:
         out = out_files.open(outfile)
         t = max(0, self.time)
-        print(self.time, self.get_date_string(), *self.global_stats, self.validation[t], sep=",", file=out, flush=True)
 
-        #print("{},{},{},{},{},{},{},{},{},{},{}".format(self.time,status["susceptible"],status["exposed"],status["infectious"],status["recovered"],status["dead"],status["immune"],num_infections_today,num_hospitalisations_today,self.validation[self.time],self.num_hospitalised), file=out, flush=True)
+        print(self.time, self.get_date_string(), *self.global_stats, self.validation[t], sep=",", file=out, flush=True)
 
 
   def add_validation_point(self, time):
