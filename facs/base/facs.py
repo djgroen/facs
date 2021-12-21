@@ -58,10 +58,10 @@ class MPIManager:
 
 
     def CalcCommWorldTotalSingle(self, i):
-
-        total = np.array([-1])
+        in_array = np.array([i])
+        total = np.array([-1.0])
         # If you want this number on rank 0, just use Reduce.
-        self.comm.Allreduce(np.array([i]), total, op=MPI.SUM)
+        self.comm.Allreduce([in_array, MPI.DOUBLE], [total, MPI.DOUBLE], op=MPI.SUM)
         return total[0]
 
     def CalcCommWorldTotalDouble(self, np_array):
@@ -274,10 +274,10 @@ class Person():
 
     if self.status in ["susceptible","exposed","infectious"]: # recovered people are assumed to be immune.
       personal_needs = needs.get_needs(self)
-      for k,element in enumerate(personal_needs):
+      for k,minutes in enumerate(personal_needs):
         nearest_locs = self.home_location.nearest_locations
 
-        if element < 1:
+        if minutes < 1:
           continue
         elif k == lids["hospital"] and self.hospitalised:
           location_to_visit = self.hospital
@@ -298,7 +298,8 @@ class Person():
         else: #no known nearby locations.
           continue
       
-        location_to_visit.register_visit(e, self, element, deterministic)
+        e.visit_minutes += minutes
+        location_to_visit.register_visit(e, self, minutes, deterministic)
 
   def print_needs(self):
     print(self.age, needs.get_needs(self))
@@ -551,7 +552,6 @@ class Location:
 
   def clear_visits(self, e):
     self.visits = []
-    self.visit_minutes = 0 # total number of minutes of all visits aggregated.
     e.loc_inf_minutes[self.loc_inf_minutes_id] = 0.0
 
   def register_visit(self, e,  person, need, deterministic):
@@ -676,7 +676,7 @@ class Location:
 
     # Deterministic mode: only used for warmup.
     if deterministic:
-      inf_counter = 0.5
+      inf_counter = 1.0 - (0.5 / float(self.mpi.size))
       for v in self.visits:
         if v[0].status == "susceptible":
           infection_probability = v[1] * base_rate
@@ -720,13 +720,13 @@ class Ecosystem:
     self.household_isolation_multiplier = 1.0
     self.track_trace_multiplier = 1.0
     self.ci_multiplier = 0.625 # default multiplier for case isolation mode 
-    self.num_agents = 0
     # value is 75% reduction in social contacts for 50% of the cases (known lower compliance).
     # 0.25*50% + 1.0*50% =0.625
     # source: https://www.gov.uk/government/publications/spi-b-key-behavioural-issues-relevant-to-test-trace-track-and-isolate-summary-6-may-2020
     # old default value is derived from Imp Report 9.
     # 75% reduction in social contacts for 70 percent of the cases.
     # (0.25*0.7)+0.3=0.475
+    self.num_agents = 0
     self.work_from_home = False
     self.ages = np.ones(91) # by default equal probability of all ages 0 to 90.
     self.hospital_protection_factor = 0.5 # 0 is perfect, 1 is no protection.
@@ -754,6 +754,8 @@ class Ecosystem:
     self.immunity_duration = -1 # value > 0 indicates non-permanent immunity.
     self.vac_duration = -1  # value > 0 indicates non-permanent vaccine efficacy.
 
+    # Tracking variables
+    self.visit_minutes = 0
 
     self.size = 1 # number of processes
     self.rank = 0 # rank of current process
@@ -1031,8 +1033,14 @@ class Ecosystem:
     # remove visits from the previous day
     total_visits = 0
 
+    self.visit_minutes = self.mpi.CalcCommWorldTotalSingle(self.visit_minutes)
+
     if self.mpi.rank == 0:
       print(self.mpi.size, self.time, "total_inf_minutes", np.sum(self.loc_inf_minutes), sep=",")
+      print(self.mpi.size, self.time, "total_visit_minutes", self.visit_minutes)
+
+    self.visit_minutes = 0.0
+
 
     for lk in self.locations.keys():
       for l in self.locations[lk]:
