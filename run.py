@@ -166,8 +166,10 @@ if __name__ == "__main__":
         e.evolve(reduce_stochasticity=True)
         print(e.time)
         if args.dbg:
+            e.debug_mode = True
             e.print_status(outfile)
         else:
+            e.debug_mode = False
             e.print_status(outfile, silent=True)
 
 

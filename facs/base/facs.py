@@ -760,6 +760,7 @@ class Ecosystem:
 
     self.size = 1 # number of processes
     self.rank = 0 # rank of current process
+    self.debug_mode = False
     if self.mode == "parallel":
       self.mpi = MPIManager()
       self.rank = self.mpi.comm.Get_rank() # this is stored outside of the MPI manager, to have one code for seq and parallel.
@@ -1041,19 +1042,20 @@ class Ecosystem:
     # remove visits from the previous day
     total_visits = 0
 
-    self.visit_minutes = self.mpi.CalcCommWorldTotalSingle(self.visit_minutes)
-    self.base_rate = self.mpi.CalcCommWorldTotalSingle(self.base_rate) / self.mpi.size
-    self.loc_evolves = self.mpi.CalcCommWorldTotalSingle(self.loc_evolves)
+    if self.debug_mode:
+      self.visit_minutes = self.mpi.CalcCommWorldTotalSingle(self.visit_minutes)
+      self.base_rate = self.mpi.CalcCommWorldTotalSingle(self.base_rate) / self.mpi.size
+      self.loc_evolves = self.mpi.CalcCommWorldTotalSingle(self.loc_evolves)
 
-    if self.mpi.rank == 0:
-      print(self.mpi.size, self.time, "total_inf_minutes", np.sum(self.loc_inf_minutes), sep=",")
-      print(self.mpi.size, self.time, "total_visit_minutes", self.visit_minutes)
-      print(self.mpi.size, self.time, "base_rate", self.base_rate)
-      print(self.mpi.size, self.time, "loc_evolves", self.loc_evolves)
+      if self.mpi.rank == 0:
+        print(self.mpi.size, self.time, "total_inf_minutes", np.sum(self.loc_inf_minutes), sep=",")
+        print(self.mpi.size, self.time, "total_visit_minutes", self.visit_minutes)
+        print(self.mpi.size, self.time, "base_rate", self.base_rate)
+        print(self.mpi.size, self.time, "loc_evolves", self.loc_evolves)
 
-    self.visit_minutes = 0.0
-    self.base_rate = 0.0
-    self.loc_evolves = 0.0
+      self.visit_minutes = 0.0
+      self.base_rate = 0.0
+      self.loc_evolves = 0.0
 
 
     for lk in self.locations.keys():
