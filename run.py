@@ -163,7 +163,7 @@ if __name__ == "__main__":
         e.add_infections(num)
 
         measures.uk_lockdown_forecast(e, e.time, transition_mode)
-        e.evolve(reduce_stochasticity=False)
+        e.evolve(reduce_stochasticity=True)
         print(e.time)
         if args.dbg:
             e.print_status(outfile)
@@ -180,7 +180,7 @@ if __name__ == "__main__":
           measures.uk_lockdown_forecast(e, t, transition_mode)
 
         # Propagate the model by one time step.
-        e.evolve()
+        e.evolve(reduce_stochasticity=True)
 
         print(t, e.get_date_string(),  e.vac_no_symptoms, e.vac_no_transmission)
         e.print_status(outfile)

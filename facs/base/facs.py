@@ -57,7 +57,7 @@ class MPIManager:
         print("#time,x,y,location_type", file=out_inf, flush=True)
 
 
-    def CalcCommWorldTotalSingle(self, i):
+    def CalcCommWorldTotalSingle(self, i, op=MPI.SUM):
         in_array = np.array([i])
         total = np.array([-1.0])
         # If you want this number on rank 0, just use Reduce.
@@ -496,19 +496,14 @@ class House:
 
 
   def add_infection(self, e, severity="exposed"): # used to preseed infections (could target using age later on)
-    infection_pending = True
-    attempts = 0
-    while infection_pending:
-      hh = get_rndint(len(self.households))
-      p = get_rndint(len(self.households[hh].agents))
-      if self.households[hh].agents[p].status == "susceptible": 
-        # because we do pre-seeding we need to ensure we add exactly 1 infection.
-        self.households[hh].agents[p].infect(e, severity)
-        infection_pending = False
-      attempts += 1
-      if attempts > 500:
-        print("WARNING: failed to correctly seed initial infection due to excessive active cases.")
-        return
+    hh = get_rndint(len(self.households))
+    p = get_rndint(len(self.households[hh].agents))
+    if self.households[hh].agents[p].status == "susceptible": 
+      # because we do pre-seeding we need to ensure we add exactly 1 infection.
+      self.households[hh].agents[p].infect(e, severity)
+      infection_pending = False
+      return True
+    return False
 
   def has_age(self, age):
     for hh in self.households:
@@ -671,13 +666,16 @@ class Location:
 
     base_rate =  e.seasonal_effect * (e.contact_rate_multiplier[self.type] * e.disease.infection_rate * e.loc_inf_minutes[self.loc_inf_minutes_id]) / (airflow * 24*60 * minutes_opened)
 
+    e.base_rate += base_rate
+
     #if e.rank == 0:
     #  print("RATES:", base_rate, e.loc_inf_minutes[self.loc_inf_minutes_id], self.loc_inf_minutes_id)
 
     # Deterministic mode: only used for warmup.
     if deterministic:
-      inf_counter = 1.0 - (0.5 / float(self.mpi.size))
+      inf_counter = 1.0 - (0.5 / float(e.mpi.size))
       for v in self.visits:
+        e.loc_evolves += 1
         if v[0].status == "susceptible":
           infection_probability = v[1] * base_rate
           inf_counter += min(infection_probability, 1.0)
@@ -688,6 +686,7 @@ class Location:
     # Used everywhere else
     else:
       for v in self.visits:
+        e.loc_evolves += 1
         if v[0].status == "susceptible":
           infection_probability = v[1] * base_rate
           if infection_probability > 0.0:
@@ -755,7 +754,9 @@ class Ecosystem:
     self.vac_duration = -1  # value > 0 indicates non-permanent vaccine efficacy.
 
     # Tracking variables
-    self.visit_minutes = 0
+    self.visit_minutes = 0.0
+    self.base_rate = 0.0
+    self.loc_evolves = 0.0
 
     self.size = 1 # number of processes
     self.rank = 0 # rank of current process
@@ -981,13 +982,20 @@ class Ecosystem:
     #  print("new infections: ", self.rank, num, self.get_partition_size(num))
     #  sys.exit()
     for i in range(0, self.get_partition_size(num)):
-      house = get_rndint(len(self.houses))
-      self.houses[house].add_infection(self, severity)
+      infected = False
+      attempts = 0
+      while infected == False and attempts < 500:
+        house = get_rndint(len(self.houses))
+        infected = self.houses[house].add_infection(self, severity)
+        attempts += 1
+      if attempts > 499:
+        print("WARNING: unable to seed infection.")
     print("add_infections:",num,self.time)
 
   def add_infection(self, x, y, age):
     """
     Add an infection to the nearest person of that age.
+    TODO: stabilize (see function above)
     """
     if age>90: # to match demographic data
       age=90
@@ -1034,12 +1042,18 @@ class Ecosystem:
     total_visits = 0
 
     self.visit_minutes = self.mpi.CalcCommWorldTotalSingle(self.visit_minutes)
+    self.base_rate = self.mpi.CalcCommWorldTotalSingle(self.base_rate) / self.mpi.size
+    self.loc_evolves = self.mpi.CalcCommWorldTotalSingle(self.loc_evolves)
 
     if self.mpi.rank == 0:
       print(self.mpi.size, self.time, "total_inf_minutes", np.sum(self.loc_inf_minutes), sep=",")
       print(self.mpi.size, self.time, "total_visit_minutes", self.visit_minutes)
+      print(self.mpi.size, self.time, "base_rate", self.base_rate)
+      print(self.mpi.size, self.time, "loc_evolves", self.loc_evolves)
 
     self.visit_minutes = 0.0
+    self.base_rate = 0.0
+    self.loc_evolves = 0.0
 
 
     for lk in self.locations.keys():
