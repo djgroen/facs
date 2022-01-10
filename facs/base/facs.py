@@ -169,7 +169,7 @@ out_files = OUTPUT_FILES()
 
 def write_log_headers(rank):
   out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, rank))
-  print("#t,x,y,location_type", file=out_inf, flush=True)
+  print("#t,x,y,location_type,rank,incubation_time", file=out_inf, flush=True)
   out_inf = out_files.open("{}/covid_out_hospitalisations_{}.csv".format(log_prefix, rank))
   print("#t,x, y,age", file=out_inf, flush=True)
   out_inf = out_files.open("{}/covid_out_deaths_{}.csv".format(log_prefix, rank))
@@ -179,10 +179,10 @@ def write_log_headers(rank):
   
 
 
-def log_infection(t, x, y, loc_type, rank):
+def log_infection(t, x, y, loc_type, rank, phase_duration):
   global num_infections_today
   out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, rank))
-  print("{},{},{},{}".format(t, x, y, loc_type), file=out_inf, flush=True)
+  print("{},{},{},{},{},{}".format(t, x, y, loc_type, rank, phase_duration), file=out_inf, flush=True)
   num_infections_today += 1
 
 def log_hospitalisation(t, x, y, age, rank):
@@ -323,7 +323,7 @@ class Person():
     self.mild_version = True
     self.hospitalised = False
     self.phase_duration = max(1, np.random.poisson(e.disease.incubation_period))
-    log_infection(e.time,self.location.x,self.location.y,location_type, e.rank)
+    log_infection(e.time,self.location.x,self.location.y,location_type, e.rank, self.phase_duration)
 
   def recover(self, e, location):
     if e.immunity_duration > 0:
@@ -757,6 +757,7 @@ class Ecosystem:
     self.visit_minutes = 0.0
     self.base_rate = 0.0
     self.loc_evolves = 0.0
+    self.number_of_non_house_locations = 0
 
     self.size = 1 # number of processes
     self.rank = 0 # rank of current process
@@ -779,7 +780,6 @@ class Ecosystem:
 
 
   def init_loc_inf_minutes(self):
-    number_of_non_house_locations = 0
     offset = 0
     self.loc_offsets = {}
     for lt in self.locations:
@@ -787,11 +787,15 @@ class Ecosystem:
         for i in range(0, len(self.locations[lt])):
           self.locations[lt][i].loc_inf_minutes_id = offset + i
 
-        print(lt, len(self.locations[lt]))
-        number_of_non_house_locations += len(self.locations[lt])
+        print(lt, len(self.locations[lt]), offset)
+        self.number_of_non_house_locations += len(self.locations[lt])
         self.loc_offsets[lt] = offset
         offset += len(self.locations[lt])
-    self.loc_inf_minutes = np.zeros(number_of_non_house_locations, dtype='f8')
+    self.loc_inf_minutes = np.zeros(self.number_of_non_house_locations, dtype='f8')
+
+
+  def reset_loc_inf_minutes(self):
+    self.loc_inf_minutes = np.zeros(self.number_of_non_house_locations, dtype='f8')
 
 
   def get_date_string(self):
@@ -864,7 +868,8 @@ class Ecosystem:
 
     num_agents = self.global_stats[0] + self.global_stats[1] + self.global_stats[2] + self.global_stats[3] + self.global_stats[5] #leaving out [4] because dead people don't travel.
     infected_external_passengers = num_agents * self.external_infection_ratio * self.external_travel_multiplier
-    
+   
+
     infection_probability = self.traffic_multiplier # we use travel uptake rate as contact rate multiplier (it implicity has case isolation multiplier in it)
     if self.enforce_masks_on_transport:
       infection_probability *= 0.44 # 56% reduction when masks are widely used: https://www.medrxiv.org/content/10.1101/2020.04.17.20069567v4.full.pdf
@@ -877,6 +882,8 @@ class Ecosystem:
     #print(infection_probability)
     infection_probability *= 30.0 / 900.0 # visit duration assumed to be 30 minutes per day / transport services assumed to be operational for 15 hours per day. 
 
+    #print(self.global_stats[2], num_agents, infected_external_passengers, infection_probability)
+    #sys.exit()
 
     # assume average of 40-50 minutes travel per day per travelling person (5 million people travel, so I reduced it to 30 minutes per person), transport open of 900 minutes/day (15h), self_isolation further reduces use of transport, and each agent has 1 m^2 of space in public transport.
     # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
@@ -1062,6 +1069,7 @@ class Ecosystem:
       for l in self.locations[lk]:
         total_visits += len(l.visits)
         l.clear_visits(self)
+    self.reset_loc_inf_minutes()
 
     if self.rank == 0:
         print("total visits:",total_visits)
