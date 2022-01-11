@@ -902,41 +902,6 @@ class Ecosystem:
     print("Transport: t {} p_inf {}, inf_ext_pas {}, # of infections {}.".format(self.time, infection_probability, infected_external_passengers, num_inf))
 
 
-  def load_nearest_from_file(self, fname):
-      """
-      Load nearest locations from CSV file.
-      """
-      try:
-          f = open(fname, "r")
-          near_reader = csv.reader(f)
-          i = 0
-
-          header_row = next(near_reader)
-          #print(header_row)
-          #print(lnames)
-          #sys.exit()
-
-          for row in near_reader:
-              #print(row)
-              self.houses[i].nearest_locations = row
-              n = []
-              for j in range(0,len(header_row)):
-                  try:
-                    n.append(self.locations[header_row[j]][int(row[j])])
-                  except:
-                    print("ERROR: nearest building lookup from file failed:")
-                    print("row in CSV: ", i)
-                    print("lnames index: ",j," len:", len(header_row))
-                    print("self.locations [key][]: ", header_row[j], " [][index]", int(row[j]))
-                    print("self.locations [keys][]", self.locations.keys(), " [][len]", len(self.locations[header_row[j]]))
-                    sys.exit()
-              self.houses[i].nearest_locations = n
-              #print(self.houses[i].nearest_locations)
-              i += 1
-      except IOError:
-          return False
-
-
   def update_nearest_locations(self, dump_and_exit=False):
     f = None
     read_from_file = False
@@ -987,7 +952,7 @@ class Ecosystem:
     Randomly add infections.
     """
     #if num > 0:
-    #  print("new infections: ", self.rank, num, self.get_partition_size(num))
+    print("new infections: ", self.rank, num, self.get_partition_size(num))
     #  sys.exit()
     for i in range(0, self.get_partition_size(num)):
       infected = False
