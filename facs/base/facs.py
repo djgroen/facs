@@ -866,7 +866,7 @@ class Ecosystem:
     if self.time < 0: # do not model transport during warmup phase!
       return
 
-    #self.print_status(None, silent=True) # Synchronize global stats
+    self.print_status(None, silent=True) # Synchronize global stats
     num_agents = self.global_stats[0] + self.global_stats[1] + self.global_stats[2] + self.global_stats[3] + self.global_stats[5] #leaving out [4] because dead people don't travel.
     infected_external_passengers = num_agents * self.external_infection_ratio * self.external_travel_multiplier
    
