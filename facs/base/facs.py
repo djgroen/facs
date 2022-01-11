@@ -866,6 +866,7 @@ class Ecosystem:
     if self.time < 0: # do not model transport during warmup phase!
       return
 
+    #self.print_status(None, silent=True) # Synchronize global stats
     num_agents = self.global_stats[0] + self.global_stats[1] + self.global_stats[2] + self.global_stats[3] + self.global_stats[5] #leaving out [4] because dead people don't travel.
     infected_external_passengers = num_agents * self.external_infection_ratio * self.external_travel_multiplier
    
@@ -907,10 +908,10 @@ class Ecosystem:
     read_from_file = False
     if dump_and_exit == True:
       f = open('nearest_locations.csv', "w")
-    else:
-      loaded = self.load_nearest_from_file('nearest_locations.csv')
-      if loaded == True:
-        return
+    #else:
+    #  loaded = self.load_nearest_from_file('nearest_locations.csv')
+    #  if loaded == True:
+    #    return
       
     if dump_and_exit == True:
       # print header row
@@ -1089,11 +1090,13 @@ class Ecosystem:
     self.date = self.date + timedelta(days=1)
     self.seasonal_effect = self.get_seasonal_effect()
 
+
   def addHouse(self, name, x, y, num_households=1):
     h = House(self, x, y, num_households)
     self.houses.append(h)
     self.house_names.append(name)
     return h
+
 
   def addLocation(self, name, loc_type, x, y, sqm=400):
     l = Location(name, loc_type, x, y, sqm)
