@@ -99,7 +99,7 @@ If you ran an ensemble jobs, you may need to do averaging across runs on the out
 
 .. code-block:: sh
 	
-	fab <localhost/remote machine> cal_avg_csv:<location_scenario>,<TS=transition scenario>,<TM=transition mode>
+	fabsim <localhost/remote machine> cal_avg_csv:<location_scenario>,<TS=transition scenario>,<TM=transition mode>
 
 
 Examples:
@@ -137,7 +137,7 @@ To run a validation simulation, simply type:
 
 .. code-block:: sh
 
-	fab localhost facs_validation
+	fabsim localhost facs_validation
 
 
 Run post-processing on the output results
@@ -146,7 +146,7 @@ To perform the post-processing on the ouput results from a single or ensemble ru
 
 .. code-block:: sh
 
-	fab localhost facs_postprocess:<results_dir_name>
+	fabsim localhost facs_postprocess:<results_dir_name>
 
 
 Here results dir is the name of the subdirectory only (e.g. brent_localhost_1), not the full path. Once you have run this, if everything has been configured correctly, you should get a web page that shows a plot like this:
@@ -159,7 +159,7 @@ Similarly, you can now perform a comparison on infectious spread by location typ
 
 .. code-block:: sh
 
-	fab localhost facs_locationplot:<results_dir_name>
+	fabsim localhost facs_locationplot:<results_dir_name>
 
 
 Once you have run this, if everything has been configured correctly, you should get a web page that shows a plot like this:
