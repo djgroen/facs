@@ -155,11 +155,11 @@ dd/mm/yyyy: # date according to date format above
   external_multiplier: 4.0 # lifting of measures 
 16/12/2020:
   social_distance: 0.6
-  work_from_home: 0.25
-  traffic_multiplier: 0.5
+  work_from_home: 0.6
+  traffic_multiplier: 0.35
   mask_uptake: 0.2
   mask_uptake_shopping: 0.8
-  track_trace_efficacy: 0.7 
+  track_trace_efficacy: 0.6 
 20/12/2020:
   partial_closure: 
     leisure: 0.5
