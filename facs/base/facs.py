@@ -9,11 +9,11 @@ import pandas as pd
 import os
 #import fastrand
 from datetime import datetime, timedelta
+
 try:
     from mpi4py import MPI
 except ImportError:
     print("MPI4Py module is not loaded, mode=parallel will not work.")
-
 
 # TODO: store all this in a YaML file
 lids = {"park":0,"hospital":1,"supermarket":2,"office":3,"school":4,"leisure":5,"shopping":6} # location ids and labels
@@ -34,6 +34,7 @@ def get_rnd():
       _rnd_i = 0
       _rnd_nums = np.random.random(10000)
     return _rnd_nums[_rnd_i]
+
 
 def get_rndint(high):
     #return random.randrange(0, high)
@@ -97,6 +98,7 @@ class Needs():
   def __init__(self, csvfile):
     self.add_needs(csvfile)
     print("Needs created.")
+
 
   def i(self, name):
     for k,e in enumerate(self.labels):
@@ -200,6 +202,7 @@ def log_death(t, x, y, age, rank):
 def log_recovery(t, x, y, age, rank):
   global num_recoveries_today
   out_inf = out_files.open("{}/covid_out_recoveries_{}.csv".format(log_prefix, rank))
+
   print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
   num_recoveries_today += 1
 
@@ -256,6 +259,7 @@ class Person():
     if vac_duration > 0:
       if vac_duration > 100:
         self.phase_duration = np.random.gamma(vac_duration/20.0, 20.0) # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
+
       else:
         self.phase_duration = np.poisson(vac_duration)
     if self.status == "susceptible":
@@ -332,6 +336,7 @@ class Person():
     self.status_change_time = e.time
     log_recovery(e.time, self.location.x, self.location.y, location, e.rank)
 
+
   def progress_condition(self, e, t, disease):
     if self.status_change_time > t:
       return
@@ -354,6 +359,7 @@ class Person():
       if self.mild_version:
         if t-self.status_change_time >= self.phase_duration:
           self.recover(e, "house")
+
       # non-mild version (will involve ICU visit)
       else:
         if not self.hospitalised:
@@ -365,6 +371,7 @@ class Person():
               sys.exit()
             e.num_hospitalised += 1
             log_hospitalisation(t, self.location.x, self.location.y, self.age, e.rank)
+
             self.status_change_time = t #hospitalisation is a status change, because recovery_period is from date of hospitalisation.
             if get_rnd() < self.get_mortality_chance(disease) / self.get_hospitalisation_chance(disease): # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
               self.dying = True
@@ -415,6 +422,7 @@ class Household():
 
   def is_infected(self):
     return self.get_infectious_count() > 0
+
 
 
   def evolve(self, e, disease):
@@ -520,6 +528,7 @@ class House:
           if a.status == "susceptible":
             a.infect(e, severity="exposed")
 
+
 class Location:
   def __init__(self, name, loc_type="park", x=0.0, y=0.0, sqm=400):
 
@@ -549,6 +558,7 @@ class Location:
     self.visits = []
     e.loc_inf_minutes[self.loc_inf_minutes_id] = 0.0
 
+
   def register_visit(self, e,  person, need, deterministic):
     visit_time = self.avg_visit_time
     if person.status == "dead":
@@ -562,6 +572,7 @@ class Location:
 
     elif person.household.is_infected(): # person is in household quarantine, but not subject to CI.
       visit_time *= e.household_isolation_multiplier
+
 
     visit_probability = 0.0
     if visit_time > 0.0:
@@ -586,7 +597,6 @@ class Location:
 
   def evolve(self, e, deterministic=False):
     minutes_opened = 12*60
-
     """
     (i)
     Pinf =
@@ -696,6 +706,7 @@ class Location:
             if get_rnd() < infection_probability:
               v[0].infect(e, location_type=self.type)
 
+
 def check_vac_eligibility(a):
   if a.status == "susceptible" and a.symptoms_suppressed==False and a.antivax==False:
     return True
@@ -728,6 +739,7 @@ class Ecosystem:
     # 75% reduction in social contacts for 70 percent of the cases.
     # (0.25*0.7)+0.3=0.475
     self.num_agents = 0
+
     self.work_from_home = False
     self.ages = np.ones(91) # by default equal probability of all ages 0 to 90.
     self.hospital_protection_factor = 0.5 # 0 is perfect, 1 is no protection.
@@ -800,6 +812,7 @@ class Ecosystem:
     self.loc_inf_minutes = np.zeros(self.number_of_non_house_locations, dtype='f8')
 
 
+
   def get_date_string(self):
     """
     Return the simulation date as a short string.
@@ -811,7 +824,7 @@ class Ecosystem:
     multipliers = [1.4,1.25,1.1,0.95,0.8,0.7,0.7,0.8,0.95,1.1,1.25,1.4]
     #print("Seasonal effect month: ",month,", multiplier: ",multipliers[month])
     return multipliers[month-1]
-    
+
 
   def make_group(self, loc_type, max_groups):
     """
@@ -945,10 +958,7 @@ class Ecosystem:
     read_from_file = False
     if dump_and_exit == True:
       f = open('nearest_locations.csv', "w")
-    #else:
-    #  loaded = self.load_nearest_from_file('nearest_locations.csv')
-    #  if loaded == True:
-    #    return
+
       
     if dump_and_exit == True:
       # print header row
@@ -963,10 +973,8 @@ class Ecosystem:
       if count % 1000 == 0:
         print(count, "houses scanned.", file=sys.stderr)
     print(count, "houses scanned.", file=sys.stderr)
-
  
     print(dump_and_exit)
-  
 
     if dump_and_exit == True:
       sys.exit()
@@ -1014,6 +1022,7 @@ class Ecosystem:
     selected_house = None
     min_dist = 99999
     print("add_infection:",x,y,age,len(self.houses))
+
     for h in self.houses:
       dist_h = calc_dist(h.x, h.y, x, y)
       if dist_h < min_dist:
@@ -1048,7 +1057,6 @@ class Ecosystem:
     num_infections_today = 0
     num_hospitalisations_today = 0 
     self.vaccinations_today = 0
-
  
     if self.mode == "parallel" and reduce_stochasticity == True:
       reduce_stochasticity=False
@@ -1091,7 +1099,6 @@ class Ecosystem:
           a.plan_visits(self, reduce_stochasticity)
           a.progress_condition(self, self.time, self.disease)
 
-            
           if a.age > self.vaccinations_age_limit and self.vaccinations_available - self.vaccinations_today > 0:
             if check_vac_eligibility(a) == True:
               a.vaccinate(self.time, self.vac_no_symptoms, self.vac_no_transmission, self.vac_duration)
@@ -1112,6 +1119,7 @@ class Ecosystem:
     self._aggregate_loc_inf_minutes()
     if self.rank == 0: 
       print(self.rank, np.sum(self.loc_inf_minutes))
+
 
     # process visits for the current day (spread infection).
     for lk in self.locations:
@@ -1157,7 +1165,6 @@ class Ecosystem:
     #sys.exit()
     self.addLocation(name, "office", data[0], data[1], office_size)
     office_log.write("office,{},{},{}\n".format(data[0], data[1], office_size))
-
 
 
   def addLocation(self, name, loc_type, x, y, sqm=400):
@@ -1362,6 +1369,7 @@ class Ecosystem:
         t = max(0, self.time)
 
         print(self.time, self.get_date_string(), *self.global_stats, self.validation[t], sep=",", file=out, flush=True)
+
 
 
   def add_validation_point(self, time):
