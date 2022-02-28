@@ -24,16 +24,16 @@ log_prefix = "."
 
 
 # Added commented code to shift from random.random if needed
-#_rnd_i = 0
-#_rnd_nums = np.random.random(10000)
+_rnd_i = 0
+_rnd_nums = np.random.random(10000)
 def get_rnd():
-    return random.random()
-    #global _rnd_i, _rnd_nums
-    #_rnd_i += 1
-    #if _rnd_i > 9999:
-    #  _rnd_i = 0
-    #  _rnd_nums = np.random.random(10000)
-    #return _rnd_nums[_rnd_i]
+    #return random.random()
+    global _rnd_i, _rnd_nums
+    _rnd_i += 1
+    if _rnd_i > 9999:
+      _rnd_i = 0
+      _rnd_nums = np.random.random(10000)
+    return _rnd_nums[_rnd_i]
 
 def get_rndint(high):
     #return random.randrange(0, high)
@@ -673,15 +673,17 @@ class Location:
 
     # Deterministic mode: only used for warmup.
     if deterministic:
-      inf_counter = 1.0 - (0.5 / float(e.mpi.size))
-      for v in self.visits:
-        e.loc_evolves += 1
-        if v[0].status == "susceptible":
-          infection_probability = v[1] * base_rate
-          inf_counter += min(infection_probability, 1.0)
-          if inf_counter > 1.0:
-            inf_counter -= 1.0
-            v[0].infect(e, location_type=self.type)
+      print("reduce_stochasticity not supported for the time being, due to instabilities in parallel implementation.")
+      #sys.exit()
+      #inf_counter = 1.0 - (0.5 / float(e.mpi.size))
+      #for v in self.visits:
+      #  e.loc_evolves += 1
+      #  if v[0].status == "susceptible":
+      #    infection_probability = v[1] * base_rate
+      #    inf_counter += min(infection_probability, 1.0)
+      #    if inf_counter > 1.0:
+      #      inf_counter -= 1.0
+      #      v[0].infect(e, location_type=self.type)
 
     # Used everywhere else
     else:
@@ -903,6 +905,41 @@ class Ecosystem:
     print("Transport: t {} p_inf {}, inf_ext_pas {}, # of infections {}.".format(self.time, infection_probability, infected_external_passengers, num_inf))
 
 
+  def load_nearest_from_file(self, fname):
+      """
+      Load nearest locations from CSV file.
+      """
+      try:
+          f = open(fname, "r")
+          near_reader = csv.reader(f)
+          i = 0
+
+          header_row = next(near_reader)
+          #print(header_row)
+          #print(lnames)
+          #sys.exit()
+
+          for row in near_reader:
+              #print(row)
+              self.houses[i].nearest_locations = row
+              n = []
+              for j in range(0,len(header_row)):
+                  try:
+                    n.append(self.locations[header_row[j]][int(row[j])])
+                  except:
+                    print("ERROR: nearest building lookup from file failed:")
+                    print("row in CSV: ", i)
+                    print("lnames index: ",j," len:", len(header_row))
+                    print("self.locations [key][]: ", header_row[j], " [][index]", int(row[j]))
+                    print("self.locations [keys][]", self.locations.keys(), " [][len]", len(self.locations[header_row[j]]))
+                    sys.exit()
+              self.houses[i].nearest_locations = n
+              #print(self.houses[i].nearest_locations)
+              i += 1
+      except IOError:
+          return False
+
+
   def update_nearest_locations(self, dump_and_exit=False):
     f = None
     read_from_file = False
@@ -1012,6 +1049,12 @@ class Ecosystem:
     num_hospitalisations_today = 0 
     self.vaccinations_today = 0
 
+ 
+    if self.mode == "parallel" and reduce_stochasticity == True:
+      reduce_stochasticity=False
+      if self.rank == 0:
+        print("WARNING: reduce stochasticity does not work reliably in parallel mode. It is therefore set to FALSE.")
+
     # remove visits from the previous day
     total_visits = 0
 
@@ -1096,6 +1139,25 @@ class Ecosystem:
     self.houses.append(h)
     self.house_names.append(name)
     return h
+
+
+  def addRandomOffice(self, office_log, name, xbounds, ybounds, office_size):
+    """
+    Office coords are generated on proc 0, then broadcasted to others.
+    """
+
+    data = None
+    if self.mpi.rank == 0:
+      x = random.uniform(xbounds[0],xbounds[1])
+      y = random.uniform(ybounds[0],ybounds[1])
+      data = [x,y]
+
+    data = self.mpi.comm.bcast(data, root=0)
+    #print("Coords: ",self.mpi.rank, data)
+    #sys.exit()
+    self.addLocation(name, "office", data[0], data[1], office_size)
+    office_log.write("office,{},{},{}\n".format(data[0], data[1], office_size))
+
 
 
   def addLocation(self, name, loc_type, x, y, sqm=400):
