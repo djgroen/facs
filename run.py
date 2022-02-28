@@ -32,7 +32,7 @@ if __name__ == "__main__":
     parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
     parser.add_argument('-g', '--generic_outfile', action="store_true", help="Write main output to out.csv instead of a scenario-specific named file.")
     parser.add_argument('--dbg', action="store_true", help="Write additional outputs to help debugging")
-    parser.add_argument('--simulation_period', action="store",type=int, default='-1')
+    parser.add_argument('-t', '--simulation_period', action="store",type=int, default='-1')
     args = parser.parse_args()
     print(args)
 
@@ -96,8 +96,6 @@ if __name__ == "__main__":
       outfile = "{}/out.csv".format(output_dir)
 
     end_time = 1100
-    if transition_scenario in ["extend-lockdown","dynamic-lockdown","periodic-lockdown","uk-forecast"]:
-      end_time = 1100
     
     if args.simulation_period > 0:
       end_time = args.simulation_period
@@ -141,14 +139,13 @@ if __name__ == "__main__":
     #                              start_date=args.start_date,
     #                              date_format="%m/%d/%Y")
 
+    e.print_status(outfile, silent=True) # silent print to initialise log data structures.
+
     starting_num_infections = 500
     if args.starting_infections:
       starting_num_infections = int(args.starting_infections)
-    if location == "test":
+    elif location == "test":
       starting_num_infections = 10
-
-    for i in range(0,10):
-      e.add_infections(int(starting_num_infections/10), i-19)
 
     print("THIS SIMULATIONS HAS {} AGENTS.".format(e.num_agents))
 
@@ -157,11 +154,22 @@ if __name__ == "__main__":
     e.date = e.date - timedelta(days=20)
     e.print_header(outfile)
     for i in range(0, 20):
+        
+        # Roughly evenly spread infections over the days.
+        num = int(starting_num_infections/20)
+        if starting_num_infections % 20 > i:
+          num += 1
+        
+        e.add_infections(num)
+
+        measures.uk_lockdown_forecast(e, e.time, transition_mode)
         e.evolve(reduce_stochasticity=False)
         print(e.time)
         if args.dbg:
+            e.debug_mode = True
             e.print_status(outfile)
         else:
+            e.debug_mode = False
             e.print_status(outfile, silent=True)
 
 
@@ -170,44 +178,16 @@ if __name__ == "__main__":
 
     for t in range(0, end_time):
 
-        if t == transition_day:
-            if transition_scenario == "extend-lockdown":
-                pass
-            elif transition_scenario == "open-all":
-                e.remove_all_measures()
-            elif transition_scenario == "open-schools":
-                e.remove_closure("school")
-            elif transition_scenario == "open-shopping":
-                e.undo_partial_closure("shopping", 0.8)
-            elif transition_scenario == "open-leisure":
-                e.remove_closure("leisure")
-            elif transition_scenario == "work50":
-                measures.work50(e)
-            elif transition_scenario == "work75":
-                measures.work75(e)
-            elif transition_scenario == "work100":
-                measures.work100(e)
-
-        if t>77 and transition_scenario == "dynamic-lockdown" and t%7 == 0:
-            print("Dynamic lockdown test: {}/100".format(e.num_hospitalised), file=sys.stderr)
-            measures.enact_dynamic_lockdown(e, measures.work50, e.num_hospitalised, 100)
-        if t>77 and transition_scenario == "periodic-lockdown" and t%61 == 0:
-            print("Periodic lockdown with 61 day interval.")
-            measures.enact_periodic_lockdown(e, measures.work50)
-
-        # Recording of existing measures
-        if transition_scenario in ["uk-forecast"]:
+        if transition_scenario not in ["no-measures"]:
           measures.uk_lockdown_forecast(e, t, transition_mode)
-        elif transition_scenario not in ["no-measures"]:
-          measures.uk_lockdown_existing(e, t, track_trace_limit=track_trace_limit)
 
         # Propagate the model by one time step.
-        e.evolve()
+        e.evolve(reduce_stochasticity=False)
 
         print(t, e.get_date_string(),  e.vac_no_symptoms, e.vac_no_transmission)
         e.print_status(outfile)
 
     # calculate cumulative sums.
-    e.add_cum_column(outfile, ["dead", "num hospitalisations today", "infectious", "num infections today"])
+    e.add_cum_column(outfile, ["num hospitalisations today", "num infections today"])
 
     print("Simulation complete.", file=sys.stderr)

@@ -74,7 +74,9 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
 
       if location_type == "house":
         if house_csv_count % house_ratio == 0:
-          e.addHouse(num_houses, x , y, house_ratio)
+          if num_houses % e.size == e.rank:
+            e.addHouse(num_houses, x , y, house_ratio)
+
           num_houses += 1
         house_csv_count += 1
       else:
@@ -99,10 +101,12 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
     f = open("offices.csv","w")
     while office_sqm_red > 0:
       num_locs += 1
-      x = random.uniform(xbound[0],xbound[1])
-      y = random.uniform(ybound[0],ybound[1])
-      e.addLocation(num_locs, "office", x, y, office_size)
-      f.write("office,{},{},{}\n".format(x, y, office_size))
+      e.addRandomOffice(f, num_locs, xbound, ybound, office_size)
+      #x = random.uniform(xbound[0],xbound[1])
+      #y = random.uniform(ybound[0],ybound[1])
+      #e.addLocation(num_locs, "office", x, y, office_size)
+      #f.write("office,{},{},{}\n".format(x, y, office_size))
+
       office_sqm_red -= office_size
 
 
