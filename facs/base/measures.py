@@ -43,6 +43,11 @@ def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations_example.yml"):
       # no_transmission: 0.6
       # TO BE IMPLEMENTED
 
+
+__measure_mask_uptake = 0.0
+__measure_mask_uptake_shopping = 0.0
+__measure_social_distance = 0.0
+
 def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
   with open(ymlfile) as f:
     m = yaml.safe_load(f)
@@ -81,16 +86,25 @@ def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
     if("work_from_home" in dm):
       e.add_work_from_home(float(dm["work_from_home"]))
 
-    mask_uptake = 0.0
-    if("mask_uptake" in dm):
-      mask_uptake = float(dm["mask_uptake"])
 
-    mask_uptake_shopping = 0.0
+    # Social distance variable parsing.
+    do_sd = False #bool to indicate whether social distancing needs to be recalculated.
+
+    if("mask_uptake" in dm):
+      __measure_mask_uptake = float(dm["mask_uptake"])
+      do_sd = True
+
     if("mask_uptake_shopping" in dm):
-      mask_uptake_shopping = float(dm["mask_uptake_shopping"])
+      __measure_mask_uptake_shopping = float(dm["mask_uptake_shopping"])
+      do_sd = True
 
     if("social_distance" in dm):
-      e.add_social_distance(compliance = float(dm["social_distance"]), mask_uptake=mask_uptake, mask_uptake_shopping=mask_uptake_shopping)
+      __measure_social_distance = float(dm["social_distance"])  
+      do_sd = True
+
+    if do_sd:
+      e.add_social_distance(compliance = __measure_social_distance, mask_uptake=__measure_mask_uptake, mask_uptake_shopping=__measure_mask_uptake_shopping)
+
 
     if("traffic_multiplier" in dm):
       e.traffic_multiplier = float(dm["traffic_multiplier"])
