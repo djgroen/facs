@@ -43,7 +43,13 @@ def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations_example.yml"):
       # no_transmission: 0.6
       # TO BE IMPLEMENTED
 
+
+__measure_mask_uptake = 0.0
+__measure_mask_uptake_shopping = 0.0
+__measure_social_distance = 0.0
+
 def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
+  global __measure_mask_uptake, __measure_mask_uptake_shopping, __measure_social_distance
   with open(ymlfile) as f:
     m = yaml.safe_load(f)
 
@@ -67,6 +73,9 @@ def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
       if(dm["household_isolation"] == False):
         e.reset_household_isolation()
 
+    if("external_multiplier" in dm):
+      e.external_travel_multiplier = float(dm["external_multiplier"])
+
     if("partial_closure" in dm):
       for pc_key in dm["partial_closure"]:
         e.add_partial_closure(pc_key, dm["partial_closure"][pc_key])
@@ -78,16 +87,25 @@ def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
     if("work_from_home" in dm):
       e.add_work_from_home(float(dm["work_from_home"]))
 
-    mask_uptake = 0.0
-    if("mask_uptake" in dm):
-      mask_uptake = float(dm["mask_uptake"])
 
-    mask_uptake_shopping = 0.0
+    # Social distance variable parsing.
+    do_sd = False #bool to indicate whether social distancing needs to be recalculated.
+
+    if("mask_uptake" in dm):
+      __measure_mask_uptake = float(dm["mask_uptake"])
+      do_sd = True
+
     if("mask_uptake_shopping" in dm):
-      mask_uptake_shopping = float(dm["mask_uptake_shopping"])
+      __measure_mask_uptake_shopping = float(dm["mask_uptake_shopping"])
+      do_sd = True
 
     if("social_distance" in dm):
-      e.add_social_distance(compliance = float(dm["social_distance"]), mask_uptake=mask_uptake, mask_uptake_shopping=mask_uptake_shopping)
+      __measure_social_distance = float(dm["social_distance"])  
+      do_sd = True
+
+    if do_sd:
+      e.add_social_distance(compliance = __measure_social_distance, mask_uptake=__measure_mask_uptake, mask_uptake_shopping=__measure_mask_uptake_shopping)
+
 
     if("traffic_multiplier" in dm):
       e.traffic_multiplier = float(dm["traffic_multiplier"])
@@ -100,14 +118,13 @@ def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
 
 
 def update_hospital_protection_factor_uk(e, t):
-  if t == 10:
-    e.hospital_protection_factor = 0.75
+  e.hospital_protection_factor = 0.4
   if t == 20:
-    e.hospital_protection_factor = 0.5
+    e.hospital_protection_factor = 0.35
   if t == 30: # start of testing ramp up in early april.
-    e.hospital_protection_factor = 0.4
-  if t == 40:
     e.hospital_protection_factor = 0.3
+  if t == 40:
+    e.hospital_protection_factor = 0.26
   if t == 50:
     e.hospital_protection_factor = 0.23
   if t == 60: # testing ramped up considerably by the end of April.
@@ -116,15 +133,14 @@ def update_hospital_protection_factor_uk(e, t):
     e.hospital_protection_factor = 0.12
   if t == 100:
     e.hospital_protection_factor = 0.10
-  if t == 120:
-    e.hospital_protection_factor = 0.08
 
 
 def uk_lockdown_existing(e, t, track_trace_limit=0.5):
   update_hospital_protection_factor_uk(e,t)
 
-  e.vac_duration = 365
-  e.immunity_duration = 365
+  e.vac_duration = 273
+  e.immunity_duration = 273
+
 
   read_lockdown_yml(e, e.get_date_string())
 
@@ -154,17 +170,20 @@ def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.1):
 def uk_lockdown_forecast(e, t, mode = 0):
 
   # add in Alpha mutation
-  # Prevalence increases linearly from Oct 22 (1%) to Jan 30th (90%)
+  # Prevalence increases linearly from Oct 22 (1%) to Jan 30th (100%)
   if t > 235 and t < 336:
+    a = e.disease.infection_rate
     fraction = (t - 235) * 0.01
-    e.disease.infection_rate = calculate_mutating_infection_rate(fraction) # https://cmmid.github.io/topics/covid19/uk-novel-variant.html
-    print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
+    e.disease.infection_rate = calculate_mutating_infection_rate(fraction, 0.07, 0.11) # https://cmmid.github.io/topics/covid19/uk-novel-variant.html
+    print("infection rate adjusted from ",a," to ", e.disease.infection_rate, file=sys.stderr)
+
 
   # add in Delta mutation
   # Prevalence increases linearly from Apr 21 (1%) to June 10th (100%)
   if t > 416 and t < 467:
     fraction = (t - 416) * 0.02
-    e.disease.infection_rate = calculate_mutating_infection_rate(fraction, 0.1, 0.15) # https://www.ecdc.europa.eu/en/publications-data/threat-assessment-emergence-and-impact-sars-cov-2-delta-variant
+    e.disease.infection_rate = calculate_mutating_infection_rate(fraction, 0.11, 0.165) # https://www.ecdc.europa.eu/en/publications-data/threat-assessment-emergence-and-impact-sars-cov-2-delta-variant
+
     # our estimate is 50% here, as Delta gains full dominance in this period.
     # https://www.gov.uk/government/news/confirmed-cases-of-covid-19-variants-identified-in-uk#:~:text=The%20Delta%20variant%20currently%20accounts,of%20cases%20across%20the%20UK.&text=In%20total%2C%203%2C692%20people%20have,the%20Delta%20and%20Beta%20variants.l
     print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
@@ -204,34 +223,3 @@ def work100(e):
   e.add_case_isolation()
   e.add_household_isolation()
 
-_dyn_lock_full = True # we assume this mechanism starts in lockdown mode.
-def enact_dynamic_lockdown(e, light_lockdown_func, kpi_value, threshold):
-  """
-  Dynamic lockdown based on threshold KPI assessment.
-  """
-  global _dyn_lock_full
-  if kpi_value > threshold:
-    if not _dyn_lock_full:
-      print("DYNAMIC: Full lockdown", file=sys.stderr)
-      full_lockdown(e)
-      _dyn_lock_full = True
-  else:
-    if _dyn_lock_full:
-      print("DYNAMIC: Light lockdown", file=sys.stderr)
-      light_lockdown_func(e)
-      _dyn_lock_full = False
-
-
-def enact_periodic_lockdown(e, light_lockdown_func):
-  """
-  Dynamic lockdown based on static time intervals.
-  """
-  global _dyn_lock_full
-  if not _dyn_lock_full:
-    print("PERIODIC: Full lockdown", file=sys.stderr)
-    full_lockdown(e)
-    _dyn_lock_full = True
-  else:
-    print("PERIODIC: Light lockdown", file=sys.stderr)
-    light_lockdown_func(e)
-    _dyn_lock_full = False
