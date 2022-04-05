@@ -53,10 +53,6 @@ class MPIManager:
         self.rank = self.comm.Get_rank()
         self.size = self.comm.Get_size()
 
-        #Make header for infections file
-        out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, self.rank))
-        print("#time,x,y,location_type", file=out_inf, flush=True)
-
 
     def CalcCommWorldTotalSingle(self, i, op=MPI.SUM):
         in_array = np.array([i])
@@ -171,13 +167,13 @@ out_files = OUTPUT_FILES()
 
 def write_log_headers(rank):
   out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, rank))
-  print("#t,x,y,location_type,rank,incubation_time", file=out_inf, flush=True)
+  print("#time,x,y,location_type,rank,incubation_time", file=out_inf, flush=True)
   out_inf = out_files.open("{}/covid_out_hospitalisations_{}.csv".format(log_prefix, rank))
-  print("#t,x, y,age", file=out_inf, flush=True)
+  print("#time,x, y,age", file=out_inf, flush=True)
   out_inf = out_files.open("{}/covid_out_deaths_{}.csv".format(log_prefix, rank))
-  print("#t,x,y,age", file=out_inf, flush=True)
+  print("#time,x,y,age", file=out_inf, flush=True)
   out_inf = out_files.open("{}/covid_out_recoveries_{}.csv".format(log_prefix, rank))
-  print("#t,x,y,age", file=out_inf, flush=True)
+  print("#time,x,y,age", file=out_inf, flush=True)
   
 
 
