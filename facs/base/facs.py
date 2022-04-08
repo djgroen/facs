@@ -469,7 +469,13 @@ class House:
     n = []
     ni = []
     for l in lnames:
-      if l not in e.locations.keys():
+      if location_type == "office": # offices are picked randomly, not based on proximity.
+        if "office" not in e.locations.keys():
+          n.append(None)
+          print("WARNING: location type missing")
+        nearest_loc_index = get_rndint(len(e.locations[l])) 
+
+      elif l not in e.locations.keys():
         n.append(None)
         print("WARNING: location type missing")
       else:
