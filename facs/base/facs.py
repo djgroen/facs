@@ -472,6 +472,11 @@ class House:
       if l not in e.locations.keys():
         n.append(None)
         print("WARNING: location type missing")
+      elif l == "office": # offices are picked randomly, not based on proximity.
+        nearest_loc_index = get_rndint(len(e.locations[l]))
+
+        n.append(e.locations[l][nearest_loc_index])
+        ni.append(nearest_loc_index)
       else:
         min_score = 99999.0
         nearest_loc_index = 0
@@ -489,6 +494,7 @@ class House:
             print("To detect these, you can use the following command:")
             print("cat <buildings file name>.csv | grep -v house | grep \",0$\"")
             sys.exit()
+
         n.append(e.locations[l][nearest_loc_index])
         ni.append(nearest_loc_index)
 
@@ -792,12 +798,16 @@ class Ecosystem:
   def init_loc_inf_minutes(self):
     offset = 0
     self.loc_offsets = {}
+    self.loc_m2 = {}
     for lt in self.locations:
       if lt != "house":
+        self.loc_m2[lt] = 0.0
         for i in range(0, len(self.locations[lt])):
           self.locations[lt][i].loc_inf_minutes_id = offset + i
+          self.loc_m2[lt] += self.locations[lt][i].sqm
 
-        print(lt, len(self.locations[lt]), offset)
+        if self.rank == 0:
+          print("type {}, # {}, tot m2 {}, offset {}".format(lt, len(self.locations[lt]), self.loc_m2[lt], offset))
         self.number_of_non_house_locations += len(self.locations[lt])
         self.loc_offsets[lt] = offset
         offset += len(self.locations[lt])
