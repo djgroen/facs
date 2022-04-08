@@ -819,11 +819,11 @@ class Ecosystem:
 
 
 
-  def get_date_string(self):
+  def get_date_string(self,date_format='%-d/%-m/%Y'):
     """
     Return the simulation date as a short string.
     """
-    return self.date.strftime('%-d/%-m/%Y')
+    return self.date.strftime(date_format)
 
   def get_seasonal_effect(self):
     month = int(self.date.month)

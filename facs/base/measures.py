@@ -48,7 +48,7 @@ __measure_mask_uptake = 0.0
 __measure_mask_uptake_shopping = 0.0
 __measure_social_distance = 0.0
 
-def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
+def read_lockdown_yml(e, ymlfile="covid_data/measures_uk.yml"):
   global __measure_mask_uptake, __measure_mask_uptake_shopping, __measure_social_distance
   with open(ymlfile) as f:
     m = yaml.safe_load(f)
@@ -56,6 +56,14 @@ def read_lockdown_yml(e, date, ymlfile="covid_data/measures_uk.yml"):
   keyworker_fraction = 0.2
   if(m["keyworker_fraction"]):
     keyworker_fraction = float(m["keyworker_fraction"])
+
+  date_format = m["date_format"]
+
+  # entry for backwards compatibility
+  if date_format == "%d/%m/%Y":
+    date_format = '%-d/%-m/%Y'
+
+  date = e.get_date_string(date_format)
 
   if date in m:
     e.remove_all_measures()
@@ -142,7 +150,7 @@ def uk_lockdown_existing(e, t, track_trace_limit=0.5):
   e.immunity_duration = 273
 
 
-  read_lockdown_yml(e, e.get_date_string())
+  read_lockdown_yml(e)
 
   
   # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes

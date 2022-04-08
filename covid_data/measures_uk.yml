@@ -1,4 +1,4 @@
-date_format: "%d/%m/%Y"
+date_format: "%d/%m/%Y" # either use the default (%d/%m/%Y) or use a format that is parsed correctly by Python3 strftime.
 keyworker_fraction: 0.18 # percentage workers that are keyworkers
 
 #Explanation
