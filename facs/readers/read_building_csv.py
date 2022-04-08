@@ -109,14 +109,17 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
 
       office_sqm_red -= office_size
 
+  if e.rank == 0:
+    print("Read in {} houses and {} other locations.".format(num_houses, num_locs))
+    print("Office sqm = {}".format(office_sqm))
+    print("Type distribution:")
+    print("house",len(e.houses))
 
-  print("Read in {} houses and {} other locations.".format(num_houses, num_locs))
-  print("Office sqm = {}".format(office_sqm))
-  print("Type distribution:")
-  print("house",len(e.houses))
   e.init_loc_inf_minutes()
-  print("raw types are:")
-  pp.pprint(building_types)
+
+  if e.rank == 0:
+    print("raw types are:")
+    pp.pprint(building_types)
 
   e.update_nearest_locations(dumpnearest)
   if dumptypesandquit:

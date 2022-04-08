@@ -792,13 +792,16 @@ class Ecosystem:
   def init_loc_inf_minutes(self):
     offset = 0
     self.loc_offsets = {}
+    self.loc_m2 = {}
     for lt in self.locations:
       if lt != "house":
+        self.loc_m2[lt] = 0.0
         for i in range(0, len(self.locations[lt])):
           self.locations[lt][i].loc_inf_minutes_id = offset + i
+          self.loc_m2[lt] += self.locations[lt][i].sqm
 
         if self.rank == 0:
-          print(lt, len(self.locations[lt]), offset)
+          print("type {}, # {}, tot m2 {}, offset {}".format(lt, len(self.locations[lt]), self.loc_m2[lt], offset))
         self.number_of_non_house_locations += len(self.locations[lt])
         self.loc_offsets[lt] = offset
         offset += len(self.locations[lt])
