@@ -469,15 +469,14 @@ class House:
     n = []
     ni = []
     for l in lnames:
-      if location_type == "office": # offices are picked randomly, not based on proximity.
-        if "office" not in e.locations.keys():
-          n.append(None)
-          print("WARNING: location type missing")
-        nearest_loc_index = get_rndint(len(e.locations[l])) 
-
-      elif l not in e.locations.keys():
+      if l not in e.locations.keys():
         n.append(None)
         print("WARNING: location type missing")
+      elif l == "office": # offices are picked randomly, not based on proximity.
+        nearest_loc_index = get_rndint(len(e.locations[l]))
+
+        n.append(e.locations[l][nearest_loc_index])
+        ni.append(nearest_loc_index)
       else:
         min_score = 99999.0
         nearest_loc_index = 0
@@ -495,6 +494,7 @@ class House:
             print("To detect these, you can use the following command:")
             print("cat <buildings file name>.csv | grep -v house | grep \",0$\"")
             sys.exit()
+
         n.append(e.locations[l][nearest_loc_index])
         ni.append(nearest_loc_index)
 
