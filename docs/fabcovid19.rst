@@ -77,7 +77,7 @@ To an an ensemble simulation of FACS,
 
 .. code-block:: sh
 
-	fab <localhost/remote machine> covid19_ensemble:location=<area_name>[,TS=transition scenario list][,TM=transition mode list] 
+	fab <localhost/remote machine> covid19_ensemble:configs='<area_name>;<area2_name>'[,TS=transition scenario list][,TM=transition mode list] 
 
 .. note::
 	By default, all Acceptable Transition Scenario and Mode will be executed if these ``TS`` and ``TM`` parameters did not passed
@@ -86,13 +86,20 @@ Examples:
 
 .. code-block:: sh
 
-        fabsim localhost covid19_ensemble:location='test',TS='uk-forecast',TM='0',cores=1,replicas=1,starting_infections=10,job_wall_time=0:15:00
+        fabsim localhost covid19_ensemble:configs='test',cores=1,replicas=1,TS='uk-forecast',TM='0',starting_infections=10,job_wall_time=0:15:00
 
-	fabsim localhost covid19_ensemble:location=harrow
+	fabsim localhost covid19_ensemble:configs='harrow'
 
-	fabsim localhost covid19_ensemble:location='brent;harrow;hillingdon'
+	fabsim localhost covid19_ensemble:configs='brent;harrow;hillingdon'
 
-	fabsim localhost covid19_ensemble:location='harrow;hillingdon',TS='open-schools;open-shopping;open-leisure',TM='2;3'
+
+To run an ensemble of parallel runs, using 4 cores per run, you can use a comment like the following examples:
+
+.. code-block:: sh
+
+        fabsim localhost covid19_ensemble:configs='brent',cores=4,replicas=1,simulation_period=500,TS='uk-forecast',TM='0',starting_infections=460,job_wall_time=1:00:00,solver=pfacs
+
+        fabsim localhost covid19_ensemble:configs='test',cores=4,replicas=1,starting_infections=460,TS='uk-forecast',TM='0',solver=pfacs
 
 
 If you ran an ensemble jobs, you may need to do averaging across runs on the output csv files before plotting, in that case you can type:
@@ -108,13 +115,13 @@ Examples:
 
 	.. code-block:: sh
 
-		fabsim localhost covid19_ensemble:location='brent',TS='extend-lockdown;dynamic-lockdown',TM='1',replicas=25
+		fabsim localhost covid19_ensemble:configs='brent',TS='extend-lockdown;dynamic-lockdown',TM='1',replicas=25
 
 * submit an ensambe job using QCG-PilotJob:
 
 	.. code-block:: sh
 
-		fabsim localhost covid19_ensemble:location='brent',TS='extend-lockdown;dynamic-lockdown',TM='1',replicas=25,PilotJob=true
+		fabsim localhost covid19_ensemble:configs='brent',TS='extend-lockdown;dynamic-lockdown',TM='1',replicas=25,PilotJob=true
 
 * fetch results:
 
