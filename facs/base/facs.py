@@ -676,7 +676,7 @@ class Location:
     if self.type == "park":
       airflow = e.airflow_outdoors
 
-    base_rate =  e.seasonal_effect * (e.contact_rate_multiplier[self.type] * e.disease.infection_rate * e.loc_inf_minutes[self.loc_inf_minutes_id]) / (airflow * 24*60 * minutes_opened)
+    base_rate =  e.seasonal_effect * (e.contact_rate_multiplier[self.type] * e.disease.infection_rate * e.loc_inf_minutes[self.loc_inf_minutes_id]) / (airflow * 24*60 * self.sqm * minutes_opened)
 
     e.base_rate += base_rate
 
@@ -757,9 +757,10 @@ class Ecosystem:
     self.loc_groups = {}
     self.needsfile = needsfile
 
-    self.airflow_indoors_small = 9.0
-    self.airflow_indoors_large = 36.0
-    self.airflow_outdoors = 180.0
+    airflow_scale_factor = 500.0
+    self.airflow_indoors_small = 9.0 / airflow_scale_factor
+    self.airflow_indoors_large = 36.0 / airflow_scale_factor
+    self.airflow_outdoors = 180.0 / airflow_scale_factor
 
     self.external_travel_multiplier = 1.0 # Can be adjusted to introduce peaks in external travel, e.g. during holiday returns or major events (Euros).
     self.external_infection_ratio = 0.5 # May be changed at runtime. Base assumption is that there are 300% extra external visitors, and that 1% of them have COVID. Only applies to transport for now.
