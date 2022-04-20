@@ -757,7 +757,7 @@ class Ecosystem:
     self.loc_groups = {}
     self.needsfile = needsfile
 
-    airflow_scale_factor = 500.0
+    airflow_scale_factor = 5000.0
     self.airflow_indoors_small = 9.0 / airflow_scale_factor
     self.airflow_indoors_large = 36.0 / airflow_scale_factor
     self.airflow_outdoors = 180.0 / airflow_scale_factor
