@@ -20,11 +20,7 @@ if __name__ == "__main__":
     # Instantiate the parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--location', action="store", default="brent")
-    parser.add_argument('--transition_scenario', action="store", default="extend-lockdown")
-    parser.add_argument('--transition_mode', action="store",
-                        type=int, default='1')
-    parser.add_argument('--ci_multiplier', action="store",
-                        type=float, default='0.625', help="Multiplier set for Case Isolation which represents the ratio of out-of-house interactions for Covid patients relative to the default interaction rate. Default value comes from Imp Report 9.")
+    parser.add_argument('--measures_yml', action="store", default="measures_uk")
     parser.add_argument('--output_dir', action="store", default=".")
     parser.add_argument('--data_dir', action="store", default="covid_data")
     parser.add_argument('-s','--starting_infections', action="store", default="500")
@@ -40,9 +36,7 @@ if __name__ == "__main__":
     if args.quicktest:
       house_ratio = 100
     location = args.location
-    ci_multiplier = float(args.ci_multiplier)
-    transition_scenario = args.transition_scenario.lower()
-    transition_mode = args.transition_mode
+    measures_yml = args.measures_yml
     output_dir = args.output_dir
     data_dir = args.data_dir
 
@@ -54,44 +48,16 @@ if __name__ == "__main__":
                 if len(row) > 0:  # skip empty lines in csv
                     if row[0][0] == "#":
                         pass
-                    elif row[0].lower() == "transition_scenario":
-                        transition_scenario = str(row[1]).lower()
-                    elif row[0].lower() == "transition_mode":
-                        transition_mode = int(row[1])
-
-    transition_day = -1
-    # if transition_mode == 1:
-    #     transition_day = 77  # 15th of April
-    # if transition_mode == 2:
-    #     transition_day = 93  # 31st of May
-    # if transition_mode == 3:
-    #     transition_day = 108  # 15th of June
-    # if transition_mode == 4:
-    #     transition_day = 123  # 30th of June
-    # if transition_mode > 10:
-    #     transition_day = transition_mode
-
-    # check the transition scenario argument
-    AcceptableTransitionScenario = ['no-measures', 'extend-lockdown',
-                                    'open-all', 'open-schools', 'open-shopping',
-                                    'open-leisure', 'work50', 'work75',
-                                    'work100', 'dynamic-lockdown', 'periodic-lockdown','uk-forecast']
-
-    if transition_scenario not in AcceptableTransitionScenario:
-        print("\nError !\n\tThe input transition scenario, %s , is not VALID" %
-              (transition_scenario))
-        print("\tThe acceptable inputs are : [%s]" %
-              (",".join(AcceptableTransitionScenario)))
-        sys.exit()
+                    elif row[0].lower() == "measures_yml":
+                        measures_yml = str(row[1]).lower()
 
     # check if output_dir is exists
     if not path.exists(output_dir):
         makedirs(output_dir)
 
-    outfile = "{}/{}-{}-{}.csv".format(output_dir,
+    outfile = "{}/{}-{}.csv".format(output_dir,
                                        location,
-                                       transition_scenario,
-                                       transition_day)
+                                       measures_yml)
     if args.generic_outfile:
       outfile = "{}/out.csv".format(output_dir)
 
@@ -102,18 +68,14 @@ if __name__ == "__main__":
     
     print("Running basic Covid-19 simulation kernel.")
     print("scenario = %s" % (location))
-    print("transition_scenario = %s" % (transition_scenario))
-    print("transition_mode = %d" % (transition_mode))
-    print("transition_day = %d" % (transition_day))
+    print("measures input yml = %s" % (measures_yml))
     print("end_time = %d" % (end_time))
     print("output_dir  = %s" % (output_dir))
     print("outfile  = %s" % (outfile))
     print("data_dir  = %s" % (data_dir))
 
-
     e = facs.Ecosystem(end_time)
 
-    e.ci_multiplier = ci_multiplier
     e.ages = read_age_csv.read_age_csv("{}/age-distr.csv".format(data_dir), location)
 
     print("age distribution in system:", e.ages, file=sys.stderr)
@@ -141,6 +103,8 @@ if __name__ == "__main__":
 
     e.print_status(outfile, silent=True) # silent print to initialise log data structures.
 
+    measures_yml = "measures_uk"
+
     starting_num_infections = 500
     if args.starting_infections:
       starting_num_infections = int(args.starting_infections)
@@ -162,8 +126,10 @@ if __name__ == "__main__":
         
         e.add_infections(num)
 
-        measures.uk_lockdown_forecast(e, e.time, transition_mode)
+        measures.enact_measures_and_evolutions(e, e.time, measures_yml)
+        
         e.evolve(reduce_stochasticity=False)
+
         print(e.time)
         if args.dbg:
             e.debug_mode = True
@@ -173,13 +139,9 @@ if __name__ == "__main__":
             e.print_status(outfile, silent=True)
 
 
-    track_trace_limit = 0.2 + transition_mode*0.1
-
-
     for t in range(0, end_time):
 
-        if transition_scenario not in ["no-measures"]:
-          measures.uk_lockdown_forecast(e, t, transition_mode)
+        measures.enact_measures_and_evolutions(e, e.time, measures_yml)
 
         # Propagate the model by one time step.
         e.evolve(reduce_stochasticity=False)

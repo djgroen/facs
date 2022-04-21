@@ -143,27 +143,6 @@ def update_hospital_protection_factor_uk(e, t):
     e.hospital_protection_factor = 0.10
 
 
-def uk_lockdown_existing(e, t, track_trace_limit=0.5):
-  update_hospital_protection_factor_uk(e,t)
-
-  e.vac_duration = 273
-  e.immunity_duration = 273
-
-
-  read_lockdown_yml(e)
-
-  
-  # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
-  # Traffic: Mar 10: 90% (estimate), Mar 16: 60%, Mar 20: 20%, Mar 28: 10%
-  # Service: Mar 20: 80%, Mar 28: 50%
-  if t > 10 and t <= 15:
-    e.traffic_multiplier = ((0.9 - (0.06*(t-10)))**2) / 1.0
-  if t > 15 and t <= 20:
-    e.traffic_multiplier = ((0.6 - (0.08*(t-15)))**2) / 0.8
-  if t > 20 and t <= 28:
-    e.traffic_multiplier = ((0.2 - (0.0125*(t-20)))**2) / 0.5
-
-
 def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.1):
   # Original infection rate is 0.07 (COVID-19 disease.yml)
   # destination infection rate is "up to 70% higher", so we set it to 0.07*1.5=0.105.
@@ -175,7 +154,7 @@ def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.1):
   return (1.0-fraction)*source + (fraction*dest)
 
 
-def uk_lockdown_forecast(e, t, mode = 0):
+def enact_measures_and_evolutions(e, t, measures_yml="measures_uk"):
 
   # add in Alpha mutation
   # Prevalence increases linearly from Oct 22 (1%) to Jan 30th (100%)
@@ -198,7 +177,25 @@ def uk_lockdown_forecast(e, t, mode = 0):
 
   read_vaccine_yml(e, e.get_date_string())
 
-  uk_lockdown_existing(e, t)
+  update_hospital_protection_factor_uk(e,t)
+
+  e.vac_duration = 273
+  e.immunity_duration = 273
+
+
+  read_lockdown_yml(e, "covid_data/{}.yml".format(measures_yml))
+
+
+  # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
+  # Traffic: Mar 10: 90% (estimate), Mar 16: 60%, Mar 20: 20%, Mar 28: 10%
+  # Service: Mar 20: 80%, Mar 28: 50%
+  if t > 10 and t <= 15:
+    e.traffic_multiplier = ((0.9 - (0.06*(t-10)))**2) / 1.0
+  if t > 15 and t <= 20:
+    e.traffic_multiplier = ((0.6 - (0.08*(t-15)))**2) / 0.8
+  if t > 20 and t <= 28:
+    e.traffic_multiplier = ((0.2 - (0.0125*(t-20)))**2) / 0.5
+
 
 
 def work50(e):
