@@ -61,15 +61,14 @@ To run a single job, simply type:
 	fabsim <localhost/remote machine> covid19:<location_scenario>,<TS=transition scenario>,<TM=transition mode>,[outdir=output directory]
 
 where
-	* ``location_scenario`` : the name of borough, the full list can be found in https://github.com/djgroen/FabCovid19/tree/master/config_files 
-	* ``TS``: is the Transition Scenario. The acceptable inputs are : [`no-measures`, `extend-lockdown`, `open-all`, `open-schools`, `open-shopping`, `open-leisure`, `work50`, `work75`, `work100`, and `dynamic-lockdown`]
-	* ``TM``: is the Transition Mode. The acceptable inputs are : [`1`, `2`, `3`, and `4`]
+	* ``configs`` : the name of borough, the full list can be found in https://github.com/djgroen/FabCovid19/tree/master/config_files 
+	* ``measures``: name of the measures.yml file used, minus the .yml extension. This file should reside in the covid_data subdirectory
 
 Example:
 
 .. code-block:: sh
 
-	fabsim localhost covid19:harrow,TS=periodic-lockdown,TM=1,ci_multiplier=0.3
+	fabsim localhost covid19:configs=harrow,measures=measures_uk
 
 Run an ensemble job
 ~~~~~~~~~~~~~~~~~~~
@@ -77,16 +76,16 @@ To an an ensemble simulation of FACS,
 
 .. code-block:: sh
 
-	fab <localhost/remote machine> covid19_ensemble:configs='<area_name>;<area2_name>'[,TS=transition scenario list][,TM=transition mode list] 
+	fab <localhost/remote machine> covid19_ensemble:configs='<area_name>;<area2_name>'[,measures=<list of measures files>] 
 
 .. note::
-	By default, all Acceptable Transition Scenario and Mode will be executed if these ``TS`` and ``TM`` parameters did not passed
+	By default, the measures_uk.yml file will be used in simulations.
 
 Examples:
 
 .. code-block:: sh
 
-        fabsim localhost covid19_ensemble:configs='test',cores=1,replicas=1,TS='uk-forecast',TM='0',starting_infections=10,job_wall_time=0:15:00
+        fabsim localhost covid19_ensemble:configs='test',cores=1,replicas=1,measures=measures_uk,starting_infections=10,job_wall_time=0:15:00
 
 	fabsim localhost covid19_ensemble:configs='harrow'
 
@@ -97,16 +96,16 @@ To run an ensemble of parallel runs, using 4 cores per run, you can use a commen
 
 .. code-block:: sh
 
-        fabsim localhost covid19_ensemble:configs='brent',cores=4,replicas=1,simulation_period=500,TS='uk-forecast',TM='0',starting_infections=460,job_wall_time=1:00:00,solver=pfacs
+        fabsim localhost covid19_ensemble:configs='brent',cores=4,replicas=1,simulation_period=500,measures=measures_uk,starting_infections=460,job_wall_time=1:00:00,solver=pfacs
 
-        fabsim localhost covid19_ensemble:configs='test',cores=4,replicas=1,starting_infections=460,TS='uk-forecast',TM='0',solver=pfacs
+        fabsim localhost covid19_ensemble:configs='test',cores=4,replicas=1,starting_infections=460,measures=measures_uk,solver=pfacs
 
 
 If you ran an ensemble jobs, you may need to do averaging across runs on the output csv files before plotting, in that case you can type:
 
 .. code-block:: sh
 	
-	fabsim <localhost/remote machine> cal_avg_csv:<location_scenario>,<TS=transition scenario>,<TM=transition mode>
+	fabsim <localhost/remote machine> cal_avg_csv:<location_scenario>,<measures=measure_yml_file>
 
 
 Examples:
@@ -115,13 +114,13 @@ Examples:
 
 	.. code-block:: sh
 
-		fabsim localhost covid19_ensemble:configs='brent',TS='extend-lockdown;dynamic-lockdown',TM='1',replicas=25
+		fabsim localhost covid19_ensemble:configs='brent',measures='measures_uk;measures_nolockdown',replicas=25
 
 * submit an ensambe job using QCG-PilotJob:
 
 	.. code-block:: sh
 
-		fabsim localhost covid19_ensemble:configs='brent',TS='extend-lockdown;dynamic-lockdown',TM='1',replicas=25,PilotJob=true
+		fabsim localhost covid19_ensemble:configs='brent',measures=measures_uk,replicas=25,PilotJob=true
 
 * fetch results:
 
@@ -130,12 +129,12 @@ Examples:
 		fabsim localhost fetch_results
 
 
-* Calculate averages across runs:
+* Calculate averages across runs (not recently tested):
 
 	.. code-block:: sh
 
-		fabsim localhost cal_avg_csv:brent,TS='extend-lockdown',TM=1
-		fabsim localhost cal_avg_csv:brent,TS='dynamic-lockdown',TM=1
+		fabsim localhost cal_avg_csv:brent,measures='lockdown_uk'
+		fabsim localhost cal_avg_csv:brent,measures='lockdown_uk'
 
 
 Run a validation job
