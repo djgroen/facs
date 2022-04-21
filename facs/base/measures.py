@@ -196,35 +196,3 @@ def enact_measures_and_evolutions(e, t, measures_yml="measures_uk"):
   if t > 20 and t <= 28:
     e.traffic_multiplier = ((0.2 - (0.0125*(t-20)))**2) / 0.5
 
-
-
-def work50(e):
-  e.remove_all_measures()
-  e.add_closure("school", 0)
-  e.add_closure("leisure", 0)
-  e.add_partial_closure("shopping", 0.4)
-  # mimicking a 75% reduction in social contacts.
-  e.add_social_distance_imp9()
-  # light work from home instruction, with 50% compliance
-  e.add_work_from_home(0.5)
-  e.add_case_isolation()
-  e.add_household_isolation()
-
-
-def work75(e):
-  e.remove_all_measures()
-  e.add_partial_closure("leisure", 0.5)
-  # mimicking a 75% reduction in social contacts.
-  e.add_social_distance_imp9()
-  # light work from home instruction, with 25% compliance
-  e.add_work_from_home(0.25)
-  e.add_case_isolation()
-  e.add_household_isolation()
-
-def work100(e):
-  e.remove_all_measures()
-  # mimicking a 75% reduction in social contacts.
-  e.add_social_distance_imp9()
-  e.add_case_isolation()
-  e.add_household_isolation()
-
