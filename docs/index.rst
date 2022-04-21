@@ -33,10 +33,17 @@ These dependencies are:
 How to run the code
 -------------------
 To run a simple simulation of a basic test dataset, type:
-`python3 run.py --location=test --output_dir=.`
+`python3 run.py -g --location=test --output_dir=.`
+
+Here, the `-g` flag indicates that output will be written to out.csv, instead of an output file with a more specific name.
 
 To run a simulation of the Borough of Brent, type:
 `python3 run.py --location=brent --measures_yml=measures_uk --output_dir=.`
+
+Note that in this case, we explicitly specify the measures YML file that we wish to use. This is done in the format:
+`covid_data/<measures_yml>.yml`
+
+So in this case FACS will use the file `covid_data/measures_uk.yml`.
 
 Outputs are written as CSV files in the output\_dir. E.g. for the test run you will get:
 covid\_out\_infections.csv
@@ -45,7 +52,7 @@ test-extend-lockdown-62.csv
 There is a hardcoded lockdown in run.py which is representative for the UK. This can be disabled by selecting the transition scenario "no-measures".
 
 We also included a simple plotting script. This could be called e.g. as follows:
-`python3 PlotSEIR.py test-extend-lockdown-62.csv test`
+`python3 PlotSEIR.py out.csv test`
 (this has not been tested in a while, as we usually use FabCovid19 for plotting these days)
 
 Citing FACS

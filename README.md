@@ -9,19 +9,19 @@ Full documentation can be found at: http://facs.readthedocs.io
 
 ## How to run the code
 To run a simple simulation of a basic test dataset, type:
-`python3 run.py --location=test --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
+`python3 run.py --location=test --output_dir=.`
 
 To run it in parallel, type (for four core runs):
-`mpirun -np 4 python3 run.py --location=test --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
+`mpirun -np 4 python3 run.py --location=test --output_dir=.`
 
 To do a run of custom length (with -t flag), and with a generically named out.csv output file, type:
-`mpirun -np 1 python3 run.py -t=10 -g --location=test --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
+`mpirun -np 1 python3 run.py -t=10 -g --location=test --output_dir=.`
 
 To run a simulation of the Borough of Brent, type:
-`python3 run.py --location=brent --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
+`python3 run.py --location=brent --output_dir=.`
 
 To run a simulation of Brunel University London, type:
-`python3 run_campus.py --location=brunel --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
+`python3 run_campus.py --location=brunel --output_dir=.`
 
 Outputs are written as CSV files in the output\_dir. E.g. for the test run you will get:
 covid\_out\_infections.csv
@@ -36,10 +36,10 @@ We also included a simple plotting script. This can be called e.g. as follows:
 
 ### Running with a specific data directory
 Flacs can be run with a different input data directory as follows:
-`python3 run.py --location=brent --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=. --data_dir=/home/derek/covid19-postprocess/flacs_input_private`
+`python3 run.py --location=brent --output_dir=. --data_dir=/home/derek/covid19-postprocess/facs_input_private`
 
 ### Performing quick tests
 Quick tests can be triggered with the '-q' flag. This sets the house ratio to 100 (default is 2), which means that households will be less well distributed.
 However, as a number of calculations are performed on the house level (not the household level), this setting speeds up the code by up to an order of magnitude.
-`python3 run.py -q --location=brent --transition_scenario=extend-lockdown --transition_mode=1 --output_dir=.`
+`python3 run.py -q --location=brent --output_dir=.`
 
