@@ -758,9 +758,9 @@ class Ecosystem:
     self.needsfile = needsfile
 
     airflow_scale_factor = 5000.0
-    self.airflow_indoors_small = 9.0 / airflow_scale_factor
-    self.airflow_indoors_large = 36.0 / airflow_scale_factor
-    self.airflow_outdoors = 180.0 / airflow_scale_factor
+    self.airflow_indoors_small = 10.0 / airflow_scale_factor
+    self.airflow_indoors_large = 30.0 / airflow_scale_factor
+    self.airflow_outdoors = 200.0 / airflow_scale_factor
 
     self.external_travel_multiplier = 1.0 # Can be adjusted to introduce peaks in external travel, e.g. during holiday returns or major events (Euros).
     self.external_infection_ratio = 0.5 # May be changed at runtime. Base assumption is that there are 300% extra external visitors, and that 1% of them have COVID. Only applies to transport for now.
