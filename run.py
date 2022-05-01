@@ -20,7 +20,7 @@ if __name__ == "__main__":
     # Instantiate the parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--location', action="store", default="brent")
-    parser.add_argument('--measures_yml', action="store", default="measures_uk")
+    parser.add_argument('--measures_yml', action="store", default="measures")
     parser.add_argument('--output_dir', action="store", default=".")
     parser.add_argument('--data_dir', action="store", default="covid_data")
     parser.add_argument('-s','--starting_infections', action="store", default="500")
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     print("age distribution in system:", e.ages, file=sys.stderr)
 
     e.disease = read_disease_yml.read_disease_yml(
-        "{}/disease_covid19.yml".format(data_dir))
+        "{}/disease.yml".format(data_dir))
 
     building_file = "{}/{}_buildings.csv".format(data_dir, location)
     read_building_csv.read_building_csv(e,
@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     e.print_status(outfile, silent=True) # silent print to initialise log data structures.
 
-    measures_yml = "measures_uk"
+    measures_yml = "measures"
 
     starting_num_infections = 500
     if args.starting_infections:

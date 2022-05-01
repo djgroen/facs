@@ -13,7 +13,7 @@ def full_lockdown(e):
   e.add_household_isolation()
 
 
-def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations_example.yml"):
+def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations.yml"):
   with open(ymlfile) as f:
     v = yaml.safe_load(f)
   
@@ -48,7 +48,7 @@ __measure_mask_uptake = 0.0
 __measure_mask_uptake_shopping = 0.0
 __measure_social_distance = 0.0
 
-def read_lockdown_yml(e, ymlfile="covid_data/measures_uk.yml"):
+def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
   global __measure_mask_uptake, __measure_mask_uptake_shopping, __measure_social_distance
   with open(ymlfile) as f:
     m = yaml.safe_load(f)
@@ -154,7 +154,7 @@ def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.1):
   return (1.0-fraction)*source + (fraction*dest)
 
 
-def enact_measures_and_evolutions(e, t, measures_yml="measures_uk"):
+def enact_measures_and_evolutions(e, t, measures_yml="measures"):
 
   # add in Alpha mutation
   # Prevalence increases linearly from Oct 22 (1%) to Jan 30th (100%)

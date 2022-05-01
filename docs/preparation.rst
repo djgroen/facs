@@ -71,7 +71,7 @@ Here you can add one new column for each new scenario location that you're addin
 4. Verifying the disease specification in disease.yml
 =====================================================
 
-One of the input files is a definition of the disease one is trying to model. We provide a YML-based specification of an example interpretation of Covid-19 in the `covid_data` subdirectory for your convenience, see: https://github.com/djgroen/facs/blob/master/covid_data/disease_covid19.yml .
+One of the input files is a definition of the disease one is trying to model. We provide a YML-based specification of an example interpretation of Covid-19 in the `covid_data` subdirectory for your convenience, see: https://github.com/djgroen/facs/blob/master/covid_data/disease.yml .
 
 The exact format may still be subject to change, but among others we have fields for:
 
@@ -87,7 +87,7 @@ The exact format may still be subject to change, but among others we have fields
 5. Defining the exact public health interventions undertaken
 ============================================================
 
-Detailed documentation for this step has yet to be developed, as the format is still subject to change. However, by default FACS will look at the file in `covid_data/measures_uk.yml` to extract the exact interventions required for the run. Below, we will explain how you can customize the interventions:
+Detailed documentation for this step has yet to be developed, as the format is still subject to change. However, by default FACS will look at the file in `covid_data/measures.yml` to extract the exact interventions required for the run. Below, we will explain how you can customize the interventions:
 
 The restrictions and measures including government interventions taken to mitigate the spread of disease are specified in a `yml` file named `measures_<location>.yml`. In this file, a list of dates on which the restrictions were imposed or modified is given. Corresponding to each date, a description of the restrictions are given. These restrictions can be defined in terms the following heads.
 
@@ -160,7 +160,7 @@ Lastly, note that interventions related to public transport are not yet incorpor
 6. Defining the vaccination strategy
 ====================================
 
-Similarly, FACS is also able to read the vaccination strategy from a file. By default, the file in `covid_date/vaccinations_example.yml` will be read to extract the vaccination strategy.
+Similarly, FACS is also able to read the vaccination strategy from a file. By default, the file in `covid_date/vaccinations.yml` will be read to extract the vaccination strategy.
 
 You can find a realistic example of this file in this repository.
 
