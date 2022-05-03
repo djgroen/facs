@@ -13,7 +13,7 @@ def full_lockdown(e):
   e.add_household_isolation()
 
 
-def read_vaccine_yml(e, date, ymlfile="covid_data/vaccinations_example.yml"):
+def read_vaccine_yml(e, date, ymlfile):
   with open(ymlfile) as f:
     v = yaml.safe_load(f)
   
@@ -154,7 +154,7 @@ def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.1):
   return (1.0-fraction)*source + (fraction*dest)
 
 
-def enact_measures_and_evolutions(e, t, measures_yml="measures_uk"):
+def enact_measures_and_evolutions(e, t, measures_yml, vaccinations_yml):
 
   # add in Alpha mutation
   # Prevalence increases linearly from Oct 22 (1%) to Jan 30th (100%)
@@ -175,7 +175,7 @@ def enact_measures_and_evolutions(e, t, measures_yml="measures_uk"):
     # https://www.gov.uk/government/news/confirmed-cases-of-covid-19-variants-identified-in-uk#:~:text=The%20Delta%20variant%20currently%20accounts,of%20cases%20across%20the%20UK.&text=In%20total%2C%203%2C692%20people%20have,the%20Delta%20and%20Beta%20variants.l
     print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
 
-  read_vaccine_yml(e, e.get_date_string())
+  read_vaccine_yml(e, e.get_date_string(), "covid_data/{}.yml".format(vaccinations_yml))
 
   update_hospital_protection_factor_uk(e,t)
 

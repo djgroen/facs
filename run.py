@@ -20,7 +20,9 @@ if __name__ == "__main__":
     # Instantiate the parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--location', action="store", default="brent")
-    parser.add_argument('--measures_yml', action="store", default="measures_uk")
+    parser.add_argument('-m','--measures_yml', action="store", default="measures_uk")
+    parser.add_argument('-d','--disease_yml', action="store", default="disease_covid19")
+    parser.add_argument('-v','--vaccinations_yml', action="store", default="vaccinations")
     parser.add_argument('--output_dir', action="store", default=".")
     parser.add_argument('--data_dir', action="store", default="covid_data")
     parser.add_argument('-s','--starting_infections', action="store", default="500")
@@ -37,6 +39,8 @@ if __name__ == "__main__":
       house_ratio = 100
     location = args.location
     measures_yml = args.measures_yml
+    disease_yml = args.disease_yml
+    vaccinations_yml = args.vaccinations_yml
     output_dir = args.output_dir
     data_dir = args.data_dir
 
@@ -69,6 +73,8 @@ if __name__ == "__main__":
     print("Running basic Covid-19 simulation kernel.")
     print("scenario = %s" % (location))
     print("measures input yml = %s" % (measures_yml))
+    print("disease input yml = %s" % (disease_yml))
+    print("vaccinations input yml = %s" % (vaccinations_yml))
     print("end_time = %d" % (end_time))
     print("output_dir  = %s" % (output_dir))
     print("outfile  = %s" % (outfile))
@@ -81,7 +87,7 @@ if __name__ == "__main__":
     print("age distribution in system:", e.ages, file=sys.stderr)
 
     e.disease = read_disease_yml.read_disease_yml(
-        "{}/disease_covid19.yml".format(data_dir))
+        "{}/{}.yml".format(data_dir, disease))
 
     building_file = "{}/{}_buildings.csv".format(data_dir, location)
     read_building_csv.read_building_csv(e,
@@ -102,8 +108,6 @@ if __name__ == "__main__":
     #                              date_format="%m/%d/%Y")
 
     e.print_status(outfile, silent=True) # silent print to initialise log data structures.
-
-    measures_yml = "measures_uk"
 
     starting_num_infections = 500
     if args.starting_infections:
@@ -126,7 +130,7 @@ if __name__ == "__main__":
         
         e.add_infections(num)
 
-        measures.enact_measures_and_evolutions(e, e.time, measures_yml)
+        measures.enact_measures_and_evolutions(e, e.time, measures_yml, vaccinations_yml)
         
         e.evolve(reduce_stochasticity=False)
 
@@ -141,7 +145,7 @@ if __name__ == "__main__":
 
     for t in range(0, end_time):
 
-        measures.enact_measures_and_evolutions(e, e.time, measures_yml)
+        measures.enact_measures_and_evolutions(e, e.time, measures_yml, vaccinations_yml)
 
         # Propagate the model by one time step.
         e.evolve(reduce_stochasticity=False)
