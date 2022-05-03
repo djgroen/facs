@@ -48,7 +48,7 @@ __measure_mask_uptake = 0.0
 __measure_mask_uptake_shopping = 0.0
 __measure_social_distance = 0.0
 
-def read_lockdown_yml(e, ymlfile="covid_data/measures_uk.yml"):
+def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
   global __measure_mask_uptake, __measure_mask_uptake_shopping, __measure_social_distance
   with open(ymlfile) as f:
     m = yaml.safe_load(f)

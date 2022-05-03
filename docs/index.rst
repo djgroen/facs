@@ -38,12 +38,12 @@ To run a simple simulation of a basic test dataset, type:
 Here, the `-g` flag indicates that output will be written to out.csv, instead of an output file with a more specific name.
 
 To run a simulation of the Borough of Brent, type:
-`python3 run.py --location=brent --measures_yml=measures_uk --output_dir=.`
+`python3 run.py --location=brent --measures_yml=measures --output_dir=.`
 
 Note that in this case, we explicitly specify the measures YML file that we wish to use. This is done in the format:
 `covid_data/<measures_yml>.yml`
 
-So in this case FACS will use the file `covid_data/measures_uk.yml`.
+So in this case FACS will use the file `covid_data/measures.yml`.
 
 Outputs are written as CSV files in the output\_dir. E.g. for the test run you will get:
 covid\_out\_infections.csv

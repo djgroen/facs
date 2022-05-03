@@ -68,7 +68,7 @@ Example:
 
 .. code-block:: sh
 
-	fabsim localhost covid19:configs=harrow,measures=measures_uk
+	fabsim localhost covid19:configs=harrow,measures=measures
 
 Run an ensemble job
 ~~~~~~~~~~~~~~~~~~~
@@ -79,13 +79,13 @@ To an an ensemble simulation of FACS,
 	fab <localhost/remote machine> covid19_ensemble:configs='<area_name>;<area2_name>'[,measures=<list of measures files>] 
 
 .. note::
-	By default, the measures_uk.yml file will be used in simulations.
+	By default, the measures.yml file will be used in simulations.
 
 Examples:
 
 .. code-block:: sh
 
-        fabsim localhost covid19_ensemble:configs='test',cores=1,replicas=1,measures=measures_uk,starting_infections=10,job_wall_time=0:15:00
+        fabsim localhost covid19_ensemble:configs='test',cores=1,replicas=1,measures=measures,starting_infections=10,job_wall_time=0:15:00
 
 	fabsim localhost covid19_ensemble:configs='harrow'
 
@@ -96,9 +96,9 @@ To run an ensemble of parallel runs, using 4 cores per run, you can use a commen
 
 .. code-block:: sh
 
-        fabsim localhost covid19_ensemble:configs='brent',cores=4,replicas=1,simulation_period=500,measures=measures_uk,starting_infections=460,job_wall_time=1:00:00,solver=pfacs
+        fabsim localhost covid19_ensemble:configs='brent',cores=4,replicas=1,simulation_period=500,measures=measures,starting_infections=460,job_wall_time=1:00:00,solver=pfacs
 
-        fabsim localhost covid19_ensemble:configs='test',cores=4,replicas=1,starting_infections=460,measures=measures_uk,solver=pfacs
+        fabsim localhost covid19_ensemble:configs='test',cores=4,replicas=1,starting_infections=460,measures=measures,solver=pfacs
 
 
 If you ran an ensemble jobs, you may need to do averaging across runs on the output csv files before plotting, in that case you can type:
@@ -114,13 +114,13 @@ Examples:
 
 	.. code-block:: sh
 
-		fabsim localhost covid19_ensemble:configs='brent',measures='measures_uk;measures_nolockdown',replicas=25
+		fabsim localhost covid19_ensemble:configs='brent',measures='measures;measures_nolockdown',replicas=25
 
 * submit an ensambe job using QCG-PilotJob:
 
 	.. code-block:: sh
 
-		fabsim localhost covid19_ensemble:configs='brent',measures=measures_uk,replicas=25,PilotJob=true
+		fabsim localhost covid19_ensemble:configs='brent',measures=measures,replicas=25,PilotJob=true
 
 * fetch results:
 

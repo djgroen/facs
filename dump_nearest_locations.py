@@ -121,7 +121,7 @@ if __name__ == "__main__":
     print("age distribution in system:", e.ages, file=sys.stderr)
 
     e.disease = read_disease_yml.read_disease_yml(
-        "{}/disease_covid19.yml".format(data_dir))
+        "{}/disease.yml".format(data_dir))
 
     building_file = "{}/{}_buildings.csv".format(data_dir, location)
     read_building_csv.read_building_csv(e,
