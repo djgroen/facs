@@ -111,11 +111,14 @@ if __name__ == "__main__":
 
     starting_num_infections = 500
     if args.starting_infections:
-      starting_num_infections = int(args.starting_infections)
+        if int(args.starting_infections[0]) == 0:
+            starting_num_infections = int(e.num_agents*float(args.starting_infections))
+        else:
+            starting_num_infections = int(args.starting_infections)
     elif location == "test":
-      starting_num_infections = 10
+        starting_num_infections = 10
 
-    print("THIS SIMULATIONS HAS {} AGENTS.".format(e.num_agents))
+    print("THIS SIMULATIONS HAS {} AGENTS. Starting with {} infections.".format(e.num_agents, starting_num_infections))
 
     e.time = -20
     e.date = datetime.strptime(args.start_date, "%d/%m/%Y")
