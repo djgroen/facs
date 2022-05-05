@@ -23,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument('-m','--measures_yml', action="store", default="measures_uk", help="Input YML file containing interventions.")
     parser.add_argument('-d','--disease_yml', action="store", default="disease_covid19", help="Input YML file containing disease specification.")
     parser.add_argument('-v','--vaccinations_yml', action="store", default="vaccinations", help="Input YML file containing vaccine strategy specification.")
-    parser.add_argument('--output_dir', action="store", default=".", help="directory to write output to."))
+    parser.add_argument('--output_dir', action="store", default=".", help="directory to write output to.")
     parser.add_argument('--data_dir', action="store", default="covid_data", help="subdirectory containing simulation input data.")
     parser.add_argument('-s','--starting_infections', action="store", default="500", help="Starting # of infections. Values below 1.0 are interpreted as a ratio of population.")
     parser.add_argument('--start_date', action="store", default="1/3/2020", help="Start date, format = %d/%m/%Y")
