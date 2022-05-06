@@ -426,7 +426,8 @@ class Household():
     for i in range(0,self.size):
       if self.agents[i].status == "susceptible":
         if ic > 0:
-          infection_chance = e.contact_rate_multiplier["house"] * disease.infection_rate * home_interaction_fraction * ic / e.airflow_indoors_small
+          infection_chance = e.contact_rate_multiplier["house"] * disease.infection_rate * home_interaction_fraction * ic 
+          # house infection already incorporates airflow, because derived from literature.
           if get_rnd() < infection_chance:
             self.agents[i].infect(e)
 
@@ -670,7 +671,7 @@ class Location:
     """
     
     #supermarket, park, hospital, shopping, school, office, leisure
-    airflow = e.airflow_indoors_large
+    airflow = e.airflow_indoors
     if self.type == "park":
       airflow = e.airflow_outdoors
 
@@ -755,8 +756,7 @@ class Ecosystem:
     self.loc_groups = {}
     self.needsfile = needsfile
 
-    self.airflow_indoors_small = 0.03
-    self.airflow_indoors_large = 0.03
+    self.airflow_indoors = 0.03
     self.airflow_outdoors = 0.12 # assuming 2.0 (x20 from the literature) but also that people occupy only 20% of the park space on average
 
     self.external_travel_multiplier = 1.0 # Can be adjusted to introduce peaks in external travel, e.g. during holiday returns or major events (Euros).
