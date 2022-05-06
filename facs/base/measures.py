@@ -112,7 +112,7 @@ def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
       do_sd = True
 
     if do_sd:
-      e.add_social_distance(compliance = __measure_social_distance, mask_uptake=__measure_mask_uptake, mask_uptake_shopping=__measure_mask_uptake_shopping)
+      e.add_social_distance(2.0, compliance = __measure_social_distance, mask_uptake=__measure_mask_uptake, mask_uptake_shopping=__measure_mask_uptake_shopping)
 
 
     if("traffic_multiplier" in dm):

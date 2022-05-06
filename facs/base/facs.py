@@ -757,9 +757,9 @@ class Ecosystem:
     self.loc_groups = {}
     self.needsfile = needsfile
 
-    self.airflow_indoors_small = 0.05
-    self.airflow_indoors_large = 0.05
-    self.airflow_outdoors = 0.2 # assuming 2.0 (x20 from the literature) but also that people occupy only 20% of the park space on average
+    self.airflow_indoors_small = 0.03
+    self.airflow_indoors_large = 0.03
+    self.airflow_outdoors = 0.12 # assuming 2.0 (x20 from the literature) but also that people occupy only 20% of the park space on average
 
     self.external_travel_multiplier = 1.0 # Can be adjusted to introduce peaks in external travel, e.g. during holiday returns or major events (Euros).
     self.external_infection_ratio = 0.5 # May be changed at runtime. Base assumption is that there are 300% extra external visitors, and that 1% of them have COVID. Only applies to transport for now.
@@ -1198,12 +1198,17 @@ class Ecosystem:
           for a in hh.agents:
             if get_rnd() < fraction:
               a.school_from_home = True
+            else:
+              a.school_from_home = False
+
     elif loc_type == "office" and exclude_people:
       for k,e in enumerate(self.houses):
         for hh in e.households:
           for a in hh.agents:
             if get_rnd() < fraction:
               a.work_from_home = True
+            else:
+              a.work_from_home = False
     else:
       needs.needs[lids[loc_type],:] *= (1.0 - fraction)
 
