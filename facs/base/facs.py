@@ -422,13 +422,11 @@ class Household():
 
 
   def evolve(self, e, disease):
-    ic = self.get_infectious_count()
+    ic = float(self.get_infectious_count())**0.5
     for i in range(0,self.size):
       if self.agents[i].status == "susceptible":
         if ic > 0:
-          infection_chance = e.seasonal_effect * e.contact_rate_multiplier["house"] * disease.infection_rate * home_interaction_fraction * ic / e.airflow_indoors_small
-          if e.household_isolation_multiplier < 1.0:
-            infection_chance *= 2.0 # interaction duration (and thereby infection chance) double when household isolation is incorporated (Imperial Report 9).
+          infection_chance = e.contact_rate_multiplier["house"] * disease.infection_rate * home_interaction_fraction * ic / e.airflow_indoors_small
           if get_rnd() < infection_chance:
             self.agents[i].infect(e)
 
@@ -827,8 +825,8 @@ class Ecosystem:
 
   def get_seasonal_effect(self):
     month = int(self.date.month)
-    #multipliers = [1.4,1.25,1.1,0.95,0.8,0.7,0.7,0.8,0.95,1.1,1.25,1.4]
-    multipliers = [1.1,1.1,1.05,1.0,1.0,0.95,0.9,0.9,0.95,1.0,1.0,1.05]
+    multipliers = [1.4,1.25,1.1,0.95,0.8,0.7,0.7,0.8,0.95,1.1,1.25,1.4]
+    #multipliers = [1.1,1.1,1.05,1.0,1.0,0.95,0.9,0.9,0.95,1.0,1.0,1.05]
     #print("Seasonal effect month: ",month,", multiplier: ",multipliers[month])
     return multipliers[month-1]
 
