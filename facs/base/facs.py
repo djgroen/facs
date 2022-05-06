@@ -759,7 +759,7 @@ class Ecosystem:
 
     self.airflow_indoors_small = 0.1
     self.airflow_indoors_large = 0.1
-    self.airflow_outdoors = 0.4 # assuming 2.0 (x20 from the literatur) but also that people occupy only 20% of the park space on average
+    self.airflow_outdoors = 0.4 # assuming 2.0 (x20 from the literature) but also that people occupy only 20% of the park space on average
 
     self.external_travel_multiplier = 1.0 # Can be adjusted to introduce peaks in external travel, e.g. during holiday returns or major events (Euros).
     self.external_infection_ratio = 0.5 # May be changed at runtime. Base assumption is that there are 300% extra external visitors, and that 1% of them have COVID. Only applies to transport for now.
@@ -827,7 +827,8 @@ class Ecosystem:
 
   def get_seasonal_effect(self):
     month = int(self.date.month)
-    multipliers = [1.4,1.25,1.1,0.95,0.8,0.7,0.7,0.8,0.95,1.1,1.25,1.4]
+    #multipliers = [1.4,1.25,1.1,0.95,0.8,0.7,0.7,0.8,0.95,1.1,1.25,1.4]
+    multipliers = [1.1,1.1,1.05,1.0,1.0,0.95,0.9,0.9,0.95,1.0,1.0,1.05]
     #print("Seasonal effect month: ",month,", multiplier: ",multipliers[month])
     return multipliers[month-1]
 
