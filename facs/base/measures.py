@@ -126,19 +126,19 @@ def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
 
 
 def update_hospital_protection_factor_uk(e, t):
-  e.hospital_protection_factor = 0.4
+  e.hospital_protection_factor = 0.5
   if t == 20:
-    e.hospital_protection_factor = 0.35
+    e.hospital_protection_factor = 0.4
   if t == 30: # start of testing ramp up in early april.
-    e.hospital_protection_factor = 0.3
+    e.hospital_protection_factor = 0.35
   if t == 40:
-    e.hospital_protection_factor = 0.26
+    e.hospital_protection_factor = 0.3
   if t == 50:
-    e.hospital_protection_factor = 0.23
+    e.hospital_protection_factor = 0.25
   if t == 60: # testing ramped up considerably by the end of April.
-    e.hospital_protection_factor = 0.16
+    e.hospital_protection_factor = 0.2
   if t == 80:
-    e.hospital_protection_factor = 0.12
+    e.hospital_protection_factor = 0.15
   if t == 100:
     e.hospital_protection_factor = 0.10
 
