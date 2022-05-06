@@ -422,7 +422,7 @@ class Household():
 
 
   def evolve(self, e, disease):
-    ic = float(self.get_infectious_count())**0.5
+    ic = self.get_infectious_count()
     for i in range(0,self.size):
       if self.agents[i].status == "susceptible":
         if ic > 0:
@@ -759,8 +759,8 @@ class Ecosystem:
     self.loc_groups = {}
     self.needsfile = needsfile
 
-    self.airflow_indoors = 0.01
-    self.airflow_outdoors = 0.04 # assuming x4: x20 from the literature but also that people occupy only 20% of the park space on average
+    self.airflow_indoors = 0.015
+    self.airflow_outdoors = 0.06 # assuming x4: x20 from the literature but also that people occupy only 20% of the park space on average
 
     self.external_travel_multiplier = 1.0 # Can be adjusted to introduce peaks in external travel, e.g. during holiday returns or major events (Euros).
     self.external_infection_ratio = 0.5 # May be changed at runtime. Base assumption is that there are 300% extra external visitors, and that 1% of them have COVID. Only applies to transport for now.
@@ -1274,7 +1274,7 @@ class Ecosystem:
     self.add_partial_closure("office", compliance, exclude_people=True)
     self.print_contact_rate("Work from home with {} compliance".format(compliance))
 
-  def add_social_distance(self, distance=2, compliance=0.8571, mask_uptake=0.0, mask_uptake_shopping=0.0):
+  def add_social_distance(self, distance=2.0, compliance=0.8571, mask_uptake=0.0, mask_uptake_shopping=0.0):
 
     distance += mask_uptake*1.0 #if everyone wears a mask, we add 1.0 meter to the distancing, 
     tight_distance = 1.0 + mask_uptake_shopping*1.0
