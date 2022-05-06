@@ -182,17 +182,6 @@ def enact_measures_and_evolutions(e, t, measures_yml, vaccinations_yml):
   e.vac_duration = 273
   e.immunity_duration = 273
 
-
   read_lockdown_yml(e, "covid_data/{}.yml".format(measures_yml))
 
-
-  # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
-  # Traffic: Mar 10: 90% (estimate), Mar 16: 60%, Mar 20: 20%, Mar 28: 10%
-  # Service: Mar 20: 80%, Mar 28: 50%
-  if t > 10 and t <= 15:
-    e.traffic_multiplier = ((0.9 - (0.06*(t-10)))**2) / 1.0
-  if t > 15 and t <= 20:
-    e.traffic_multiplier = ((0.6 - (0.08*(t-15)))**2) / 0.8
-  if t > 20 and t <= 28:
-    e.traffic_multiplier = ((0.2 - (0.0125*(t-20)))**2) / 0.5
 
