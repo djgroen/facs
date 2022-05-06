@@ -601,29 +601,30 @@ class Location:
     """
     (i)
     Pinf =
-    Contact rate multiplier [dimensionless]
+    Contact rate multiplier [dimensionless] * 4 (to correct for a 1m2 baseline, rather than 4 m2.)
     *
-    Infection rate [dimensionless] / airflow coefficient [dimensionless, 200 by default for indoors]
+    Infection rate [dimensionless] / airflow coefficient [dimensionless]
     *
     Duration of susceptible person visit [minutes] / 1 day [minutes]
     *
-    (Average number of infectious person visiting today [#] * physical area of a single standing person [m^2]) /
-    (Area of space [m^2] * max number of persons that can fit within 4 m^2 [#]) 
+    (Number of infectious person visiting today [#] * physical area of a single standing person [m^2]) /
+    (Area of space [m^2] * number of infectious persons in 4 m^2 in baseline scenario (1) [#]) 
     * 
     Average infectious person visit duration [minutes] / minutes_opened [minutes]
    
     Pinf is a dimensionless quantity (a probability) which must never exceed one.
 
     (ii)
-    if we define Pinf = Duration of susceptible person visit [minutes] * base_rate, then
+    if we define Pinf = Duration of susceptible person visit [minutes] * base_rate,
+    and substitute in the # of infectious people in the baseline scenario (i.e., 1), then we get:
     base_rate = 
-    Contact rate multiplier [dimensionless]
+    Contact rate multiplier [dimensionless] * 4 (to correct for a 1m2 baseline, rather than 4 m2.)
     *
     Infection rate [dimensionless] / airflow coefficient [dimensionless]
     *
     1.0 / 1 day [minutes]
     *
-    (Average number of infectious person visiting today [#] * physical area of a single standing person [m^2]) /
+    (Number of infectious person visiting today [#] * physical area of a single standing person [m^2]) /
     (Area of space [m^2]) 
     * 
     Average infectious person visit duration [minutes] / minutes_opened [minutes]
@@ -638,7 +639,7 @@ class Location:
 
     So we rewrite base_rate at:
     base_rate =
-    Contact rate multiplier [dimensionless]
+    Contact rate multiplier [dimensionless] * 4 (to correct for a 1m2 baseline, rather than 4 m2.)
     *
     Infection rate [dimensionless] / airflow coefficient [dimensionless]
     *
@@ -653,6 +654,8 @@ class Location:
     Lastly, we simplify the equation for easier coding to:
 
     base_rate =
+    4.0
+    *
     ( Contact rate multiplier [dimensionless]
     *
     Infection rate [dimensionless] 
@@ -675,7 +678,7 @@ class Location:
     if self.type == "park":
       airflow = e.airflow_outdoors
 
-    base_rate =  (e.seasonal_effect * e.contact_rate_multiplier[self.type] * e.disease.infection_rate * float(e.loc_inf_minutes[self.loc_inf_minutes_id])) / (float(airflow) * 24.0*60.0 * float(self.sqm) * float(minutes_opened))
+    base_rate =  (4.0 * e.seasonal_effect * e.contact_rate_multiplier[self.type] * e.disease.infection_rate * float(e.loc_inf_minutes[self.loc_inf_minutes_id])) / (float(airflow) * 24.0*60.0 * float(self.sqm) * float(minutes_opened))
 
     e.base_rate += base_rate
 
