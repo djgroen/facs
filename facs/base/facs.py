@@ -744,7 +744,7 @@ class Ecosystem:
 
     self.work_from_home = False
     self.ages = np.ones(91) # by default equal probability of all ages 0 to 90.
-    self.hospital_protection_factor = 0.5 # 0 is perfect, 1 is no protection.
+    self.hospital_protection_factor = 1.0 # 0 is perfect, 1 is no protection.
     self.vaccinations_available = 0 # vaccinations available per day
     self.vaccinations_today = 0
     self.vac_no_symptoms = 1.0 # Default: 100% of people receiving vaccine have no more symptons.
@@ -757,9 +757,9 @@ class Ecosystem:
     self.loc_groups = {}
     self.needsfile = needsfile
 
-    self.airflow_indoors_small = 0.1
-    self.airflow_indoors_large = 0.1
-    self.airflow_outdoors = 0.4 # assuming 2.0 (x20 from the literature) but also that people occupy only 20% of the park space on average
+    self.airflow_indoors_small = 0.05
+    self.airflow_indoors_large = 0.05
+    self.airflow_outdoors = 0.2 # assuming 2.0 (x20 from the literature) but also that people occupy only 20% of the park space on average
 
     self.external_travel_multiplier = 1.0 # Can be adjusted to introduce peaks in external travel, e.g. during holiday returns or major events (Euros).
     self.external_infection_ratio = 0.5 # May be changed at runtime. Base assumption is that there are 300% extra external visitors, and that 1% of them have COVID. Only applies to transport for now.
