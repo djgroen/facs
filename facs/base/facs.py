@@ -1195,7 +1195,7 @@ class Ecosystem:
 
   def add_partial_closure(self, loc_type, fraction=0.8, exclude_people=False):
 
-    if loc_type == "school" 
+    if loc_type == "school": 
       fraction = min(fraction, 1.0 - self.keyworker_fraction)
       if exclude_people:
         for k,e in enumerate(self.houses):
@@ -1208,7 +1208,7 @@ class Ecosystem:
       else:
         needs.needs[lids[loc_type],:] *= (1.0 - fraction)
 
-    elif loc_type == "office" 
+    elif loc_type == "office": 
       fraction = min(fraction, 1.0 - self.keyworker_fraction)
       if exclude_people:
         for k,e in enumerate(self.houses):
