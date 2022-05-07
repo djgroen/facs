@@ -1194,25 +1194,33 @@ class Ecosystem:
     self.closures = {}
 
   def add_partial_closure(self, loc_type, fraction=0.8, exclude_people=False):
-    if loc_type == "school" and exclude_people:
-      fraction = min(fraction, 1.0 - self.keyworker_fraction)
-      for k,e in enumerate(self.houses):
-        for hh in e.households:
-          for a in hh.agents:
-            if get_rnd() < fraction:
-              a.school_from_home = True
-            else:
-              a.school_from_home = False
 
-    elif loc_type == "office" and exclude_people:
+    if loc_type == "school" 
       fraction = min(fraction, 1.0 - self.keyworker_fraction)
-      for k,e in enumerate(self.houses):
-        for hh in e.households:
-          for a in hh.agents:
-            if get_rnd() < fraction:
-              a.work_from_home = True
-            else:
-              a.work_from_home = False
+      if exclude_people:
+        for k,e in enumerate(self.houses):
+          for hh in e.households:
+            for a in hh.agents:
+              if get_rnd() < fraction:
+                a.school_from_home = True
+              else:
+                a.school_from_home = False
+      else:
+        needs.needs[lids[loc_type],:] *= (1.0 - fraction)
+
+    elif loc_type == "office" 
+      fraction = min(fraction, 1.0 - self.keyworker_fraction)
+      if exclude_people:
+        for k,e in enumerate(self.houses):
+          for hh in e.households:
+            for a in hh.agents:
+              if get_rnd() < fraction:
+                a.work_from_home = True
+              else:
+                a.work_from_home = False
+      else:
+        needs.needs[lids[loc_type],:] *= (1.0 - fraction)
+
     else:
       needs.needs[lids[loc_type],:] *= (1.0 - fraction)
 

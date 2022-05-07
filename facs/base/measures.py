@@ -1,18 +1,6 @@
 import sys
 import yaml
 
-def full_lockdown(e):
-  e.remove_all_measures()
-  e.add_closure("school", 0)
-  e.add_closure("leisure", 0)
-  e.add_partial_closure("shopping", 0.8)
-  # mimicking a 75% reduction in social contacts.
-  e.add_social_distance_imp9()
-  e.add_work_from_home()
-  e.add_case_isolation()
-  e.add_household_isolation()
-
-
 def read_vaccine_yml(e, date, ymlfile):
   with open(ymlfile) as f:
     v = yaml.safe_load(f)
