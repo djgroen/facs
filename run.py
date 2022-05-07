@@ -93,10 +93,10 @@ if __name__ == "__main__":
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map.yml".format(data_dir),
-                                        house_ratio=house_ratio, workspace=16, office_size=2500, household_size=2.6, work_participation_rate=0.5)
+                                        house_ratio=house_ratio, workspace=20, office_size=2500, household_size=2.6, work_participation_rate=0.5)
     # house ratio: number of households per house placed (higher number adds noise, but reduces runtime
     # And then 3 parameters that ONLY affect office placement.
-    # workspace: m2 per employee on average. (10 in an office setting, but we use 12 as some people work in more spacious environments)
+    # workspace: m2 per employee on average. (10 in an office setting, but we use 20 as some people work in much more spacious environments)
     # household size: average size of each household, specified separately here.
     # work participation rate: fraction of population in workforce, irrespective of age
 

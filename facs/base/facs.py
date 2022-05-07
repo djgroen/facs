@@ -735,6 +735,7 @@ class Ecosystem:
     self.self_isolation_multiplier = 1.0
     self.household_isolation_multiplier = 1.0
     self.track_trace_multiplier = 1.0
+    self.keyworker_fraction = 0.2
     self.ci_multiplier = 0.625 # default multiplier for case isolation mode 
     # value is 75% reduction in social contacts for 50% of the cases (known lower compliance).
     # 0.25*50% + 1.0*50% =0.625
@@ -759,8 +760,8 @@ class Ecosystem:
     self.loc_groups = {}
     self.needsfile = needsfile
 
-    self.airflow_indoors = 0.009
-    self.airflow_outdoors = 0.036 # assuming x4: x20 from the literature but also that people occupy only 20% of the park space on average
+    self.airflow_indoors = 0.0075
+    self.airflow_outdoors = 0.03 # assuming x4: x20 from the literature but also that people occupy only 20% of the park space on average
 
     self.external_travel_multiplier = 1.0 # Can be adjusted to introduce peaks in external travel, e.g. during holiday returns or major events (Euros).
     self.external_infection_ratio = 0.5 # May be changed at runtime. Base assumption is that there are 300% extra external visitors, and that 1% of them have COVID. Only applies to transport for now.
@@ -1194,6 +1195,7 @@ class Ecosystem:
 
   def add_partial_closure(self, loc_type, fraction=0.8, exclude_people=False):
     if loc_type == "school" and exclude_people:
+      fraction = min(fraction, 1.0 - self.keyworker_fraction)
       for k,e in enumerate(self.houses):
         for hh in e.households:
           for a in hh.agents:
@@ -1203,6 +1205,7 @@ class Ecosystem:
               a.school_from_home = False
 
     elif loc_type == "office" and exclude_people:
+      fraction = min(fraction, 1.0 - self.keyworker_fraction)
       for k,e in enumerate(self.houses):
         for hh in e.households:
           for a in hh.agents:

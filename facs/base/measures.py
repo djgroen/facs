@@ -53,9 +53,8 @@ def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
   with open(ymlfile) as f:
     m = yaml.safe_load(f)
 
-  keyworker_fraction = 0.2
   if(m["keyworker_fraction"]):
-    keyworker_fraction = float(m["keyworker_fraction"])
+    e.keyworker_fraction = float(m["keyworker_fraction"])
 
   date_format = m["date_format"]
 
