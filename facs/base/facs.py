@@ -1257,25 +1257,11 @@ class Ecosystem:
           a.school_from_home = False
           a.work_from_home = False
 
-  def add_social_distance_imp9(self): # Add social distancing as defined in Imperial Report 0.
-    # The default values are chosen to give a 75% reduction in social interactions,
-    # as assumed by Ferguson et al., Imperial Summary Report 9, 2020.
-    self.contact_rate_multiplier["hospital"] *= 0.25
-    self.contact_rate_multiplier["leisure"] *= 0.25
-    self.contact_rate_multiplier["shopping"] *= 0.25
-    self.contact_rate_multiplier["park"] *= 0.25
-    self.contact_rate_multiplier["supermarket"] *= 0.25
-   
-    # Values are different for three location types.
-    # Setting values as described in Table 2, Imp Report 9. ("SD")
-    self.contact_rate_multiplier["office"] *= 0.75
-    self.contact_rate_multiplier["school"] *= 1.0
-    self.contact_rate_multiplier["house"] *= 1.25
-    self.print_contact_rate("SD (Imperial Report 9)")
 
   def add_work_from_home(self, compliance=0.75):
     self.add_partial_closure("office", compliance, exclude_people=True)
     self.print_contact_rate("Work from home with {} compliance".format(compliance))
+
 
   def add_social_distance(self, distance=2.0, compliance=0.8571, mask_uptake=0.0, mask_uptake_shopping=0.0):
 
