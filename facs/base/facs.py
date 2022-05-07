@@ -759,8 +759,8 @@ class Ecosystem:
     self.loc_groups = {}
     self.needsfile = needsfile
 
-    self.airflow_indoors = 0.015
-    self.airflow_outdoors = 0.06 # assuming x4: x20 from the literature but also that people occupy only 20% of the park space on average
+    self.airflow_indoors = 0.009
+    self.airflow_outdoors = 0.036 # assuming x4: x20 from the literature but also that people occupy only 20% of the park space on average
 
     self.external_travel_multiplier = 1.0 # Can be adjusted to introduce peaks in external travel, e.g. during holiday returns or major events (Euros).
     self.external_infection_ratio = 0.5 # May be changed at runtime. Base assumption is that there are 300% extra external visitors, and that 1% of them have COVID. Only applies to transport for now.
