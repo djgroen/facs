@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 # gridpp
+output_dir/
 *covid_out_*
 err_*.err
 out_*.out

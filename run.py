@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 if __name__ == "__main__":
 
     # Instantiate the parameters
-    location = sys.argv[1]
+    region = sys.argv[1]
     measures_yml = sys.argv[2]
     disease_yml = sys.argv[3]
     vaccinations_yml = sys.argv[4]
@@ -30,6 +30,8 @@ if __name__ == "__main__":
     generic_outfile = int(sys.argv[10])
     dbg = int(sys.argv[11])
     simulation_period = int(sys.argv[12])
+
+    facs.region = region
 
     house_ratio = 2
     if quicktest == 1:
@@ -51,7 +53,7 @@ if __name__ == "__main__":
         makedirs(output_dir)
 
     outfile = "{}/{}-{}.csv".format(output_dir,
-                                       location,
+                                       region,
                                        measures_yml)
     if generic_outfile == 1:
       outfile = "{}/out.csv".format(output_dir)
@@ -62,7 +64,7 @@ if __name__ == "__main__":
       end_time = simulation_period
     
     print("Running basic Covid-19 simulation kernel.")
-    print("scenario = %s" % (location))
+    print("scenario = %s" % (region))
     print("measures input yml = %s" % (measures_yml))
     print("disease input yml = %s" % (disease_yml))
     print("vaccinations input yml = %s" % (vaccinations_yml))
@@ -71,16 +73,16 @@ if __name__ == "__main__":
     print("outfile  = %s" % (outfile))
     print("data_dir  = %s" % (data_dir))
 
-    e = facs.Ecosystem(end_time)
+    e = facs.Ecosystem(facs.region, end_time)
 
-    e.ages = read_age_csv.read_age_csv("{}/age-distr.csv".format(data_dir), location)
+    e.ages = read_age_csv.read_age_csv("{}/age-distr.csv".format(data_dir), region)
 
     print("age distribution in system:", e.ages, file=sys.stderr)
 
     e.disease = read_disease_yml.read_disease_yml(
         "{}/{}.yml".format(data_dir, disease_yml))
 
-    building_file = "{}/{}_buildings.csv".format(data_dir, location)
+    building_file = "{}/{}_buildings.csv".format(data_dir, region)
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map.yml".format(data_dir),
@@ -91,10 +93,10 @@ if __name__ == "__main__":
     # household size: average size of each household, specified separately here.
     # work participation rate: fraction of population in workforce, irrespective of age
 
-    #print("{}/{}_cases.csv".format(data_dir, location))
+    #print("{}/{}_cases.csv".format(data_dir, region))
     # Can only be done after houses are in.
     #read_cases_csv.read_cases_csv(e,
-    #                              "{}/{}_cases.csv".format(data_dir, location),
+    #                              "{}/{}_cases.csv".format(data_dir, region),
     #                              start_date=args.start_date,
     #                              date_format="%m/%d/%Y")
 
@@ -106,7 +108,7 @@ if __name__ == "__main__":
             starting_num_infections = int(e.num_agents*float(starting_infections))
         else:
             starting_num_infections = int(starting_infections)
-    elif location == "test":
+    elif region == "test":
         starting_num_infections = 10
 
     print("THIS SIMULATIONS HAS {} AGENTS. Starting with {} infections.".format(e.num_agents, starting_num_infections))

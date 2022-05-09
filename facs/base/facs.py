@@ -21,6 +21,7 @@ lnames = list(lids.keys())
 avg_visit_times = [90,60,60,360,360,60,60] #average time spent per visit
 home_interaction_fraction = 0.2 # people are within 2m at home of a specific other person 20% of the time.
 log_prefix = "."
+region = ""
 
 
 # Added commented code to shift from random.random if needed
@@ -165,39 +166,39 @@ class OUTPUT_FILES():
 out_files = OUTPUT_FILES()
 
 
-def write_log_headers(rank):
-  out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, rank))
+def write_log_headers(r, rank):
+  out_inf = out_files.open("{}/{}_covid_out_infections_{}.csv".format(log_prefix, r, rank))
   print("#time,x,y,location_type,rank,incubation_time", file=out_inf, flush=True)
-  out_inf = out_files.open("{}/covid_out_hospitalisations_{}.csv".format(log_prefix, rank))
+  out_inf = out_files.open("{}/{}_covid_out_hospitalisations_{}.csv".format(log_prefix, r, rank))
   print("#time,x, y,age", file=out_inf, flush=True)
-  out_inf = out_files.open("{}/covid_out_deaths_{}.csv".format(log_prefix, rank))
+  out_inf = out_files.open("{}/{}_covid_out_deaths_{}.csv".format(log_prefix, r, rank))
   print("#time,x,y,age", file=out_inf, flush=True)
-  out_inf = out_files.open("{}/covid_out_recoveries_{}.csv".format(log_prefix, rank))
+  out_inf = out_files.open("{}/{}_covid_out_recoveries_{}.csv".format(log_prefix, r, rank))
   print("#time,x,y,age", file=out_inf, flush=True)
   
 
 
-def log_infection(t, x, y, loc_type, rank, phase_duration):
+def log_infection(t, x, y, loc_type, r, rank, phase_duration):
   global num_infections_today
-  out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, rank))
+  out_inf = out_files.open("{}/{}_covid_out_infections_{}.csv".format(log_prefix, r, rank))
   print("{},{},{},{},{},{}".format(t, x, y, loc_type, rank, phase_duration), file=out_inf, flush=True)
   num_infections_today += 1
 
-def log_hospitalisation(t, x, y, age, rank):
+def log_hospitalisation(t, x, y, age, r, rank):
   global num_hospitalisations_today
-  out_inf = out_files.open("{}/covid_out_hospitalisations_{}.csv".format(log_prefix, rank))
+  out_inf = out_files.open("{}/{}_covid_out_hospitalisations_{}.csv".format(log_prefix, r, rank))
   print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
   num_hospitalisations_today += 1
 
-def log_death(t, x, y, age, rank):
+def log_death(t, x, y, age, r, rank):
   global num_deaths_today
-  out_inf = out_files.open("{}/covid_out_deaths_{}.csv".format(log_prefix, rank))
+  out_inf = out_files.open("{}/{}_covid_out_deaths_{}.csv".format(log_prefix, r, rank))
   print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
   num_deaths_today += 1
 
-def log_recovery(t, x, y, age, rank):
+def log_recovery(t, x, y, age, r, rank):
   global num_recoveries_today
-  out_inf = out_files.open("{}/covid_out_recoveries_{}.csv".format(log_prefix, rank))
+  out_inf = out_files.open("{}/{}_covid_out_recoveries_{}.csv".format(log_prefix, r, rank))
 
   print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
   num_recoveries_today += 1
@@ -323,14 +324,14 @@ class Person():
     self.mild_version = True
     self.hospitalised = False
     self.phase_duration = max(1, np.random.poisson(e.disease.incubation_period))
-    log_infection(e.time,self.location.x,self.location.y,location_type, e.rank, self.phase_duration)
+    log_infection(e.time,self.location.x,self.location.y,location_type, region, e.rank, self.phase_duration)
 
   def recover(self, e, location):
     if e.immunity_duration > 0:
       self.phase_duration = np.random.gamma(e.immunity_duration/20.0, 20.0) # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
     self.status = "recovered"
     self.status_change_time = e.time
-    log_recovery(e.time, self.location.x, self.location.y, location, e.rank)
+    log_recovery(e.time, self.location.x, self.location.y, location, region, e.rank)
 
 
   def progress_condition(self, e, t, disease):
@@ -366,7 +367,7 @@ class Person():
               print("Error: agent is hospitalised, but there are no hospitals in the location graph.")
               sys.exit()
             e.num_hospitalised += 1
-            log_hospitalisation(t, self.location.x, self.location.y, self.age, e.rank)
+            log_hospitalisation(t, self.location.x, self.location.y, self.age, region, e.rank)
 
             self.status_change_time = t #hospitalisation is a status change, because recovery_period is from date of hospitalisation.
             if get_rnd() < self.get_mortality_chance(disease) / self.get_hospitalisation_chance(disease): # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
@@ -383,7 +384,7 @@ class Person():
             # decease
             if self.dying:
               self.status = "dead"
-              log_death(t,self.location.x,self.location.y,"hospital", e.rank)
+              log_death(t,self.location.x,self.location.y,"hospital", region, e.rank)
             # hospital discharge
             else:
               self.recover(e, "hospital")
@@ -718,7 +719,7 @@ def check_vac_eligibility(a):
 
 
 class Ecosystem:
-  def __init__(self, duration, needsfile="covid_data/needs.csv", mode="parallel"):
+  def __init__(self, region, duration, needsfile="covid_data/needs.csv", mode="parallel"):
     self.mode = mode # "serial" or "parallel"
     self.locations = {}
     self.houses = []
@@ -1363,7 +1364,7 @@ class Ecosystem:
           print(k, a.get_needs())
 
   def print_header(self, outfile):
-    write_log_headers(self.rank) # also write headers for process-specific log files.
+    write_log_headers(region, self.rank) # also write headers for process-specific log files.
     if self.rank == 0:
       out = out_files.open(outfile)
       print("#time,date,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,hospital bed occupancy,num hospitalisations today (data)",file=out, flush=True)
