@@ -1,0 +1,5 @@
+#time,date,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,hospital bed occupancy,num hospitalisations today (data)
+1,2/1/2020,132151,3923,2089,911,1,0,1444,3,12,0.0
+2,3/1/2020,130358,4957,2606,1153,1,0,1793,4,16,0.0
+3,4/1/2020,128233,6069,3288,1484,1,0,2125,6,21,0.0
+4,5/1/2020,125599,7433,4173,1869,1,0,2634,3,23,0.0

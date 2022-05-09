@@ -1,0 +1,18 @@
+greater_manchester,measures_uk_1,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,2848,01/03/2020,1,0,0,400
+kent,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,1589,01/03/2020,1,0,0,400
+merseyside measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,1434,01/03/2020,1,0,0,400
+hampshire,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,1389,01/03/2020,1,0,0,400
+surrey,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,1200,01/03/2020,1,0,0,400
+lancashire,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,1227,01/03/2020,1,0,0,400
+berkshire,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,918,01/03/2020,1,0,0,400
+west_sussex,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,868,01/03/2020,1,0,0,400
+oxfordshire,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,697,01/03/2020,1,0,0,400
+east_sussex,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,559,01/03/2020,1,0,0,400
+buckinghamshire,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,547,01/03/2020,1,0,0,400
+cumbria,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,500,01/03/2020,1,0,0,400
+cheshire_east,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,387,01/03/2020,1,0,0,400
+cheshire_west_and_chester,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,344,01/03/2020,1,0,0,400
+warrington,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,209,01/03/2020,1,0,0,400
+blackburn_with_darwen,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,150,01/03/2020,1,0,0,400
+blackpool,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,138,01/03/2020,1,0,0,400
+halton,measures_uk_8,disease_covid19,vaccinations,/home/eepgmmg1/Downloads/facs/output_dir,/home/eepgmmg1/Downloads/facs/covid_data,130,01/03/2020,1,0,0,400
