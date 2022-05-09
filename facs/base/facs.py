@@ -1222,6 +1222,9 @@ class Ecosystem:
         needs.needs[lids[loc_type],:] *= (1.0 - fraction)
 
     else:
+      if loc_type == "school_parttime":
+        loc_type = "school"
+
       needs.needs[lids[loc_type],:] *= (1.0 - fraction)
 
   def undo_partial_closure(self, loc_type, fraction=0.8):
