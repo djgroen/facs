@@ -53,6 +53,9 @@ def read_building_csv(e, csvfile, building_type_map="covid_data/building_types_m
     ybound = [99999.0,-99999.0]
 
     for row in building_reader:
+      if row[0][0] == "#":
+        continue
+
       x = float(row[1])
       y = float(row[2])
       xbound[0] = min(x,xbound[0])
