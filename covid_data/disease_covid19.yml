@@ -32,8 +32,10 @@ hospitalised:
  - [64.5,0.118]
  - [74.5,0.166]
  - [84.5,0.184]
-mortality_period: 8.0 # from day of hospitalisation (ICU)
-recovery_period: 8.0 # from day of hospitalisation (ICU)
+mortality_period: 12.0 # from day of hospitalisation (ICU)
+# https://bmcinfectdis.biomedcentral.com/articles/10.1186/s12879-021-06371-6/tables/2  (subtracted admission to ICU (2.0) from admission to outcome (~14.0))
+recovery_period: 12.0 # from day of hospitalisation (ICU)
+# https://bmcinfectdis.biomedcentral.com/articles/10.1186/s12879-021-06371-6/tables/2  (subtracted admission to ICU (2.0) from admission to outcome (~14.0))
 mild_recovery_period: 9.0 # (7-10 days) https://www.ams.edu.sg/view-pdf.aspx?file=media%5c5558_fi_168.pdf&ofile=Period+of+Infectivity+Position+Statement+(final)+23-5-20.pdf
 incubation_period: 4 # https://www.ams.edu.sg/view-pdf.aspx?file=media%5c5558_fi_168.pdf&ofile=Period+of+Infectivity+Position+Statement+(final)+23-5-20.pdf
 # 5 days of incubation, infectiousness starts 36 hours before the end of incubation.
