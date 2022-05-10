@@ -1281,11 +1281,11 @@ class Ecosystem:
     # representing a ~75% reduction for a base distance of 1 m, and a ~55% reduction for a base distance of 2 m.
     # Source: https://www.medrxiv.org/content/10.1101/2020.04.17.20069567v4.full.pdf
 
-    dist_factor = (0.75 / distance)**2
-    dist_factor_tight = (0.75 / tight_distance)**2 # assuming people stay 1 meter apart in tight areas
+    dist_factor = (0.8 / distance)**2
+    dist_factor_tight = (0.8 / tight_distance)**2 # assuming people stay 1 meter apart in tight areas
     # 0.5 is seen as a rough border between intimate and interpersonal contact, 
     # based on proxemics (Edward T Hall).
-    # But we'll take 0.75 as a standard average interpersonal distance.
+    # But we'll take 0.8 as a standard average interpersonal distance.
     # The -2 exponent is based on the observation that particles move linearly in
     # one dimension, and diffuse in the two other dimensions.
     # gravitational effects are ignored, as particles on surfaces could still
