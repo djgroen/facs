@@ -685,8 +685,8 @@ class Location:
     #  print("RATES:", base_rate, e.loc_inf_minutes[self.loc_inf_minutes_id], self.loc_inf_minutes_id)
     
     #dump rates
-    out_inf = out_files.open("{}/rates_{}.csv".format(log_prefix, e.mpi.rank))
-    print(self.type, self.sqm, self.loc_inf_minutes_id, e.loc_inf_minutes[self.loc_inf_minutes_id], base_rate, file=out_inf, flush=True)
+    #out_inf = out_files.open("{}/rates_{}.csv".format(log_prefix, e.mpi.rank))
+    #print(self.type, self.sqm, self.loc_inf_minutes_id, e.loc_inf_minutes[self.loc_inf_minutes_id], base_rate, file=out_inf, flush=True)
 
 
 
