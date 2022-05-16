@@ -174,7 +174,6 @@ def write_log_headers(rank):
   print("#time,x,y,age", file=out_inf, flush=True)
   out_inf = out_files.open("{}/covid_out_recoveries_{}.csv".format(log_prefix, rank))
   print("#time,x,y,age", file=out_inf, flush=True)
-  
 
 
 def log_infection(t, x, y, loc_type, rank, phase_duration):
@@ -597,7 +596,6 @@ class Location:
         e.loc_inf_minutes[self.loc_inf_minutes_id] += visit_time
 
   def evolve(self, e, deterministic=False):
-    minutes_opened = 12*60
     """
     (i)
     Pinf =
@@ -674,6 +672,7 @@ class Location:
     """
     
     #supermarket, park, hospital, shopping, school, office, leisure
+    minutes_opened = 12*60
     airflow = e.airflow_indoors
     if self.type == "park":
       airflow = e.airflow_outdoors
@@ -684,6 +683,12 @@ class Location:
 
     #if e.rank == 0:
     #  print("RATES:", base_rate, e.loc_inf_minutes[self.loc_inf_minutes_id], self.loc_inf_minutes_id)
+    
+    #dump rates
+    out_inf = out_files.open("{}/rates_{}.csv".format(log_prefix, e.mpi.rank))
+    print(self.type, self.sqm, self.loc_inf_minutes_id, e.loc_inf_minutes[self.loc_inf_minutes_id], base_rate, file=out_inf, flush=True)
+
+
 
     # Deterministic mode: only used for warmup.
     if deterministic:
@@ -1171,7 +1176,6 @@ class Ecosystem:
 
     data = self.mpi.comm.bcast(data, root=0)
     #print("Coords: ",self.mpi.rank, data)
-    #sys.exit()
     self.addLocation(name, "office", data[0], data[1], office_size)
     office_log.write("office,{},{},{}\n".format(data[0], data[1], office_size))
 
@@ -1384,6 +1388,15 @@ class Ecosystem:
 
         print(self.time, self.get_date_string(), *self.global_stats, self.validation[t], sep=",", file=out, flush=True)
 
+
+  def dump_locations(self):
+    out_inf = out_files.open("{}/locations_{}.csv".format(log_prefix, self.mpi.rank))
+    print("#type,x,y,sqm", file=out_inf, flush=True)
+    for h in self.houses:
+      print("house,{},{},-1".format(h.x,h.y), file=out_inf, flush=True)
+    for lt in self.locations:
+      for i in range(0, len(self.locations[lt])):
+        print("{},{},{},{}".format(lt,self.locations[lt][i].x,self.locations[lt][i].y,self.locations[lt][i].sqm), file=out_inf, flush=True)
 
 
   def add_validation_point(self, time):
