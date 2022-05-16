@@ -113,7 +113,7 @@ if __name__ == "__main__":
     if args.starting_infections:
         if int(args.starting_infections[0]) == 0:
             # Aggregate the num agents before using the starting infections multiplier.
-            num_agents_all = self.mpi.CalcCommWorldTotalSingle(e.num_agents)
+            num_agents_all = e.mpi.CalcCommWorldTotalSingle(e.num_agents)
             starting_num_infections = int(num_agents_all*float(args.starting_infections))
         else:
             starting_num_infections = int(args.starting_infections)
