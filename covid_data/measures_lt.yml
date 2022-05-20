@@ -84,7 +84,7 @@ keyworker_fraction: 0.18
 
 9/10/2020:
   traffic_multiplier: 0.7
-  work_from_home: 0.5
+  work_from_home: 0.3
   social_distance: 0.8
   mask_uptake: 0.4
   mask_uptake_shopping: 0.4
