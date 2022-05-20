@@ -35,6 +35,13 @@ def location_timeline():
 
     dd = dd.set_index('date')
     fig = px.line(dd)
+    fig.update_layout(
+        title = 'No. of infections per location type',
+        xaxis_title = 'Date',
+        yaxis_title = 'No. of infections',
+        legend_title = 'Types of locations'
+    )
+
     fig.show()
 
 def map_plotter(date='2020 September 30'):
@@ -50,6 +57,10 @@ def map_plotter(date='2020 September 30'):
     fig = px.scatter_mapbox(df, lat='y', lon='x', color='location_type', zoom=10.3)
     fig.update_layout(mapbox_style="open-street-map")
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    fig.update_layout(
+        legend_title = 'Types of locations'
+    )
+
     fig.show()
 
 if __name__ == '__main__':
