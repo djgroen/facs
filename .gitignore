@@ -128,10 +128,13 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# gridpp
+# grid settings
 output_dir/
-*covid_out_*
-err_*.err
-out_*.out
-log_*.log
+*_logs_dir/
+build/
+dist/
+*.spec
+*err_*.err
+*out_*.out
+*log_*.log
 

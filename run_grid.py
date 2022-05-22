@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 if __name__ == "__main__":
 
     # Instantiate the parameters
-    region = sys.argv[1]
+    location = sys.argv[1]
     measures_yml = sys.argv[2]
     disease_yml = sys.argv[3]
     vaccinations_yml = sys.argv[4]
@@ -30,8 +30,7 @@ if __name__ == "__main__":
     generic_outfile = int(sys.argv[10])
     dbg = int(sys.argv[11])
     simulation_period = int(sys.argv[12])
-
-    facs.region = region
+    print(str(sys.argv))
 
     house_ratio = 2
     if quicktest == 1:
@@ -48,12 +47,19 @@ if __name__ == "__main__":
                     elif row[0].lower() == "measures_yml":
                         measures_yml = str(row[1]).lower()
 
+    # creating directory specific to the location
+    facs.log_prefix = "{}_logs_dir".format(location)
+
+    # check if logs_dir is exists
+    if not path.exists(facs.log_prefix):
+        makedirs(facs.log_prefix)
+
     # check if output_dir is exists
     if not path.exists(output_dir):
         makedirs(output_dir)
 
     outfile = "{}/{}-{}.csv".format(output_dir,
-                                       region,
+                                       location,
                                        measures_yml)
     if generic_outfile == 1:
       outfile = "{}/out.csv".format(output_dir)
@@ -64,7 +70,7 @@ if __name__ == "__main__":
       end_time = simulation_period
     
     print("Running basic Covid-19 simulation kernel.")
-    print("scenario = %s" % (region))
+    print("scenario = %s" % (location))
     print("measures input yml = %s" % (measures_yml))
     print("disease input yml = %s" % (disease_yml))
     print("vaccinations input yml = %s" % (vaccinations_yml))
@@ -73,16 +79,16 @@ if __name__ == "__main__":
     print("outfile  = %s" % (outfile))
     print("data_dir  = %s" % (data_dir))
 
-    e = facs.Ecosystem(facs.region, end_time)
+    e = facs.Ecosystem(end_time)
 
-    e.ages = read_age_csv.read_age_csv("{}/age-distr.csv".format(data_dir), region)
+    e.ages = read_age_csv.read_age_csv("{}/age-distr.csv".format(data_dir), location)
 
     print("age distribution in system:", e.ages, file=sys.stderr)
 
     e.disease = read_disease_yml.read_disease_yml(
         "{}/{}.yml".format(data_dir, disease_yml))
 
-    building_file = "{}/{}_buildings.csv".format(data_dir, region)
+    building_file = "{}/{}_buildings.csv".format(data_dir, location)
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map.yml".format(data_dir),
@@ -93,22 +99,25 @@ if __name__ == "__main__":
     # household size: average size of each household, specified separately here.
     # work participation rate: fraction of population in workforce, irrespective of age
 
-    #print("{}/{}_cases.csv".format(data_dir, region))
+    #print("{}/{}_cases.csv".format(data_dir, location))
     # Can only be done after houses are in.
     #read_cases_csv.read_cases_csv(e,
-    #                              "{}/{}_cases.csv".format(data_dir, region),
-    #                              start_date=args.start_date,
+    #                              "{}/{}_cases.csv".format(data_dir, location),
+    #                              start_date=start_date,
     #                              date_format="%m/%d/%Y")
 
     e.print_status(outfile, silent=True) # silent print to initialise log data structures.
 
     starting_num_infections = 500
-    if starting_infections:
+    if starting_infections != 500:
         if int(starting_infections[0]) == 0:
-            starting_num_infections = int(e.num_agents*float(starting_infections))
+            # Aggregate the num agents before using the starting infections multiplier.
+            num_agents_all = e.mpi.CalcCommWorldTotalSingle(float(e.num_agents))
+            print("Num agents all:",num_agents_all)
+            starting_num_infections = int((num_agents_all*float(starting_infections)))
         else:
             starting_num_infections = int(starting_infections)
-    elif region == "test":
+    elif location == "test":
         starting_num_infections = 10
 
     print("THIS SIMULATIONS HAS {} AGENTS. Starting with {} infections.".format(e.num_agents, starting_num_infections))

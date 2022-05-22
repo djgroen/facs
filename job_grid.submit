@@ -1,9 +1,9 @@
 # job.submit file for running a multicore (n cores) job
 universe                = vanilla
-log                     = log_$(ClusterId).log
-output                  = out_$(ClusterId)_$(ProcId).out
-error                   = err_$(ClusterId)_$(ProcId).err
-executable              = script.sh
+log                     = grid_log_$(ClusterId).log
+output                  = grid_out_$(ClusterId)_$(ProcId).out
+error                   = grid_err_$(ClusterId)_$(ProcId).err
+executable              = script_grid.sh
 ##
 arguments               = $(location) $(measures_yml) $(disease_yml) $(vaccinations_yml) $(output_dir) $(data_dir) $(starting_infections) $(start_date) $(quicktest) $(generic_outfile) $(dbg) $(simulation_period)
 ##
@@ -18,4 +18,4 @@ request_cpus            = 4
 ##
 +jobflavour = "nextweek"
 ##
-queue location,measures_yml,disease_yml,vaccinations_yml,output_dir,data_dir,starting_infections,start_date,quicktest,generic_outfile,dbg,simulation_period from joblist.txt
+queue location,measures_yml,disease_yml,vaccinations_yml,output_dir,data_dir,starting_infections,start_date,quicktest,generic_outfile,dbg,simulation_period from joblist_grid.txt

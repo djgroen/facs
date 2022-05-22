@@ -43,3 +43,18 @@ Quick tests can be triggered with the '-q' flag. This sets the house ratio to 10
 However, as a number of calculations are performed on the house level (not the household level), this setting speeds up the code by up to an order of magnitude.
 `python3 run.py -q --location=brent --output_dir=.`
 
+## Submitting jobs to the GridPP via HTCondor
+Facs directory contains three files:
+`script_grid.sh (bash script for job submission automation)`
+`run_grid.py (python script equivilant to run.py for job submission)`
+`joblist_grid.txt (list of jobs with facs arguments for job queuing)`
+
+After initiating the python environment, the pyinstaller package can be used to create executable from 'run_grid.py'.
+`pyinstaller run_grid.py --onefile`
+
+There are currently 18 locations (jobs) in the 'joblist_grid.txt' file. (optional)
+The jobs are submitted with the command below:
+`condor_submit job_grid.submit`
+
+The results are transferrd back to the local machine and placed in 'output_dir'.
+
