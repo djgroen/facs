@@ -48,6 +48,7 @@ Facs directory contains three files:
 `script_grid.sh (bash script for job submission automation)`
 `run_grid.py (python script equivalent to run.py for job submission)`
 `joblist_grid.txt (list of jobs with facs arguments for job queuing)`
+`job_grid.submit (contains the configuration for facs simulations)`
 
 After initiating the python environment, the pyinstaller package can be used to create an executable from 'run_grid.py'. 
 `pyinstaller run_grid.py --onefile`
