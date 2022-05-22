@@ -44,17 +44,17 @@ However, as a number of calculations are performed on the house level (not the h
 `python3 run.py -q --location=brent --output_dir=.`
 
 ## Submitting jobs to the GridPP via HTCondor
-Facs directory contains three files:
+Facs directory contains three files: 
 `script_grid.sh (bash script for job submission automation)`
-`run_grid.py (python script equivilant to run.py for job submission)`
+`run_grid.py (python script equivalent to run.py for job submission)`
 `joblist_grid.txt (list of jobs with facs arguments for job queuing)`
 
-After initiating the python environment, the pyinstaller package can be used to create executable from 'run_grid.py'.
+After initiating the python environment, the pyinstaller package can be used to create an executable from 'run_grid.py'. 
 `pyinstaller run_grid.py --onefile`
 
-There are currently 18 locations (jobs) in the 'joblist_grid.txt' file. (optional)
-The jobs are submitted with the command below:
+There are currently 18 locations (jobs) in the 'joblist_grid.txt' file. (optional) 
+The jobs are submitted with the command: 
 `condor_submit job_grid.submit`
 
-The results are transferrd back to the local machine and placed in 'output_dir'.
+The results are transferred back to the local machine and placed in 'output_dir'.
 
