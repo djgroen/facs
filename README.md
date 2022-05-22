@@ -44,7 +44,7 @@ However, as a number of calculations are performed on the house level (not the h
 `python3 run.py -q --location=brent --output_dir=.`
 
 ## Submitting jobs to the GridPP via HTCondor
-Facs directory contains three files: 
+Facs directory contains four additional files: 
 `script_grid.sh (bash script for job submission automation)`
 `run_grid.py (python script equivalent to run.py for job submission)`
 `joblist_grid.txt (list of jobs with facs arguments for job queuing)`
