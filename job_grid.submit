@@ -1,0 +1,21 @@
+# job.submit file for running a multicore (n cores) job
+universe                = vanilla
+log                     = grid_log_$(ClusterId).log
+output                  = grid_out_$(ClusterId)_$(ProcId).out
+error                   = grid_err_$(ClusterId)_$(ProcId).err
+executable              = script_grid.sh
+##
+arguments               = $(location) $(measures_yml) $(disease_yml) $(vaccinations_yml) $(output_dir) $(data_dir) $(starting_infections) $(start_date) $(quicktest) $(generic_outfile) $(dbg) $(simulation_period)
+##
+#should_transfer_files   = YES
+#when_to_transfer_output = ON_EXIT
+##
+request_cpus            = 4
+##
+#transfer_input_files    = run,joblist.txt,disease.py,facs.py,measures.py,read_age_csv.py,read_building_csv.py,read_cases_csv.py,read_disease_yml.py,age-distr.csv,needs.csv,offices.csv,building_types_map.yml,disease_covid19.yml,berkshire_buildings.csv,measures_berkshire.yml,blackburn_with_darwen_buildings.csv,measures_blackburn_with_darwen.yml,blackpool_buildings.csv,measures_blackpool.yml,buckinghamshire_buildings.csv,measures_buckinghamshire.yml,cheshire_east_buildings.csv,measures_cheshire_east.yml,cheshire_west_and_chester_buildings.csv,measures_cheshire_west_and_chester.yml,cumbria_buildings.csv,measures_cumbria.yml,east_sussex_buildings.csv,measures_east_sussex.yml,greater_manchester_buildings.csv,measures_greater_manchester.yml,halton_buildings.csv,measures_halton.yml,hampshire_buildings.csv,measures_hampshire.yml,kent_buildings.csv,measures_kent.yml,lancashire_buildings.csv,measures_lancashire.yml,merseyside_buildings.csv,measures_merseyside.yml,oxfordshire_buildings.csv,measures_oxfordshire.yml,surrey_buildings.csv,measures_surrey.yml,warrington_buildings.csv,measures_warrington.yml,west_sussex_buildings.csv,measures_west_sussex.yml
+##
+#transfer_output_files   = berkshire-extend-lockdown--1.csv,blackburn_with_darwen-extend-lockdown--1.csv,blackpool-extend-lockdown--1.csv,buckinghamshire-extend-lockdown--1.csv,cheshire_east-extend-lockdown--1.csv,cheshire_west_and_chester-extend-lockdown--1.csv,cumbria-extend-lockdown--1.csv,east_sussex-extend-lockdown--1.csv,greater_manchester-extend-lockdown--1.csv,halton-extend-lockdown--1.csv,hampshire-extend-lockdown--1.csv,kent-extend-lockdown--1.csv,lancashire-extend-lockdown--1.csv,merseyside-extend-lockdown--1.csv,oxfordshire-extend-lockdown--1.csv,surrey-extend-lockdown--1.csv,warrington-extend-lockdown--1.csv,west_sussex-extend-lockdown--1.csv
+##
++jobflavour = "nextweek"
+##
+queue location,measures_yml,disease_yml,vaccinations_yml,output_dir,data_dir,starting_infections,start_date,quicktest,generic_outfile,dbg,simulation_period from joblist_grid.txt
