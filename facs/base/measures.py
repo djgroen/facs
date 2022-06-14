@@ -1,5 +1,6 @@
 import sys
 import yaml
+import os
 
 def read_vaccine_yml(e, date, ymlfile):
   with open(ymlfile) as f:
@@ -38,6 +39,11 @@ __measure_social_distance = 0.0
 
 def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
   global __measure_mask_uptake, __measure_mask_uptake_shopping, __measure_social_distance
+
+  if not os.path.exists(ymlfile):
+    print("ERROR: measures YML file not found. Exiting.")
+    sys.exit()
+
   with open(ymlfile) as f:
     m = yaml.safe_load(f)
 
