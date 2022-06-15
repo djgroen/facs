@@ -39,7 +39,7 @@ __measure_social_distance = 0.0
 __measure_work_from_home = 0.0
 
 def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
-  global __measure_mask_uptake, __measure_mask_uptake_shopping, __measure_social_distance
+  global __measure_mask_uptake, __measure_mask_uptake_shopping, __measure_social_distance, __measure_work_from_home
 
   if not os.path.exists(ymlfile):
     print("ERROR: measures YML file not found. Exiting.")
