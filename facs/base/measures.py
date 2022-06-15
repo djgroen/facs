@@ -87,7 +87,7 @@ def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
         e.add_closure(loc_name, 0) # add closure starting immediately (indicated by the 0)
 
     if("work_from_home" in dm):
-      __measure_work_from_home = float(dm["work_from_home"]))
+      __measure_work_from_home = float(dm["work_from_home"])
     
     e.add_work_from_home(__measure_work_from_home)
 
