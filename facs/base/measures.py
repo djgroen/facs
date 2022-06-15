@@ -36,6 +36,7 @@ def read_vaccine_yml(e, date, ymlfile):
 __measure_mask_uptake = 0.0
 __measure_mask_uptake_shopping = 0.0
 __measure_social_distance = 0.0
+__measure_work_from_home = 0.0
 
 def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
   global __measure_mask_uptake, __measure_mask_uptake_shopping, __measure_social_distance
@@ -86,7 +87,9 @@ def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
         e.add_closure(loc_name, 0) # add closure starting immediately (indicated by the 0)
 
     if("work_from_home" in dm):
-      e.add_work_from_home(float(dm["work_from_home"]))
+      __measure_work_from_home = float(dm["work_from_home"]))
+    
+    e.add_work_from_home(__measure_work_from_home)
 
 
     # Social distance variable parsing.
