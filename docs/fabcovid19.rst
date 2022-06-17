@@ -33,7 +33,7 @@ Configuration
 
 There are a few small configuration steps to follow:
 
-1. Go to ``<FabSim3_dir>/plugins/FabFlee``.
+1. Go to ``<FabSim3_dir>/plugins/FabCovid19``.
 
 2. copy ``machines_FabCovid19_user_example.yml`` as ``machines_FabCovid19_user.yml``.
 
