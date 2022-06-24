@@ -110,13 +110,13 @@ If you ran an ensemble jobs, you may need to do averaging across runs on the out
 
 Examples:
 
-* submit an ensambe job, containing 25 identically configured simulations:
+* submit an ensemble job, containing 25 identically configured simulations:
 
 	.. code-block:: sh
 
 		fabsim localhost covid19_ensemble:configs='brent',measures='measures;measures_nolockdown',replicas=25
 
-* submit an ensambe job using QCG-PilotJob:
+* submit an ensemble job using QCG-PilotJob:
 
 	.. code-block:: sh
 
