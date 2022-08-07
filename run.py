@@ -26,6 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--output_dir', action="store", default=".", help="directory to write output to.")
     parser.add_argument('--data_dir', action="store", default="covid_data", help="subdirectory containing simulation input data.")
     parser.add_argument('-s','--starting_infections', action="store", default="500", help="Starting # of infections. Values below 1.0 are interpreted as a ratio of population.")
+    parser.add_argument('--household_size', action="store", default="2.6", help="Average household size.")
     parser.add_argument('--start_date', action="store", default="1/3/2020", help="Start date, format = %d/%m/%Y")
     parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
     parser.add_argument('-g', '--generic_outfile', action="store_true", help="Write main output to out.csv instead of a scenario-specific named file.")
@@ -43,6 +44,7 @@ if __name__ == "__main__":
     vaccinations_yml = args.vaccinations_yml
     output_dir = args.output_dir
     data_dir = args.data_dir
+    household_size = float(args.household_size)
 
     # if simsetting.csv exists -> overwrite the simulation setting parameters
     if path.isfile('simsetting.csv'):
@@ -93,7 +95,7 @@ if __name__ == "__main__":
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map.yml".format(data_dir),
-                                        house_ratio=house_ratio, workspace=20, office_size=2500, household_size=2.6, work_participation_rate=0.5)
+                                        house_ratio=house_ratio, workspace=20, office_size=2500, household_size=household_size, work_participation_rate=0.5)
     # house ratio: number of households per house placed (higher number adds noise, but reduces runtime
     # And then 3 parameters that ONLY affect office placement.
     # workspace: m2 per employee on average. (10 in an office setting, but we use 20 as some people work in much more spacious environments)
