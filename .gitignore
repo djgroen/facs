@@ -138,3 +138,7 @@ dist/
 *out_*.out
 *log_*.log
 
+# output files
+covid_out_*.csv
+offices.csv
+*.pkl
