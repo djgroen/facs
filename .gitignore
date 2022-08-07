@@ -137,8 +137,11 @@ dist/
 *err_*.err
 *out_*.out
 *log_*.log
+nearest_locations.csv
 
 # output files
 covid_out_*.csv
 offices.csv
 *.pkl
+*.swp
+.vscode
