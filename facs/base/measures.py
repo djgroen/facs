@@ -2,15 +2,19 @@ import sys
 import yaml
 import os
 
-def read_vaccine_yml(e, date, ymlfile):
+def read_vaccine_yml(e, base_date, ymlfile):
   with open(ymlfile) as f:
     v = yaml.safe_load(f)
   
-    vaccine_effect_time = 21
+    e.vaccine_effect_time = 14
     if "vaccine_effect_time" in v:
-      vaccine_effect_time = v["vaccine_effect_time"]
+      e.vaccine_effect_time = v["vaccine_effect_time"]
     else:
       print("warning, {} does not contain field vaccine_effect time.".format(ymlfile))
+
+    tmpdate = datetime.strptime(base_date, "%-d/%-m/%Y")
+    tmpdate = tmpdate - timedelta(days=e.vaccine_effect_time)
+    date = tmpdate.strftime("%-d/%-m/%Y")
 
     if date in v:
       dv = v[date]

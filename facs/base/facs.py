@@ -759,6 +759,7 @@ class Ecosystem:
     self.vac_no_transmission = 1.0 # Default: 100% of people receiving vaccine transmit the disease as normal.
     self.vaccinations_age_limit = 70 # Age limit for priority group. Can be changed at runtime.
     self.vaccinations_legal_age_limit = 16 # Minimum age to be allowed vaccines.
+    self.vaccine_effect_time = 14
     self.traffic_multiplier = 1.0
     self.status = {"susceptible":0,"exposed":0,"infectious":0,"recovered":0,"dead":0,"immune":0}
     self.enforce_masks_on_transport = False
