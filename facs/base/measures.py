@@ -1,6 +1,7 @@
 import sys
 import yaml
 import os
+from datetime import datetime, timedelta
 
 def read_vaccine_yml(e, base_date, ymlfile):
   with open(ymlfile) as f:
