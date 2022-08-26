@@ -752,7 +752,7 @@ class Ecosystem:
 
     self.work_from_home = False
     self.ages = np.ones(91) # by default equal probability of all ages 0 to 90.
-    self.hospital_protection_factor = 1.0 # 0 is perfect, 1 is no protection.
+    self.hospital_protection_factor = 0.2 # 0 is perfect, 1 is no protection.
     self.vaccinations_available = 0 # vaccinations available per day
     self.vaccinations_today = 0
     self.vac_no_symptoms = 1.0 # Default: 100% of people receiving vaccine have no more symptons.
