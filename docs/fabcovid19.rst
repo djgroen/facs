@@ -33,7 +33,7 @@ Configuration
 
 There are a few small configuration steps to follow:
 
-1. Go to ``<FabSim3_dir>/plugins/FabFlee``.
+1. Go to ``<FabSim3_dir>/plugins/FabCovid19``.
 
 2. copy ``machines_FabCovid19_user_example.yml`` as ``machines_FabCovid19_user.yml``.
 
@@ -146,9 +146,21 @@ To run a validation simulation, simply type:
 	fabsim localhost facs_validation
 
 
-Run post-processing on the output results
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-To perform the post-processing on the ouput results from a single or ensemble runs, simple type:
+Post-processing the output results
+----------------------------------
+
+.. csv-table:: Post-processing commands
+	:header-rows: 1
+
+	Task, Command Syntax, Examples, Description
+	No. of infected people and ICU admissions over time,:code:`fabsim localhost facs_postprocess:<results_dir_name>`, :code:`fabsim localhost facs_postprocess:brent_localhost_1`, Plots the mean of all the runs present in the specified results directory. Corresponding confidence intervals are also provided.
+	No. of infections in specific location types over time, :code:`fabsim localhost facs_locationplot:<results_dir_name>`, :code:`fabsim localhost facs_locationplot:brent_localhost_1`, Creates a vertical stack of plots showing the number of infections that occured over time in each location type.
+	Map of the region, :code:`fabsim localhost facs_locationmap:<region_name>`, :code:`fabsim localhost facs_locationmap:brent`, Creates a map of the location showing all the locations (shopping schools hospitals etc.) on a map.
+	
+Basic post-processing (No. of infectios people and ICU admissions)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To perform the post-processing on the output results from a single results directory, simple type:
 
 .. code-block:: sh
 
@@ -158,6 +170,9 @@ To perform the post-processing on the ouput results from a single or ensemble ru
 Here results dir is the name of the subdirectory only (e.g. brent_localhost_1), not the full path. Once you have run this, if everything has been configured correctly, you should get a web page that shows a plot like this:
 
 .. image:: validateplot.png        
+
+Comparing the infection-spread by location type
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 Similarly, you can now perform a comparison on infectious spread by location type. To do so, type:
