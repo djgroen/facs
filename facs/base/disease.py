@@ -1,7 +1,7 @@
 import numpy as np
 
 class Disease():
-  def __init__(self, infection_rate, incubation_period, mild_recovery_period, recovery_period, mortality_period, period_to_hospitalisation):
+  def __init__(self, infection_rate, incubation_period, mild_recovery_period, recovery_period, mortality_period, period_to_hospitalisation, immunity_duration):
 
     self.infection_rate = min(1.0, infection_rate) 
     # infection rate is doubled because the default setting has 50% infectious persons, whereas the baseline we use for our calculations is
@@ -13,7 +13,7 @@ class Disease():
     self.period_to_hospitalisation = period_to_hospitalisation
     self.hospital = np.zeros(91)
     self.mortality = np.zeros(91)
-
+    self.immunity_duration = immunity_duration
 
   def addHospitalisationChances(self, hosp_array):
     hosp_array = np.asarray(hosp_array)

@@ -1,5 +1,6 @@
 date_format: "%d/%m/%Y"
 vaccine_effect_time: 21 # time between receiving vaccine and immunity conferred in days.
+vaccine_immunity_duration: 287 # average time that vaccines give immunity to persons.
 
 1/12/2020:
   vaccines_per_day: 500 # Total no. of vaccines handed out daily.

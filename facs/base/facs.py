@@ -325,8 +325,8 @@ class Person():
     log_infection(e.time,self.location.x,self.location.y,location_type, e.rank, self.phase_duration)
 
   def recover(self, e, location):
-    if e.immunity_duration > 0:
-      self.phase_duration = np.random.gamma(e.immunity_duration/20.0, 20.0) # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
+    if e.disease.immunity_duration > 0:
+      self.phase_duration = np.random.gamma(e.disease.immunity_duration/20.0, 20.0) # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
     self.status = "recovered"
     self.status_change_time = e.time
     log_recovery(e.time, self.location.x, self.location.y, location, e.rank)
@@ -387,7 +387,7 @@ class Person():
             else:
               self.recover(e, "hospital")
 
-    elif e.immunity_duration > 0 and (self.status == "recovered" or self.status == "immune"):
+    elif e.disease.immunity_duration > 0 and (self.status == "recovered" or self.status == "immune"):
       if t-self.status_change_time >= self.phase_duration:
         #print("susc.", self.status, self.phase_duration)
         self.status = "susceptible"

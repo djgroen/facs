@@ -10,24 +10,27 @@ def read_vaccine_yml(e, base_date, ymlfile):
     e.vaccine_effect_time = 14
     if "vaccine_effect_time" in v:
       e.vaccine_effect_time = v["vaccine_effect_time"]
+    if "immunity_duration" in v:
+      e.vac_duration = v["immunity_duration"]
     else:
       print("warning, {} does not contain field vaccine_effect time.".format(ymlfile))
 
-    tmpdate = datetime.strptime(base_date, "%-d/%-m/%Y")
+    tmpdate = datetime.strptime(base_date, "%d/%m/%Y")
     tmpdate = tmpdate - timedelta(days=e.vaccine_effect_time)
     date = tmpdate.strftime("%-d/%-m/%Y")
+
+    print(date,v)
 
     if date in v:
       dv = v[date]
       if "vaccines_per_day" in dv:
-        e.vaccinations_available = int(dv["vaccines_per_day"])
+        e.vaccinations_available = int(dv["vaccines_per_day"]) / e.mpi.size
       if "vaccine_age_limit" in dv:
         e.vaccinations_age_limit = int(dv["vaccine_age_limit"])
       if "no_symptoms" in dv:
         e.vac_no_symptoms = float(dv["no_symptoms"])
       if "no_transmission" in dv:
         e.vac_no_transmission = float(dv["no_transmission"])
-
 
       #dvb = v[date]["booster"]
       # fields:
@@ -161,9 +164,6 @@ def enact_measures_and_evolutions(e, t, measures_yml, vaccinations_yml):
     print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
 
   read_vaccine_yml(e, e.get_date_string(), "covid_data/{}.yml".format(vaccinations_yml))
-
-  e.vac_duration = 273
-  e.immunity_duration = 273
 
   read_lockdown_yml(e, "covid_data/{}.yml".format(measures_yml))
 
