@@ -113,29 +113,14 @@ def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
     if("traffic_multiplier" in dm):
       e.traffic_multiplier = float(dm["traffic_multiplier"])
 
+    if("hospital_protection_factor" in dm):
+      e.hospital_protection_factor = float(dm["hospital_protection_factor"])
+
     if("track_trace_efficiency" in dm):
       e.track_trace__multiplier = 1.0 - float(dm["track_trace_efficiency"])
 
     print(date)
     print(dm)
-
-
-def update_hospital_protection_factor_uk(e, t):
-  e.hospital_protection_factor = 1.0
-  if t == 30: # start of testing ramp up in early april.
-    e.hospital_protection_factor = 0.8
-  if t == 40: 
-    e.hospital_protection_factor = 0.6
-  if t == 50:
-    e.hospital_protection_factor = 0.45
-  if t == 60:
-    e.hospital_protection_factor = 0.3
-  if t == 70: # testing ramped up considerably by the end of April.
-    e.hospital_protection_factor = 0.2
-  if t == 85:
-    e.hospital_protection_factor = 0.15
-  if t == 100:
-    e.hospital_protection_factor = 0.10
 
 
 def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.1):
@@ -171,8 +156,6 @@ def enact_measures_and_evolutions(e, t, measures_yml, vaccinations_yml):
     print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
 
   read_vaccine_yml(e, e.get_date_string(), "covid_data/{}.yml".format(vaccinations_yml))
-
-  update_hospital_protection_factor_uk(e,t)
 
   e.vac_duration = 273
   e.immunity_duration = 273
