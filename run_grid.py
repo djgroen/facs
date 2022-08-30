@@ -30,6 +30,8 @@ if __name__ == "__main__":
     generic_outfile = int(sys.argv[10])
     dbg = int(sys.argv[11])
     simulation_period = int(sys.argv[12])
+    workspace = int(sys.argv[13])
+    office_size = int(sys.argv[14])
     print(str(sys.argv))
 
     house_ratio = 2
@@ -92,7 +94,7 @@ if __name__ == "__main__":
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map.yml".format(data_dir),
-                                        house_ratio=house_ratio, workspace=20, office_size=2500, household_size=2.6, work_participation_rate=0.5)
+                                        house_ratio=house_ratio, workspace=workspace, office_size=office_size, household_size=2.6, work_participation_rate=0.5)
     # house ratio: number of households per house placed (higher number adds noise, but reduces runtime
     # And then 3 parameters that ONLY affect office placement.
     # workspace: m2 per employee on average. (10 in an office setting, but we use 20 as some people work in much more spacious environments)
