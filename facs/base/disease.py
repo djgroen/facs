@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 class Disease():
   def __init__(self, infection_rate, incubation_period, mild_recovery_period, recovery_period, mortality_period, period_to_hospitalisation, immunity_duration):
@@ -24,6 +25,10 @@ class Disease():
     mort_array = np.asarray(mort_array)
     for a in range(0,len(self.mortality)):
       self.mortality[a] = np.interp(a, mort_array[:,0], mort_array[:,1])
+
+  def addMutations(self, mutations):
+    print(mutations, mutations["alpha"]["infection_rate"])
+    sys.exit()
 
 
   def print(self):

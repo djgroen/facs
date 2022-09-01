@@ -43,3 +43,8 @@ incubation_period: 4 # https://www.ams.edu.sg/view-pdf.aspx?file=media%5c5558_fi
 # Fei Zhou et al. The Lancet vol. 395.
 period_to_hospitalisation: 14.0 #this is period to ICU.
 immunity_duration: 273.0
+mutations:
+  alpha:
+    infection_rate: 0.112
+  delta:
+    infection_rate: 0.165
