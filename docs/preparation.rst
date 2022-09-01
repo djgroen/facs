@@ -87,7 +87,7 @@ Within this file we have fields for:
 
 In addition, we have a separate entry for each mutation, which can have modified properties. This is done in the following format:
 
-.. code-block:: yml
+.. code-block:: yaml
    mutations:
      type: alpha
      infection_rate: 0.1
