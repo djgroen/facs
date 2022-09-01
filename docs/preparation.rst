@@ -73,7 +73,7 @@ Here you can add one new column for each new scenario location that you're addin
 
 One of the input files is a definition of the disease one is trying to model. We provide a YML-based specification of an example interpretation of Covid-19 in the `covid_data` subdirectory for your convenience, see: https://github.com/djgroen/facs/blob/master/covid_data/disease.yml .
 
-The exact format may still be subject to change, but among others we have fields for:
+Within this file we have fields for:
 
 * *infection_rate* - indicates how fast the disease spreads.
 * *mortality* - percentage of patients that do not survive the disease. This is binned, with each bin labelled with the mean age value of that bin (e.g., 4.5 for the range 0-9 years).
@@ -83,6 +83,15 @@ The exact format may still be subject to change, but among others we have fields
 * *mild_recovery_period* - mean duration to recovery (i.e., no longer shedding viral particles) after infection.
 * *incubation_period* - mean duration between receiving the virus and becoming infectious. NOTE: does not relate to exhibiting symptoms (!)
 * *period_to_hospitalisation* - mean duration for severely ill patients between getting infected and being admitted to **intensive care**.
+* *immunity_period* - mean duration for recovered people to become susceptible to the disease again.
+
+In addition, we have a separate entry for each mutation, which can have modified properties. This is done in the following format:
+```
+mutations:
+  type: alpha
+  infection_rate: 0.1
+```
+In this example we define a mutation named `alpha`, which has a modified infection rate of 1.0. Other parameters cannot be overridden yet at this time, but we are open to supporting this in the near future.
 
 5. Defining the exact public health interventions undertaken
 ============================================================
