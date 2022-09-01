@@ -3,7 +3,11 @@ import yaml
 import os
 from datetime import datetime, timedelta
 
+__mutation_daily_change = 0.0
+__mutation_days_remaining = -1
+
 def read_vaccine_yml(e, base_date, ymlfile):
+  global __mutation_daily_change, __mutation_days_remaining
   with open(ymlfile) as f:
     v = yaml.safe_load(f)
   
@@ -39,6 +43,23 @@ def read_vaccine_yml(e, base_date, ymlfile):
       # no_symptoms: 0.75
       # no_transmission: 0.6
       # TO BE IMPLEMENTED
+
+  with open("covid_data/mutations.yml") as f:
+    v = yaml.safe_load(f)
+
+    if base_date in v:
+      dv = v[base_date]
+      new_inf_rate = e.disease.mutations[dv["type"]]["infection_rate"]
+      __mutation_daily_change = (new_inf_rate - e.disease.infection_rate) / int(dv["transition_period"])
+      __mutation_days_remaining = int(dv["transition_period"])
+
+      print("Mutation started to {}, inf. rate {}, transition period {}, daily change {}".format(dv["type"], new_inf_rate, dv["transition_period"], __mutation_daily_change))
+      sys.exit()
+
+  if __mutation_days_remaining > 0:
+    e.infection_rate += __mutation_daily_change
+    __mutation_days_remaining -= 1
+
 
 
 __measure_mask_uptake = 0.0

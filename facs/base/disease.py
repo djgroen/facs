@@ -27,9 +27,8 @@ class Disease():
       self.mortality[a] = np.interp(a, mort_array[:,0], mort_array[:,1])
 
   def addMutations(self, mutations):
-    print(mutations, mutations["alpha"]["infection_rate"])
-    sys.exit()
-
+    print("Loading mutations:", mutations)
+    self.mutations = mutations
 
   def print(self):
     print(self.infection_rate, self.incubation_period, self.mild_recovery_period, self.recovery_period, self.mortality_period)
