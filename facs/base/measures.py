@@ -143,7 +143,7 @@ def read_lockdown_yml(e, ymlfile="covid_data/measures.yml"):
       e.traffic_multiplier = float(dm["traffic_multiplier"])
 
     if("hospital_protection_factor" in dm):
-      e.hospital_protection_factor = float(dm["hospital_protection_factor"])
+      e.hospital_protection_factor = 1.0 - float(dm["hospital_protection_factor"])
 
     if("track_trace_efficiency" in dm):
       e.track_trace__multiplier = 1.0 - float(dm["track_trace_efficiency"])
