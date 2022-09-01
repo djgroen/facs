@@ -32,6 +32,8 @@ if __name__ == "__main__":
     parser.add_argument('-g', '--generic_outfile', action="store_true", help="Write main output to out.csv instead of a scenario-specific named file.")
     parser.add_argument('--dbg', action="store_true", help="Write additional outputs to help debugging")
     parser.add_argument('-t', '--simulation_period', action="store",type=int, default='-1', help="Simulation duration [days].")
+    parser.add_argument('-o', '--office_size', action="store",type=int, default='2500', help="Office size in m2.")
+    parser.add_argument('-w', '--workspace', action="store",type=int, default='20', help="Workspace per person in m2.")
     args = parser.parse_args()
     print(args)
 
@@ -71,6 +73,9 @@ if __name__ == "__main__":
     
     if args.simulation_period > 0:
       end_time = args.simulation_period
+
+    workspace = args.workspace
+    office_size = args.office_size
     
     print("Running basic Covid-19 simulation kernel.")
     print("scenario = %s" % (location))
@@ -95,7 +100,7 @@ if __name__ == "__main__":
     read_building_csv.read_building_csv(e,
                                         building_file,
                                         "{}/building_types_map.yml".format(data_dir),
-                                        house_ratio=house_ratio, workspace=20, office_size=2500, household_size=household_size, work_participation_rate=0.5)
+                                        house_ratio=house_ratio, workspace=workspace, office_size=office_size, household_size=household_size, work_participation_rate=0.5)
     # house ratio: number of households per house placed (higher number adds noise, but reduces runtime
     # And then 3 parameters that ONLY affect office placement.
     # workspace: m2 per employee on average. (10 in an office setting, but we use 20 as some people work in much more spacious environments)
