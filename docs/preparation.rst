@@ -86,11 +86,12 @@ Within this file we have fields for:
 * *immunity_period* - mean duration for recovered people to become susceptible to the disease again.
 
 In addition, we have a separate entry for each mutation, which can have modified properties. This is done in the following format:
-```
-mutations:
-  type: alpha
-  infection_rate: 0.1
-```
+
+.. code-block:: yml
+   mutations:
+     type: alpha
+     infection_rate: 0.1
+
 In this example we define a mutation named `alpha`, which has a modified infection rate of 1.0. Other parameters cannot be overridden yet at this time, but we are open to supporting this in the near future.
 
 5. Defining the exact public health interventions undertaken
