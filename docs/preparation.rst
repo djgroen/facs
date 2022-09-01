@@ -94,6 +94,21 @@ In addition, we have a separate entry for each mutation, which can have modified
 
 In this example we define a mutation named `alpha`, which has a modified infection rate of 1.0. Other parameters cannot be overridden yet at this time, but we are open to supporting this in the near future.
 
+In addition to the main definition, we also have a file for defining when certain strains are introduced in the simulation (as of FACS 2.2). This file, named `mutations.yml` is separete from the main disease file, because these timings can vary by location. Here is an example for the UK::
+
+  date_format: "%d/%m/%Y"
+
+  22/10/2020:
+    type: alpha
+    transition_period: 80
+
+  21/04/2023:
+    type: delta
+    transition_period: 60
+  
+
+Here the type refers to the mutation name defined in the disease YML file, whilte the transition period indicates the period over which the prevalence of the mutation in the population grows from 0% to 100%. If this file is kept empty then no mutations will emerge during the simulation.
+
 5. Defining the exact public health interventions undertaken
 ============================================================
 
