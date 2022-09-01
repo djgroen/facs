@@ -112,6 +112,7 @@ The restrictions and measures including government interventions taken to mitiga
 - **`track_trace_efficiency`**: Fraction of the population who escape the track and trace system.
 - **`closure`**: List of building types which are closed for the public.
 - **`partial_closure`**: List of tuples which define the extent of closures (on a scale from 0-1) for building types.
+- **hospital_protection_factor**: Degree of security precautions taken by hospitals. 0.0 is none, and 1.0 equals complete prevention of COVID transmission.
 
 In addition to to list of dates, the `yml` file should also have a key called `keyworker_fraction` with a value giving the fraction of key workers in the population. This is the fraction of employees who go to the workplace despite the lock-down. A sample section of a measures file is given below.::
 
