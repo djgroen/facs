@@ -27,7 +27,7 @@ class Disease():
       self.mortality[a] = np.interp(a, mort_array[:,0], mort_array[:,1])
 
   def addMutations(self, mutations):
-    print("Loading mutations:", mutations)
+    print("Loading mutations:", mutations, file=sys.stderr)
     self.mutations = mutations
 
   def print(self):

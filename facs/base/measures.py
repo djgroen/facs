@@ -23,7 +23,7 @@ def read_vaccine_yml(e, base_date, ymlfile):
     tmpdate = tmpdate - timedelta(days=e.vaccine_effect_time)
     date = tmpdate.strftime("%-d/%-m/%Y")
 
-    print(date,v)
+    #print(date,v)
 
     if date in v:
       dv = v[date]
@@ -53,8 +53,8 @@ def read_vaccine_yml(e, base_date, ymlfile):
       __mutation_daily_change = (new_inf_rate - e.disease.infection_rate) / int(dv["transition_period"])
       __mutation_days_remaining = int(dv["transition_period"])
 
-      print("Mutation started to {}, inf. rate {}, transition period {}, daily change {}".format(dv["type"], new_inf_rate, dv["transition_period"], __mutation_daily_change))
-      sys.exit()
+      #print("Mutation started to {}, inf. rate {}, transition period {}, daily change {}".format(dv["type"], new_inf_rate, dv["transition_period"], __mutation_daily_change))
+      #sys.exit()
 
   if __mutation_days_remaining > 0:
     e.infection_rate += __mutation_daily_change
