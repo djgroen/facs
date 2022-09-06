@@ -57,7 +57,7 @@ def read_vaccine_yml(e, base_date, ymlfile):
       #sys.exit()
 
   if __mutation_days_remaining > 0:
-    e.infection_rate += __mutation_daily_change
+    e.disease.infection_rate += __mutation_daily_change
     __mutation_days_remaining -= 1
 
 
