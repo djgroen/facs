@@ -52,10 +52,8 @@ def read_vaccine_yml(e, base_date, ymlfile, diseasefile):
 
     if base_date in v:
       dv = v[base_date]
-      # print(e.disease)
-      # print('++++++++++++++++++')
-      # new_inf_rate = e.disease.mutations[dv["type"]]["infection_rate"]
       new_inf_rate = w['mutations'][dv["type"]]["infection_rate"]
+      e.disease.mutations[dv["type"]]["infection_rate"] = new_inf_rate
       __mutation_daily_change = (new_inf_rate - e.disease.infection_rate) / int(dv["transition_period"])
       __mutation_days_remaining = int(dv["transition_period"])
 
