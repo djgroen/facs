@@ -143,7 +143,7 @@ if __name__ == "__main__":
         
         e.add_infections(num)
 
-        measures.enact_measures_and_evolutions(e, e.time, measures_yml, vaccinations_yml)
+        measures.enact_measures_and_evolutions(e, e.time, measures_yml, vaccinations_yml, disease_yml)
         
         e.evolve(reduce_stochasticity=False)
 
@@ -158,7 +158,7 @@ if __name__ == "__main__":
 
     for t in range(0, end_time):
 
-        measures.enact_measures_and_evolutions(e, e.time, measures_yml, vaccinations_yml)
+        measures.enact_measures_and_evolutions(e, e.time, measures_yml, vaccinations_yml, disease_yml)
 
         # Propagate the model by one time step.
         e.evolve(reduce_stochasticity=False)

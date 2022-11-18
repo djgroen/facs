@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 __mutation_daily_change = 0.0
 __mutation_days_remaining = -1
 
-def read_vaccine_yml(e, base_date, ymlfile):
+def read_vaccine_yml(e, base_date, ymlfile, diseasefile):
   global __mutation_daily_change, __mutation_days_remaining
   with open(ymlfile) as f:
     v = yaml.safe_load(f)
@@ -47,9 +47,15 @@ def read_vaccine_yml(e, base_date, ymlfile):
   with open("covid_data/mutations.yml") as f:
     v = yaml.safe_load(f)
 
+  with open(diseasefile) as g:
+    w = yaml.safe_load(g)
+
     if base_date in v:
       dv = v[base_date]
-      new_inf_rate = e.disease.mutations[dv["type"]]["infection_rate"]
+      # print(e.disease)
+      # print('++++++++++++++++++')
+      # new_inf_rate = e.disease.mutations[dv["type"]]["infection_rate"]
+      new_inf_rate = w['mutations'][dv["type"]]["infection_rate"]
       __mutation_daily_change = (new_inf_rate - e.disease.infection_rate) / int(dv["transition_period"])
       __mutation_days_remaining = int(dv["transition_period"])
 
@@ -163,7 +169,7 @@ def calculate_mutating_infection_rate(fraction, source=0.07, dest=0.1):
   return (1.0-fraction)*source + (fraction*dest)
 
 
-def enact_measures_and_evolutions(e, t, measures_yml, vaccinations_yml):
+def enact_measures_and_evolutions(e, t, measures_yml, vaccinations_yml, disease_yml):
 
   # add in Alpha mutation
   # Prevalence increases linearly from Oct 22 (1%) to Jan 20th (100%)
@@ -184,7 +190,7 @@ def enact_measures_and_evolutions(e, t, measures_yml, vaccinations_yml):
   #  # https://www.gov.uk/government/news/confirmed-cases-of-covid-19-variants-identified-in-uk#:~:text=The%20Delta%20variant%20currently%20accounts,of%20cases%20across%20the%20UK.&text=In%20total%2C%203%2C692%20people%20have,the%20Delta%20and%20Beta%20variants.l
   #  print("infection rate adjusted to ", e.disease.infection_rate, file=sys.stderr)
 
-  read_vaccine_yml(e, e.get_date_string(), "covid_data/{}.yml".format(vaccinations_yml))
+  read_vaccine_yml(e, e.get_date_string(), "covid_data/{}.yml".format(vaccinations_yml), "covid_data/{}.yml".format(disease_yml))
 
   read_lockdown_yml(e, "covid_data/{}.yml".format(measures_yml))
 
