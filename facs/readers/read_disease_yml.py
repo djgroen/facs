@@ -6,7 +6,7 @@ from facs.base import disease
 
 pp = pprint.PrettyPrinter()
 
-def read_disease_yml(ymlfile="covid_data/disease-covid19.yml"):
+def read_disease_yml(ymlfile="covid_data/disease_covid19.yml"):
 
   with open(ymlfile) as f:
     dp = yaml.safe_load(f)
