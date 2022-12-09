@@ -1,5 +1,6 @@
 import numpy as np
 import yaml
+import argparse
 
 def population_generator(region, config_file, output_file):
 
@@ -27,4 +28,10 @@ def population_generator(region, config_file, output_file):
 
 
 if __name__ == '__main__':
-    population_generator('test_calarasi', 'population_generator.yml', '../config_files/test_calarasi/covid_data/age-distr.csv')
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--location', action="store", default="test_calarasi", help="Name of location.")
+    args = parser.parse_args()
+    print(args)
+
+    population_generator(args.location, 'covid_data/population_generator.yml', 'covid_data/age-distr.csv')
