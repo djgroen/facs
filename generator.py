@@ -1,6 +1,7 @@
 import numpy as np
 import yaml
 import argparse
+import os
 
 def population_generator(region, config_file, output_file):
 
@@ -31,6 +32,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--location', action="store", default="test_calarasi", help="Name of location.")
+    parser.add_argument('--cwd', action="store", default=".", help="Current working directory")
     args = parser.parse_args()
     print(args)
 
