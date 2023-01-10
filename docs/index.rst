@@ -20,23 +20,32 @@ What sets FACS apart from many other codes is that we have a partially automated
 We are currently finalizing a first journal paper about FACS, and will link to it from this page once it has become available.
 
 Quick installation notes
-========================
+------------------------
 
-To install FACS, simply clone the GitHub repository, and ensure the dependencies are met.
- 
+To install FACS,
+
+1. Clone the GitHub repository
+
 .. code:: console
 
           git clone https://github.com/djgroen/facs.git
 
+2. Change to the newly created ``facs`` directory
 
-These dependencies are:
+.. code:: console
 
-* PyYaml
-* numpy
-* pandas
+        cd facs
+
+3. Install all the required dependencies using
+
+.. code:: console
+
+        pip3 install -r requirements.txt
+
 
 How to run the code
 -------------------
+
 To run a simple simulation of a basic test dataset, type:
 `python3 run.py -g --location=test --output_dir=.`
 
@@ -59,6 +68,16 @@ There is a hardcoded lockdown in run.py which is representative for the UK. This
 We also included a simple plotting script. This could be called e.g. as follows:
 `python3 PlotSEIR.py out.csv test`
 (this has not been tested in a while, as we usually use FabCovid19 for plotting these days)
+
+Upadating FACS
+--------------
+
+The FACS code is currently under active development. In order to update FACS to the latest version, from the ``facs`` directory, run the command
+
+.. code:: console
+
+        git pull
+
 
 Citing FACS
 -----------
