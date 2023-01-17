@@ -46,13 +46,15 @@ To install FACS,
 How to run the code
 -------------------
 
-To run a simple simulation of a basic test dataset, type:
-`python3 run.py -g --location=test --output_dir=.`
+To run a simple simulation of a basic test dataset, type::
+
+    python3 run.py -g --location=test --output_dir=.
 
 Here, the `-g` flag indicates that output will be written to out.csv, instead of an output file with a more specific name.
 
-To run a simulation of the Borough of Brent, type:
-`python3 run.py --location=brent --measures_yml=measures --output_dir=.`
+To run a simulation of the Borough of Brent, type::
+
+    python3 run.py --location=brent --measures_yml=measures --output_dir=.
 
 Note that in this case, we explicitly specify the measures YML file that we wish to use. This is done in the format:
 `covid_data/<measures_yml>.yml`
