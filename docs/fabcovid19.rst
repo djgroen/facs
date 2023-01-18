@@ -4,6 +4,8 @@ FabCovid19: Automated FACS simulation
 
 To automate the execution and analysis of FACS, we use a FabSim3-based FabCovid19 plugin (https://github.com/djgroen/FabCovid19). It provides an environment for researchers and organisations to construct and modify simulations, instantiate and execute multiple runs for different policy decisions, as well as to validate and visualise the obtained results against the existing data.
 
+Setup
+*****
 
 
 Installing the FabSim3 automation toolkit
@@ -50,6 +52,9 @@ There are a few small configuration steps to follow:
    
 Automated FACS execution using FabCovid19
 -----------------------------------------
+
+Execution
+*********
 
 Run a single job
 ~~~~~~~~~~~~~~~~
@@ -146,6 +151,13 @@ To run a validation simulation, simply type:
 	fabsim localhost facs_validation
 
 
+Visualisation
+*************
+
+.. note::
+	Before you execute `facs_postprocess` or `facs_locationplot`, you should fetch the results using `fab <machine_name> fetch_results`.
+
+
 Post-processing the output results
 ----------------------------------
 
@@ -186,7 +198,3 @@ Similarly, you can now perform a comparison on infectious spread by location typ
 Once you have run this, if everything has been configured correctly, you should get a web page that shows a plot like this:
 
 .. image:: locationplot.png        
-
-
-.. note::
-	Before you execute `facs_postprocess` or `facs_locationplot`, you should fetch the results using `fab <machine_name> fetch_results`.
