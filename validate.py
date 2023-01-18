@@ -21,7 +21,7 @@ def load_output_data(out_dir):
 
 def load_admissions_data(out_dir):
     val_adm_output = pd.read_csv(
-        "%s/validation_data/admissions.csv" % (out_dir), sep=',', encoding='latin1')
+        "%s/covid_data/admissions.csv" % (out_dir), sep=',', encoding='latin1')
 
     return val_adm_output
 
