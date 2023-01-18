@@ -151,8 +151,8 @@ To run a validation simulation, simply type:
 	fabsim localhost facs_validation
 
 
-Validation
-**********
+Visualisation
+*************
 
 .. note::
 	Before you execute `facs_postprocess` or `facs_locationplot`, you should fetch the results using `fab <machine_name> fetch_results`.
