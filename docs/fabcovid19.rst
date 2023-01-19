@@ -162,8 +162,8 @@ Visualisation
 	This will create various subdirectories in the ``<FabSim3_dir>/results`` directories. the name of these directories will be referred to as ``results_dir_name`` in this documentatioin.
 	
 
-.. Post-processing the output results
-.. ----------------------------------
+Post-processing the output results
+----------------------------------
 
 .. .. csv-table:: Post-processing commands
 .. 	:header-rows: 1
