@@ -155,19 +155,23 @@ Visualisation
 *************
 
 .. note::
-	Before you execute `facs_postprocess` or `facs_locationplot`, you should fetch the results using `fab <machine_name> fetch_results`.
+	Before you executing any visualisation commands, you should fetch the results using::
+	
+		fabsim <machine_name> fetch_results
 
+	This will create various subdirectories in the ``<FabSim3_dir>/results`` directories. the name of these directories will be referred to as ``results_dir_name`` in this documentatioin.
+	
 
-Post-processing the output results
-----------------------------------
+.. Post-processing the output results
+.. ----------------------------------
 
-.. csv-table:: Post-processing commands
-	:header-rows: 1
+.. .. csv-table:: Post-processing commands
+.. 	:header-rows: 1
 
-	Task, Command Syntax, Examples, Description
-	No. of infected people and ICU admissions over time,:code:`fabsim localhost facs_postprocess:<results_dir_name>`, :code:`fabsim localhost facs_postprocess:brent_localhost_1`, Plots the mean of all the runs present in the specified results directory. Corresponding confidence intervals are also provided.
-	No. of infections in specific location types over time, :code:`fabsim localhost facs_locationplot:<results_dir_name>`, :code:`fabsim localhost facs_locationplot:brent_localhost_1`, Creates a vertical stack of plots showing the number of infections that occured over time in each location type.
-	Map of the region, :code:`fabsim localhost facs_locationmap:<region_name>`, :code:`fabsim localhost facs_locationmap:brent`, Creates a map of the location showing all the locations (shopping schools hospitals etc.) on a map.
+.. 	Task, Command Syntax, Examples, Description
+.. 	No. of infected people and ICU admissions over time,:code:`fabsim localhost facs_postprocess:<results_dir_name>`, :code:`fabsim localhost facs_postprocess:brent_localhost_1`, Plots the mean of all the runs present in the specified results directory. Corresponding confidence intervals are also provided.
+.. 	No. of infections in specific location types over time, :code:`fabsim localhost facs_locationplot:<results_dir_name>`, :code:`fabsim localhost facs_locationplot:brent_localhost_1`, Creates a vertical stack of plots showing the number of infections that occured over time in each location type.
+.. 	Map of the region, :code:`fabsim localhost facs_locationmap:<region_name>`, :code:`fabsim localhost facs_locationmap:brent`, Creates a map of the location showing all the locations (shopping schools hospitals etc.) on a map.
 	
 Basic post-processing (No. of infectios people and ICU admissions)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -179,22 +183,47 @@ To perform the post-processing on the output results from a single results direc
 	fabsim localhost facs_postprocess:<results_dir_name>
 
 
-Here results dir is the name of the subdirectory only (e.g. brent_localhost_1), not the full path. Once you have run this, if everything has been configured correctly, you should get a web page that shows a plot like this:
+On running this command, you should get a web page that shows a plot like this:
 
 .. image:: validateplot.png        
+
+Thge top and bottom panels of the figure shows number of infectious people and the number of hospitalisations as time progrssses.
 
 Comparing the infection-spread by location type
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-Similarly, you can now perform a comparison on infectious spread by location type. To do so, type:
-
+Similarly, you can perform a comparison on infectious spread by location type. To do so, type:
 
 .. code-block:: sh
 
 	fabsim localhost facs_locationplot:<results_dir_name>
 
 
-Once you have run this, if everything has been configured correctly, you should get a web page that shows a plot like this:
+This should give you a web page that shows a plot like this:
 
 .. image:: locationplot.png        
+
+This plot would show the number of infections which occurred in various types of locations on each day. 
+
+Infections on a map during a period of time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To see the locations where the infections occurred during a period of time, simply type:
+
+.. code-block:: sh
+
+	fabsim localhost facs_mapspread:<results_dir_name>,<starting_day>-<end_day>
+
+
+This should give you a web page that shows a plot like this:
+
+.. image:: mapspread.png        
+
+To visualise the data for a single day, type:
+
+.. code-block:: sh
+
+	fabsim localhost facs_mapspread:<day>
+
+.. note:: 
+	The ``day``, ``starting_day`` and ``end_day`` arguments represent the number of days since the start of the simulation and not the dates.
