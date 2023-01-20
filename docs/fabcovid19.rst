@@ -31,7 +31,7 @@ Once you have installed FabSim3, you can install FabCovid19 by typing:
 The FabCovid19 plugin will appear in ``<FabSim3_dir>/plugins/FabCovid19``.
 
 Configuration
-~~~~~~~~~~~~~
+-------------
 
 There are a few small configuration steps to follow:
 
@@ -48,16 +48,12 @@ There are a few small configuration steps to follow:
 		localhost:
 			# location of FACS in your local PC
 			facs_location: "<PATH to you local FACS installation>"
-		
-   
-Automated FACS execution using FabCovid19
------------------------------------------
 
 Execution
 *********
 
 Run a single job
-~~~~~~~~~~~~~~~~
+----------------
 
 To run a single job, simply type:
 
@@ -76,7 +72,7 @@ Example:
 	fabsim localhost covid19:configs=harrow,measures=measures
 
 Run an ensemble job
-~~~~~~~~~~~~~~~~~~~
+-------------------
 To an an ensemble simulation of FACS, 
 
 .. code-block:: sh
@@ -143,7 +139,7 @@ Examples:
 
 
 Run a validation job
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 To run a validation simulation, simply type:
 
 .. code-block:: sh
@@ -162,19 +158,8 @@ Visualisation
 	This will create various subdirectories in the ``<FabSim3_dir>/results`` directories. the name of these directories will be referred to as ``results_dir_name`` in this documentatioin.
 	
 
-Post-processing the output results
-----------------------------------
-
-.. .. csv-table:: Post-processing commands
-.. 	:header-rows: 1
-
-.. 	Task, Command Syntax, Examples, Description
-.. 	No. of infected people and ICU admissions over time,:code:`fabsim localhost facs_postprocess:<results_dir_name>`, :code:`fabsim localhost facs_postprocess:brent_localhost_1`, Plots the mean of all the runs present in the specified results directory. Corresponding confidence intervals are also provided.
-.. 	No. of infections in specific location types over time, :code:`fabsim localhost facs_locationplot:<results_dir_name>`, :code:`fabsim localhost facs_locationplot:brent_localhost_1`, Creates a vertical stack of plots showing the number of infections that occured over time in each location type.
-.. 	Map of the region, :code:`fabsim localhost facs_locationmap:<region_name>`, :code:`fabsim localhost facs_locationmap:brent`, Creates a map of the location showing all the locations (shopping schools hospitals etc.) on a map.
-	
 Basic post-processing (No. of infectios people and ICU admissions)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------------------------------------
 
 To perform the post-processing on the output results from a single results directory, simple type:
 
@@ -190,7 +175,7 @@ On running this command, you should get a web page that shows a plot like this:
 Thge top and bottom panels of the figure shows number of infectious people and the number of hospitalisations as time progrssses.
 
 Comparing the infection-spread by location type
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------------
 
 Similarly, you can perform a comparison on infectious spread by location type. To do so, type:
 
@@ -206,7 +191,7 @@ This should give you a web page that shows a plot like this:
 This plot would show the number of infections which occurred in various types of locations on each day. 
 
 Infections on a map during a period of time
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------
 
 To see the locations where the infections occurred during a period of time, simply type:
 
