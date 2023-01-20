@@ -212,3 +212,25 @@ To visualise the data for a single day, type:
 
 .. note:: 
 	The ``day``, ``starting_day`` and ``end_day`` arguments represent the number of days since the start of the simulation and not the dates.
+
+Buildings on a map
+------------------
+
+To see all the buildings in a region on a map, type:
+
+.. code-block:: sh
+
+	fabsim localhost facs_locationmap:<region_name>,houses=True
+
+This plots all the builings in the region including the houses. Since, the number of houses is typically very high, it may take some time to render on the web-browser. Therefore, if you do not wish to plot the houses, type:
+
+.. code-block:: sh
+
+	fabsim localhost facs_locationmap:<region_name>
+
+This should give you a web page that show plots like:
+
+.. image:: maplocations.png        
+
+.. image:: maplocations1.png        
+
