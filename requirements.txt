@@ -4,3 +4,5 @@ numpy
 plotly
 pyyaml
 mpi4py
+shapely
+pyproj
