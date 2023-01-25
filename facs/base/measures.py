@@ -14,10 +14,11 @@ def read_vaccine_yml(e, base_date, ymlfile, diseasefile):
     e.vaccine_effect_time = 14
     if "vaccine_effect_time" in v:
       e.vaccine_effect_time = v["vaccine_effect_time"]
-    if "immunity_duration" in v:
-      e.vac_duration = v["immunity_duration"]
     else:
       print("warning, {} does not contain field vaccine_effect time.".format(ymlfile))
+
+    if "immunity_duration" in v:
+      e.vac_duration = v["immunity_duration"]
 
     tmpdate = datetime.strptime(base_date, "%d/%m/%Y")
     tmpdate = tmpdate - timedelta(days=e.vaccine_effect_time)
@@ -44,21 +45,26 @@ def read_vaccine_yml(e, base_date, ymlfile, diseasefile):
       # no_transmission: 0.6
       # TO BE IMPLEMENTED
 
-  with open("covid_data/mutations.yml") as f:
-    v = yaml.safe_load(f)
+  verbose = False
+  try:
+    with open("covid_data/mutations.yml") as f:
+      v = yaml.safe_load(f)
 
-  with open(diseasefile) as g:
-    w = yaml.safe_load(g)
+    with open(diseasefile) as g:
+      w = yaml.safe_load(g)
 
-    if base_date in v:
-      dv = v[base_date]
-      new_inf_rate = w['mutations'][dv["type"]]["infection_rate"]
-      e.disease.mutations[dv["type"]]["infection_rate"] = new_inf_rate
-      __mutation_daily_change = (new_inf_rate - e.disease.infection_rate) / int(dv["transition_period"])
-      __mutation_days_remaining = int(dv["transition_period"])
+      if base_date in v:
+        dv = v[base_date]
+        new_inf_rate = w['mutations'][dv["type"]]["infection_rate"]
+        e.disease.mutations[dv["type"]]["infection_rate"] = new_inf_rate
+        __mutation_daily_change = (new_inf_rate - e.disease.infection_rate) / int(dv["transition_period"])
+        __mutation_days_remaining = int(dv["transition_period"])
 
-      #print("Mutation started to {}, inf. rate {}, transition period {}, daily change {}".format(dv["type"], new_inf_rate, dv["transition_period"], __mutation_daily_change))
-      #sys.exit()
+        #print("Mutation started to {}, inf. rate {}, transition period {}, daily change {}".format(dv["type"], new_inf_rate, dv["transition_period"], __mutation_daily_change))
+        #sys.exit()
+  except FileNotFoundError:
+    if verbose:
+      print("WARNING: covid_data/mutations.yml OR {} not found".format(diseasefile))
 
   if __mutation_days_remaining > 0:
     e.disease.infection_rate += __mutation_daily_change

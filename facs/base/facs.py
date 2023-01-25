@@ -786,6 +786,7 @@ class Ecosystem:
     self.size = 1 # number of processes
     self.rank = 0 # rank of current process
     self.debug_mode = False
+    self.verbose = False
     if self.mode == "parallel":
       self.mpi = MPIManager()
       self.rank = self.mpi.comm.Get_rank() # this is stored outside of the MPI manager, to have one code for seq and parallel.
@@ -814,7 +815,7 @@ class Ecosystem:
           self.locations[lt][i].loc_inf_minutes_id = offset + i
           self.loc_m2[lt] += self.locations[lt][i].sqm
 
-        if self.rank == 0:
+        if self.rank == 0 and self.verbose:
           print("type {}, # {}, tot m2 {}, offset {}".format(lt, len(self.locations[lt]), self.loc_m2[lt], offset))
         self.number_of_non_house_locations += len(self.locations[lt])
         self.loc_offsets[lt] = offset
@@ -1013,7 +1014,8 @@ class Ecosystem:
     Randomly add infections.
     """
     #if num > 0:
-    print("new infections: ", self.rank, num, self.get_partition_size(num))
+    if self.verbose:
+      print("new infections: ", self.rank, num, self.get_partition_size(num))
     #  sys.exit()
     for i in range(0, self.get_partition_size(num)):
       infected = False
@@ -1024,7 +1026,8 @@ class Ecosystem:
         attempts += 1
       if attempts > 499:
         print("WARNING: unable to seed infection.")
-    print("add_infections:",num,self.time)
+    if self.verbose:
+      print("add_infections:",num,self.time)
 
   def add_infection(self, x, y, age):
     """
@@ -1036,7 +1039,8 @@ class Ecosystem:
 
     selected_house = None
     min_dist = 99999
-    print("add_infection:",x,y,age,len(self.houses))
+    if self.verbose:
+      print("add_infection:",x,y,age,len(self.houses))
 
     for h in self.houses:
       dist_h = calc_dist(h.x, h.y, x, y)
@@ -1059,7 +1063,7 @@ class Ecosystem:
     #print("loc inf min:", self.loc_inf_minutes, type(self.loc_inf_minutes[0]))
 
 
-  def _get_house_rank(i):
+  def _get_house_rank(self, i):
     rank = -1
     while i >= self.house_slice_offsets[i]:
       rank += 1
@@ -1086,7 +1090,7 @@ class Ecosystem:
       self.base_rate = self.mpi.CalcCommWorldTotalSingle(self.base_rate) / self.mpi.size
       self.loc_evolves = self.mpi.CalcCommWorldTotalSingle(self.loc_evolves)
 
-      if self.mpi.rank == 0:
+      if self.mpi.rank == 0 and self.verbose:
         print(self.mpi.size, self.time, "total_inf_minutes", np.sum(self.loc_inf_minutes), sep=",")
         print(self.mpi.size, self.time, "total_visit_minutes", self.visit_minutes)
         print(self.mpi.size, self.time, "base_rate", self.base_rate)
@@ -1103,7 +1107,7 @@ class Ecosystem:
         l.clear_visits(self)
     self.reset_loc_inf_minutes()
 
-    if self.rank == 0:
+    if self.rank == 0 and self.verbose:
         print("total visits:",total_visits)
 
     # collect visits for the current day
@@ -1132,7 +1136,7 @@ class Ecosystem:
                 self.vaccinations_today += 1
 
     self._aggregate_loc_inf_minutes()
-    if self.rank == 0: 
+    if self.rank == 0 and self.verbose: 
       print(self.rank, np.sum(self.loc_inf_minutes))
 
 
