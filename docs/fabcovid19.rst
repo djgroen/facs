@@ -62,14 +62,14 @@ To run a single job, simply type:
 	fabsim <localhost/remote machine> covid19:<location_scenario>,<TS=transition scenario>,<TM=transition mode>,[outdir=output directory]
 
 where
-	* ``configs`` : the name of borough, the full list can be found in https://github.com/djgroen/FabCovid19/tree/master/config_files 
+	* ``config`` : the name of borough, the full list can be found in https://github.com/djgroen/FabCovid19/tree/master/config_files 
 	* ``measures``: name of the measures.yml file used, minus the .yml extension. This file should reside in the covid_data subdirectory
 
 Example:
 
 .. code-block:: sh
 
-	fabsim localhost covid19:configs=harrow,measures=measures
+	fabsim localhost covid19:config=harrow,measures=measures
 
 Run an ensemble job
 -------------------
@@ -77,7 +77,7 @@ To an an ensemble simulation of FACS,
 
 .. code-block:: sh
 
-	fab <localhost/remote machine> covid19_ensemble:configs='<area_name>;<area2_name>'[,measures=<list of measures files>] 
+	fab <localhost/remote machine> covid19_ensemble:config='<area_name>;<area2_name>'[,measures=<list of measures files>] 
 
 .. note::
 	By default, the measures.yml file will be used in simulations.
@@ -86,20 +86,20 @@ Examples:
 
 .. code-block:: sh
 
-        fabsim localhost covid19_ensemble:configs='test',cores=1,replicas=1,measures=measures,starting_infections=10,job_wall_time=0:15:00
+        fabsim localhost covid19_ensemble:config='test',cores=1,replicas=1,measures=measures,starting_infections=10,job_wall_time=0:15:00
 
-	fabsim localhost covid19_ensemble:configs='harrow'
+	fabsim localhost covid19_ensemble:config='harrow'
 
-	fabsim localhost covid19_ensemble:configs='brent;harrow;hillingdon'
+	fabsim localhost covid19_ensemble:config='brent;harrow;hillingdon'
 
 
 To run an ensemble of parallel runs, using 4 cores per run, you can use a comment like the following examples:
 
 .. code-block:: sh
 
-        fabsim localhost covid19_ensemble:configs='brent',cores=4,replicas=1,simulation_period=500,measures=measures,starting_infections=460,job_wall_time=1:00:00,solver=pfacs
+        fabsim localhost covid19_ensemble:config='brent',cores=4,replicas=1,simulation_period=500,measures=measures,starting_infections=460,job_wall_time=1:00:00,solver=pfacs
 
-        fabsim localhost covid19_ensemble:configs='test',cores=4,replicas=1,starting_infections=460,measures=measures,solver=pfacs
+        fabsim localhost covid19_ensemble:config='test',cores=4,replicas=1,starting_infections=460,measures=measures,solver=pfacs
 
 
 If you ran an ensemble jobs, you may need to do averaging across runs on the output csv files before plotting, in that case you can type:
@@ -115,13 +115,13 @@ Examples:
 
 	.. code-block:: sh
 
-		fabsim localhost covid19_ensemble:configs='brent',measures='measures;measures_nolockdown',replicas=25
+		fabsim localhost covid19_ensemble:config='brent',measures='measures;measures_nolockdown',replicas=25
 
 * submit an ensemble job using QCG-PilotJob:
 
 	.. code-block:: sh
 
-		fabsim localhost covid19_ensemble:configs='brent',measures=measures,replicas=25,PilotJob=true
+		fabsim localhost covid19_ensemble:config='brent',measures=measures,replicas=25,PilotJob=true
 
 * fetch results:
 
