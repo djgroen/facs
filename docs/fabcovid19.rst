@@ -16,7 +16,7 @@ To install FabSim3, you need to clone the FabSim3 repository:
 
           git clone https://github.com/djgroen/FabSim3.git
 
-To configure FabSim3 and install required dependencies, go to https://fabsim3.readthedocs.io/en/latest/installation.html that provides detailed instructions.
+To configure FabSim3 and install required dependencies, go to https://fabsim3.readthedocs.io/en/latest/installation.html which provides detailed instructions.
 
 
 Installing the FabCovid19 plugin
@@ -47,7 +47,7 @@ There are a few small configuration steps to follow:
 
 		localhost:
 			# location of FACS in your local PC
-			facs_location: "<PATH to you local FACS installation>"
+			facs_location: "<PATH to your local FACS installation>"
 
 Execution
 *********
@@ -73,7 +73,7 @@ Example:
 
 Run an ensemble job
 -------------------
-To an an ensemble simulation of FACS, 
+To an ensemble simulation of FACS, 
 
 .. code-block:: sh
 
@@ -102,7 +102,7 @@ To run an ensemble of parallel runs, using 4 cores per run, you can use a commen
         fabsim localhost covid19_ensemble:config='test',cores=4,replicas=1,starting_infections=460,measures=measures,solver=pfacs
 
 
-If you ran an ensemble jobs, you may need to do averaging across runs on the output csv files before plotting, in that case you can type:
+If you ran an ensemble job, you may need to do averaging across runs on the output csv files before plotting, in that case, you can type:
 
 .. code-block:: sh
 	
@@ -151,17 +151,17 @@ Visualisation
 *************
 
 .. note::
-	Before you executing any visualisation commands, you should fetch the results using::
+	Before you execute any visualisation commands, you should fetch the results using::
 	
 		fabsim <machine_name> fetch_results
 
-	This will create various subdirectories in the ``<FabSim3_dir>/results`` directories. the name of these directories will be referred to as ``results_dir_name`` in this documentatioin.
+	This will create various subdirectories in the ``<FabSim3_dir>/results`` directories. the name of these directories will be referred to as ``results_dir_name`` in this documentation.
 	
 
-Basic post-processing (No. of infectios people and ICU admissions)
+Basic post-processing (No. of infectious people and ICU admissions)
 ------------------------------------------------------------------
 
-To perform the post-processing on the output results from a single results directory, simple type:
+To perform the post-processing on the output results from a single results directory, simply type:
 
 .. code-block:: sh
 
@@ -172,7 +172,7 @@ On running this command, you should get a web page that shows a plot like this:
 
 .. image:: validateplot.png        
 
-Thge top and bottom panels of the figure shows number of infectious people and the number of hospitalisations as time progrssses.
+The top and bottom panels of the figure show the number of infectious people and the number of hospitalisations as time progresses.
 
 Comparing the infection-spread by location type
 -----------------------------------------------
@@ -222,13 +222,13 @@ To see all the buildings in a region on a map, type:
 
 	fabsim localhost facs_locationmap:<region_name>,houses=True
 
-This plots all the builings in the region including the houses. Since, the number of houses is typically very high, it may take some time to render on the web-browser. Therefore, if you do not wish to plot the houses, type:
+This plots all the buildings in the region including the houses. Since, the number of houses is typically very high, it may take some time to render on the web-browser. Therefore, if you do not wish to plot the houses, type:
 
 .. code-block:: sh
 
 	fabsim localhost facs_locationmap:<region_name>
 
-This should give you a web page that show plots like:
+This should give you a web page that shows plots like:
 
 .. image:: maplocations.png        
 

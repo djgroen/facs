@@ -10,7 +10,7 @@ To prepare simulations for a specific region, you will require to do undertake t
 
 #. Extract building CSV files from geospatial data.
 #. Acquiring validation data.
-#. Acquiring demographics data.
+#. Acquiring demographic data.
 #. Verifying the disease specification in disease.yml.
 #. Defining the exact public health interventions undertaken, their timing and estimated compliance rate.
 
@@ -18,7 +18,7 @@ To prepare simulations for a specific region, you will require to do undertake t
 1. Extract building CSV files
 =============================
 
-This can be done e.g. using the scripts availably at https://www.github.com/djgroen/covid19-preprocess
+This can be done e.g. using the scripts available at https://www.github.com/djgroen/covid19-preprocess
 
 The first thing you will need is an OSM file of the region of interest. You can obtain these e.g. by exporting them from Openstreetmaps.org, or using the OSRM tool.
 
@@ -66,7 +66,7 @@ The layout of the file is as follows::
     ...
     90+,x,x,x
     
-Here you can add one new column for each new scenario location that you're adding. This could be a city or a country (if you plan to do a very large scale run). It is perfectly fine to remove columns of locations that you're not using, to make the file simpler.
+Here you can add one new column for each new scenario location that you're adding. This could be a city or a country (if you plan to do a very large-scale run). It is perfectly fine to remove columns of locations that you're not using, to make the file simpler.
 
 4. Verifying the disease specification in disease.yml
 =====================================================
@@ -92,9 +92,9 @@ In addition, we have a separate entry for each mutation, which can have modified
     infection_rate: 0.1
 
 
-In this example we define a mutation named `alpha`, which has a modified infection rate of 1.0. Other parameters cannot be overridden yet at this time, but we are open to supporting this in the near future.
+In this example, we define a mutation named `alpha`, which has a modified infection rate of 1.0. Other parameters cannot be overridden yet at this time, but we are open to supporting this in the near future.
 
-In addition to the main definition, we also have a file for defining when certain strains are introduced in the simulation (as of FACS 2.2). This file, named `mutations.yml` is separete from the main disease file, because these timings can vary by location. Here is an example for the UK::
+In addition to the main definition, we also have a file for defining when certain strains are introduced in the simulation (as of FACS 2.2). This file, named `mutations.yml` is separate from the main disease file, because these timings can vary by location. Here is an example for the UK::
 
   date_format: "%d/%m/%Y"
 
@@ -107,14 +107,14 @@ In addition to the main definition, we also have a file for defining when certai
     transition_period: 60
   
 
-Here the type refers to the mutation name defined in the disease YML file, whilte the transition period indicates the period over which the prevalence of the mutation in the population grows from 0% to 100%. If this file is kept empty then no mutations will emerge during the simulation.
+Here the type refers to the mutation name defined in the disease YML file, while the transition period indicates the period over which the prevalence of the mutation in the population grows from 0% to 100%. If this file is kept empty then no mutations will emerge during the simulation.
 
 5. Defining the exact public health interventions undertaken
 ============================================================
 
 Detailed documentation for this step has yet to be developed, as the format is still subject to change. However, by default FACS will look at the file in `covid_data/measures.yml` to extract the exact interventions required for the run. Below, we will explain how you can customize the interventions:
 
-The restrictions and measures including government interventions taken to mitigate the spread of disease are specified in a `yml` file named `measures_<location>.yml`. In this file, a list of dates on which the restrictions were imposed or modified is given. Corresponding to each date, a description of the restrictions are given. These restrictions can be defined in terms the following heads.
+The restrictions and measures including government interventions taken to mitigate the spread of disease are specified in a `yml` file named `measures_<location>.yml`. In this file, a list of dates on which the restrictions were imposed or modified is given. Corresponding to each date, a description of the restrictions is given. These restrictions can be defined in terms of the following heads.
 
 - **`case_isolation`**: A binary value which determines if infected people go into quarantine.
 - **`household_isolation`**: A binary value which decides if all members of the household go into quarantine when at least one of its members is isolated.
@@ -125,11 +125,11 @@ The restrictions and measures including government interventions taken to mitiga
 - **`mask_uptake`**: Fraction of the population wearing masks outside of the house.
 - **`mask_uptake_shopping`**: Fraction of the population wearing masks while in shops or supermarkets.
 - **`track_trace_efficiency`**: Fraction of the population who escape the track and trace system.
-- **`closure`**: List of building types which are closed for the public.
+- **`closure`**: List of building types which are closed to the public.
 - **`partial_closure`**: List of tuples which define the extent of closures (on a scale from 0-1) for building types.
 - **hospital_protection_factor**: Degree of security precautions taken by hospitals. 0.0 is none, and 1.0 equals complete prevention of COVID transmission.
 
-In addition to to list of dates, the `yml` file should also have a key called `keyworker_fraction` with a value giving the fraction of key workers in the population. This is the fraction of employees who go to the workplace despite the lock-down. A sample section of a measures file is given below.::
+In addition to list of dates, the `yml` file should also have a key called `keyworker_fraction` with a value giving the fraction of key workers in the population. This is the fraction of employees who go to the workplace despite the lockdown. A sample section of a measures file is given below.::
 
   keyworker_fraction: 0.2
 
@@ -158,7 +158,7 @@ In addition to to list of dates, the `yml` file should also have a key called `k
     external_multiplier: 0.7
 
 
-The above example highlights following two two important features of the restrictions and measures file.
+The above example highlights the following two important features of the restrictions and measures file.
 
 At the start of the simulations, no restrictions are assumed. In other words,::
 
