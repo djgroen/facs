@@ -16,30 +16,108 @@ from datetime import datetime, timedelta
 
 
 if __name__ == "__main__":
-
     # Instantiate the parser
     parser = argparse.ArgumentParser()
-    parser.add_argument('--location', action="store", default="brent", help="Name of location to load.")
-    parser.add_argument('-m','--measures_yml', action="store", default="measures_uk", help="Input YML file containing interventions.")
-    parser.add_argument('-d','--disease_yml', action="store", default="disease_covid19", help="Input YML file containing disease specification.")
-    parser.add_argument('-v','--vaccinations_yml', action="store", default="vaccinations", help="Input YML file containing vaccine strategy specification.")
-    parser.add_argument('--output_dir', action="store", default=".", help="directory to write output to.")
-    parser.add_argument('--data_dir', action="store", default="covid_data", help="subdirectory containing simulation input data.")
-    parser.add_argument('-s','--starting_infections', action="store", default="500", help="Starting # of infections. Values below 1.0 are interpreted as a ratio of population.")
-    parser.add_argument('--household_size', action="store", default="2.6", help="Average household size.")
-    parser.add_argument('--start_date', action="store", default="1/3/2020", help="Start date, format = %d/%m/%Y")
-    parser.add_argument('-q', '--quicktest', action="store_true", help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.")
-    parser.add_argument('-g', '--generic_outfile', action="store_true", help="Write main output to out.csv instead of a scenario-specific named file.")
-    parser.add_argument('--dbg', action="store_true", help="Write additional outputs to help debugging")
-    parser.add_argument('-t', '--simulation_period', action="store",type=int, default='-1', help="Simulation duration [days].")
-    parser.add_argument('-o', '--office_size', action="store",type=int, default='2500', help="Office size in m2.")
-    parser.add_argument('-w', '--workspace', action="store",type=int, default='20', help="Workspace per person in m2.")
+    parser.add_argument(
+        "--location", action="store", default="brent", help="Name of location to load."
+    )
+    parser.add_argument(
+        "-m",
+        "--measures_yml",
+        action="store",
+        default="measures_uk",
+        help="Input YML file containing interventions.",
+    )
+    parser.add_argument(
+        "-d",
+        "--disease_yml",
+        action="store",
+        default="disease_covid19",
+        help="Input YML file containing disease specification.",
+    )
+    parser.add_argument(
+        "-v",
+        "--vaccinations_yml",
+        action="store",
+        default="vaccinations",
+        help="Input YML file containing vaccine strategy specification.",
+    )
+    parser.add_argument(
+        "--output_dir",
+        action="store",
+        default=".",
+        help="directory to write output to.",
+    )
+    parser.add_argument(
+        "--data_dir",
+        action="store",
+        default="covid_data",
+        help="subdirectory containing simulation input data.",
+    )
+    parser.add_argument(
+        "-s",
+        "--starting_infections",
+        action="store",
+        default="500",
+        help="Starting # of infections. Values below 1.0 are interpreted as a ratio of population.",
+    )
+    parser.add_argument(
+        "--household_size",
+        action="store",
+        default="2.6",
+        help="Average household size.",
+    )
+    parser.add_argument(
+        "--start_date",
+        action="store",
+        default="1/3/2020",
+        help="Start date, format = %d/%m/%Y",
+    )
+    parser.add_argument(
+        "-q",
+        "--quicktest",
+        action="store_true",
+        help="set house_ratio to 100 to do quicker (but less accurate) runs for populous regions.",
+    )
+    parser.add_argument(
+        "-g",
+        "--generic_outfile",
+        action="store_true",
+        help="Write main output to out.csv instead of a scenario-specific named file.",
+    )
+    parser.add_argument(
+        "--dbg", action="store_true", help="Write additional outputs to help debugging"
+    )
+    parser.add_argument(
+        "-t",
+        "--simulation_period",
+        action="store",
+        type=int,
+        default="-1",
+        help="Simulation duration [days].",
+    )
+    parser.add_argument(
+        "-o",
+        "--office_size",
+        action="store",
+        type=int,
+        default="2500",
+        help="Office size in m2.",
+    )
+    parser.add_argument(
+        "-w",
+        "--workspace",
+        action="store",
+        type=int,
+        default="20",
+        help="Workspace per person in m2.",
+    )
     args = parser.parse_args()
     print(args)
 
     house_ratio = 2
     if args.quicktest:
-      house_ratio = 100
+        house_ratio = 100
     location = args.location
     measures_yml = args.measures_yml
     disease_yml = args.disease_yml
@@ -49,8 +127,8 @@ if __name__ == "__main__":
     household_size = float(args.household_size)
 
     # if simsetting.csv exists -> overwrite the simulation setting parameters
-    if path.isfile('simsetting.csv'):
-        with open('simsetting.csv', newline='') as csvfile:
+    if path.isfile("simsetting.csv"):
+        with open("simsetting.csv", newline="") as csvfile:
             values = csv.reader(csvfile)
             for row in values:
                 if len(row) > 0:  # skip empty lines in csv
@@ -63,20 +141,18 @@ if __name__ == "__main__":
     if not path.exists(output_dir):
         makedirs(output_dir)
 
-    outfile = "{}/{}-{}.csv".format(output_dir,
-                                       location,
-                                       measures_yml)
+    outfile = "{}/{}-{}.csv".format(output_dir, location, measures_yml)
     if args.generic_outfile:
-      outfile = "{}/out.csv".format(output_dir)
+        outfile = "{}/out.csv".format(output_dir)
 
     end_time = 1100
-    
+
     if args.simulation_period > 0:
-      end_time = args.simulation_period
+        end_time = args.simulation_period
 
     workspace = args.workspace
     office_size = args.office_size
-    
+
     print("Running basic Covid-19 simulation kernel.")
     print("scenario = %s" % (location))
     print("measures input yml = %s" % (measures_yml))
@@ -94,57 +170,73 @@ if __name__ == "__main__":
     print("age distribution in system:", e.ages, file=sys.stderr)
 
     e.disease = read_disease_yml.read_disease_yml(
-        "{}/{}.yml".format(data_dir, disease_yml))
+        "{}/{}.yml".format(data_dir, disease_yml)
+    )
 
     building_file = "{}/{}_buildings.csv".format(data_dir, location)
-    read_building_csv.read_building_csv(e,
-                                        building_file,
-                                        "{}/building_types_map.yml".format(data_dir),
-                                        house_ratio=house_ratio, workspace=workspace, office_size=office_size, household_size=household_size, work_participation_rate=0.5)
+    read_building_csv.read_building_csv(
+        e,
+        building_file,
+        "{}/building_types_map.yml".format(data_dir),
+        house_ratio=house_ratio,
+        workspace=workspace,
+        office_size=office_size,
+        household_size=household_size,
+        work_participation_rate=0.5,
+    )
     # house ratio: number of households per house placed (higher number adds noise, but reduces runtime
     # And then 3 parameters that ONLY affect office placement.
     # workspace: m2 per employee on average. (10 in an office setting, but we use 20 as some people work in much more spacious environments)
     # household size: average size of each household, specified separately here.
     # work participation rate: fraction of population in workforce, irrespective of age
 
-    #print("{}/{}_cases.csv".format(data_dir, location))
+    # print("{}/{}_cases.csv".format(data_dir, location))
     # Can only be done after houses are in.
-    #read_cases_csv.read_cases_csv(e,
+    # read_cases_csv.read_cases_csv(e,
     #                              "{}/{}_cases.csv".format(data_dir, location),
     #                              start_date=args.start_date,
     #                              date_format="%m/%d/%Y")
 
-    e.print_status(outfile, silent=True) # silent print to initialise log data structures.
+    e.print_status(
+        outfile, silent=True
+    )  # silent print to initialise log data structures.
 
     starting_num_infections = 500
     if args.starting_infections:
         if int(args.starting_infections[0]) == 0:
             # Aggregate the num agents before using the starting infections multiplier.
             num_agents_all = e.mpi.CalcCommWorldTotalSingle(float(e.num_agents))
-            print("Num agents all:",num_agents_all)
-            starting_num_infections = int((num_agents_all*float(args.starting_infections)))
+            print("Num agents all:", num_agents_all)
+            starting_num_infections = int(
+                (num_agents_all * float(args.starting_infections))
+            )
         else:
             starting_num_infections = int(args.starting_infections)
     elif location == "test":
         starting_num_infections = 10
 
-    print("THIS SIMULATIONS HAS {} AGENTS. Starting with {} infections.".format(e.num_agents, starting_num_infections))
+    print(
+        "THIS SIMULATIONS HAS {} AGENTS. Starting with {} infections.".format(
+            e.num_agents, starting_num_infections
+        )
+    )
 
     e.time = -20
     e.date = datetime.strptime(args.start_date, "%d/%m/%Y")
     e.date = e.date - timedelta(days=20)
     e.print_header(outfile)
     for i in range(0, 20):
-        
         # Roughly evenly spread infections over the days.
-        num = int(starting_num_infections/20)
+        num = int(starting_num_infections / 20)
         if starting_num_infections % 20 > i:
-          num += 1
-        
+            num += 1
+
         e.add_infections(num)
 
-        measures.enact_measures_and_evolutions(e, e.time, measures_yml, vaccinations_yml, disease_yml)
-        
+        measures.enact_measures_and_evolutions(
+            e, e.time, measures_yml, vaccinations_yml, disease_yml
+        )
+
         e.evolve(reduce_stochasticity=False)
 
         print(e.time)
@@ -155,15 +247,15 @@ if __name__ == "__main__":
             e.debug_mode = False
             e.print_status(outfile, silent=True)
 
-
     for t in range(0, end_time):
-
-        measures.enact_measures_and_evolutions(e, e.time, measures_yml, vaccinations_yml, disease_yml)
+        measures.enact_measures_and_evolutions(
+            e, e.time, measures_yml, vaccinations_yml, disease_yml
+        )
 
         # Propagate the model by one time step.
         e.evolve(reduce_stochasticity=False)
 
-        print(t, e.get_date_string(),  e.vac_no_symptoms, e.vac_no_transmission)
+        print(t, e.get_date_string(), e.vac_no_symptoms, e.vac_no_transmission)
         e.print_status(outfile)
 
     # calculate cumulative sums.

@@ -15,7 +15,6 @@ dd = {}
 # print(dd)
 
 for location in df.columns:
-
     test = df[location].value_counts()
 
     print(np.histogram(test))

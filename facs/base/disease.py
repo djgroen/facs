@@ -1,35 +1,49 @@
 import numpy as np
 import sys
 
-class Disease():
-  def __init__(self, infection_rate, incubation_period, mild_recovery_period, recovery_period, mortality_period, period_to_hospitalisation, immunity_duration):
 
-    self.infection_rate = min(1.0, infection_rate) 
-    # infection rate is doubled because the default setting has 50% infectious persons, whereas the baseline we use for our calculations is
-    # 100% infectious persons. However, since it's a probability the value should never be higher than 1.0.
-    self.incubation_period = incubation_period
-    self.mild_recovery_period = mild_recovery_period
-    self.recovery_period = recovery_period
-    self.mortality_period = mortality_period
-    self.period_to_hospitalisation = period_to_hospitalisation
-    self.hospital = np.zeros(91)
-    self.mortality = np.zeros(91)
-    self.immunity_duration = immunity_duration
+class Disease:
+    def __init__(
+        self,
+        infection_rate,
+        incubation_period,
+        mild_recovery_period,
+        recovery_period,
+        mortality_period,
+        period_to_hospitalisation,
+        immunity_duration,
+    ):
+        self.infection_rate = min(1.0, infection_rate)
+        # infection rate is doubled because the default setting has 50% infectious persons, whereas the baseline we use for our calculations is
+        # 100% infectious persons. However, since it's a probability the value should never be higher than 1.0.
+        self.incubation_period = incubation_period
+        self.mild_recovery_period = mild_recovery_period
+        self.recovery_period = recovery_period
+        self.mortality_period = mortality_period
+        self.period_to_hospitalisation = period_to_hospitalisation
+        self.hospital = np.zeros(91)
+        self.mortality = np.zeros(91)
+        self.immunity_duration = immunity_duration
 
-  def addHospitalisationChances(self, hosp_array):
-    hosp_array = np.asarray(hosp_array)
-    for a in range(0,len(self.hospital)):
-      self.hospital[a] = np.interp(a, hosp_array[:,0], hosp_array[:,1])
+    def addHospitalisationChances(self, hosp_array):
+        hosp_array = np.asarray(hosp_array)
+        for a in range(0, len(self.hospital)):
+            self.hospital[a] = np.interp(a, hosp_array[:, 0], hosp_array[:, 1])
 
-  def addMortalityChances(self, mort_array):
-    mort_array = np.asarray(mort_array)
-    for a in range(0,len(self.mortality)):
-      self.mortality[a] = np.interp(a, mort_array[:,0], mort_array[:,1])
+    def addMortalityChances(self, mort_array):
+        mort_array = np.asarray(mort_array)
+        for a in range(0, len(self.mortality)):
+            self.mortality[a] = np.interp(a, mort_array[:, 0], mort_array[:, 1])
 
-  def addMutations(self, mutations):
-    print("Loading mutations:", mutations, file=sys.stderr)
-    self.mutations = mutations
+    def addMutations(self, mutations):
+        print("Loading mutations:", mutations, file=sys.stderr)
+        self.mutations = mutations
 
-  def print(self):
-    print(self.infection_rate, self.incubation_period, self.mild_recovery_period, self.recovery_period, self.mortality_period)
-
+    def print(self):
+        print(
+            self.infection_rate,
+            self.incubation_period,
+            self.mild_recovery_period,
+            self.recovery_period,
+            self.mortality_period,
+        )

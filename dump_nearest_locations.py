@@ -16,15 +16,21 @@ from datetime import datetime, timedelta
 
 
 if __name__ == "__main__":
-
     # Instantiate the parser
     parser = argparse.ArgumentParser()
-    parser.add_argument('--location', action="store", default="brent")
-    parser.add_argument('--ci_multiplier', action="store",
-                        type=float, default='0.625', help="Multiplier set for Case Isolation which represents the ratio of out-of-house interactions for Covid patients relative to the default interaction rate. Default value comes from Imp Report 9.")
-    parser.add_argument('--output_dir', action="store", default=".")
-    parser.add_argument('--data_dir', action="store", default="covid_data")
-    parser.add_argument('--dbg', action="store_true", help="Write additional outputs to help debugging")
+    parser.add_argument("--location", action="store", default="brent")
+    parser.add_argument(
+        "--ci_multiplier",
+        action="store",
+        type=float,
+        default="0.625",
+        help="Multiplier set for Case Isolation which represents the ratio of out-of-house interactions for Covid patients relative to the default interaction rate. Default value comes from Imp Report 9.",
+    )
+    parser.add_argument("--output_dir", action="store", default=".")
+    parser.add_argument("--data_dir", action="store", default="covid_data")
+    parser.add_argument(
+        "--dbg", action="store_true", help="Write additional outputs to help debugging"
+    )
     args = parser.parse_args()
     print(args)
 
@@ -40,7 +46,7 @@ if __name__ == "__main__":
         makedirs(output_dir)
 
     end_time = 1100
-    
+
     print("Running basic Covid-19 simulation kernel.")
     print("scenario = %s" % (location))
 
@@ -52,12 +58,20 @@ if __name__ == "__main__":
     print("age distribution in system:", e.ages, file=sys.stderr)
 
     e.disease = read_disease_yml.read_disease_yml(
-        "{}/disease_covid19.yml".format(data_dir))
+        "{}/disease_covid19.yml".format(data_dir)
+    )
 
     building_file = "{}/{}_buildings.csv".format(data_dir, location)
-    read_building_csv.read_building_csv(e,
-                                        building_file,
-                                        "{}/building_types_map.yml".format(data_dir),
-                                        house_ratio=house_ratio, workspace=12, office_size=1600, household_size=2.6, work_participation_rate=0.5, dumpnearest=True)
+    read_building_csv.read_building_csv(
+        e,
+        building_file,
+        "{}/building_types_map.yml".format(data_dir),
+        house_ratio=house_ratio,
+        workspace=12,
+        office_size=1600,
+        household_size=2.6,
+        work_participation_rate=0.5,
+        dumpnearest=True,
+    )
 
     print("Nearest locations dump complete.", file=sys.stderr)
