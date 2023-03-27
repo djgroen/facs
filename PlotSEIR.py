@@ -1,14 +1,12 @@
+"""Simple plotter"""
+
 import sys
 
 import pandas as pd
 import plotly as py
-import plotly.express as px
 import plotly.graph_objects as go
 
 df = pd.read_csv(sys.argv[1], delimiter=",")
-# fig = px.line(df, x="#time", y="susceptible", title='COVID-19 Simulation - London Borough of Brent')
-# fig = px.line(df, x="#time", y="exposed", title='COVID-19 Simulation - London Borough of Brent')
-# py.offline.plot(fig, filename='name.html')
 
 df["new cases"] = df["exposed"].diff(1) + df["infectious"].diff(1)
 
@@ -62,4 +60,4 @@ fig.add_trace(
     )
 )
 
-py.offline.plot(fig, filename="{}-Cases.html".format(sys.argv[2]))
+py.offline.plot(fig, filename=f"{sys.argv[2]}.html")

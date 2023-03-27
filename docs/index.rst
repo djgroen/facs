@@ -64,11 +64,15 @@ Outputs are written as CSV files in the output\_dir. E.g. for the test run you w
 covid\_out\_infections.csv
 out.csv
 
-We also included a simple plotting script. This could be called e.g. as follows::
+We also included a simple plotting script with the following syntax::
 
-    python3 PlotSEIR.py brent-measures.csv test
+    python3 PlotSEIR.py <output_filename> <plot_filename>
 
-(this has not been tested in a while, as we usually use FabCovid19 for plotting these days)
+For example, if we wanted to plot the results from the previous FACS run for brent, we would type:: 
+
+    python3 PlotSEIR.py brent-measures.csv brent-plot
+
+This will create a file called `brent-plot.html` in the current directory. For more detailed plots, we use FabCovid19.
 
 Upadating FACS
 --------------
