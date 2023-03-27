@@ -1,3 +1,5 @@
+"""Script to run facs"""
+
 import argparse
 import csv
 import sys
@@ -181,9 +183,11 @@ if __name__ == "__main__":
         household_size=household_size,
         work_participation_rate=0.5,
     )
-    # house ratio: number of households per house placed (higher number adds noise, but reduces runtime
+    # house ratio: number of households per house placed (higher number adds noise, but reduces
+    # runtime
     # And then 3 parameters that ONLY affect office placement.
-    # workspace: m2 per employee on average. (10 in an office setting, but we use 20 as some people work in much more spacious environments)
+    # workspace: m2 per employee on average. (10 in an office setting, but we use 20 as some
+    # people work in much more spacious environments)
     # household size: average size of each household, specified separately here.
     # work participation rate: fraction of population in workforce, irrespective of age
 
