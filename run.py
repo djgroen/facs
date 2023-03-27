@@ -135,7 +135,6 @@ if __name__ == "__main__":
     household_size = float(args.household_size)
     end_time = args.simulation_period if args.simulation_period > 0 else 1100
 
-
     # if simsetting.csv exists -> overwrite the simulation setting parameters
     if path.isfile("simsetting.csv"):
         with open("simsetting.csv", newline="", encoding="utf-8") as csvfile:
