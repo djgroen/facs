@@ -57,7 +57,7 @@ To run a simulation of the Borough of Brent, type::
 Note that in this case, we explicitly specify the measures YML file that we wish to use. This is done in the format:
 `covid_data/<measures_yml>.yml`. So in this case we want to use the file `covid_data/measures.yml` as the measures file for Brent, we type::
 
-    python3 run.py --location=brent --measures_yml=measures
+    python3 run.py --location=brent --measures_yml=measures_uk
 
 
 Outputs are written as CSV files in the output\_dir. E.g. for the test run you will get:
