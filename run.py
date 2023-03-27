@@ -14,8 +14,14 @@ from facs.readers import (
     read_disease_yml,
 )
 
-if __name__ == "__main__":
-    # Instantiate the parser
+
+def parse_arguments() -> dict:
+    """Formats command-line arguments as dictionary
+
+    Returns:
+        dict: Dictionary of all command line arguments
+    """
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--location", action="store", default="brent", help="Name of location to load."
@@ -111,12 +117,15 @@ if __name__ == "__main__":
         default="20",
         help="Workspace per person in m2.",
     )
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    args = parse_arguments()
+
     print(args)
 
-    house_ratio = 2
-    if args.quicktest:
-        house_ratio = 100
+    house_ratio = 100 if args.quicktest else 2
     location = args.location
     measures_yml = args.measures_yml
     disease_yml = args.disease_yml
@@ -124,6 +133,8 @@ if __name__ == "__main__":
     output_dir = args.output_dir
     data_dir = args.data_dir
     household_size = float(args.household_size)
+    end_time = args.simulation_period if args.simulation_period > 0 else 1100
+
 
     # if simsetting.csv exists -> overwrite the simulation setting parameters
     if path.isfile("simsetting.csv"):
@@ -140,14 +151,9 @@ if __name__ == "__main__":
     if not path.exists(output_dir):
         makedirs(output_dir)
 
-    outfile = f"{output_dir}/{output_dir}-{measures_yml}.csv"
+    outfile = f"{output_dir}/{location}-{measures_yml}.csv"
     if args.generic_outfile:
         outfile = f"{output_dir}/out.csv"
-
-    end_time = 1100
-
-    if args.simulation_period > 0:
-        end_time = args.simulation_period
 
     workspace = args.workspace
     office_size = args.office_size
