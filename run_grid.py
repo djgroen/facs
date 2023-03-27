@@ -1,19 +1,16 @@
-from facs.base import facs as facs
-from facs.base import measures as measures
-from facs.readers import read_age_csv
-import numpy as np
-from facs.readers import read_building_csv
-from facs.readers import read_cases_csv
-from facs.readers import read_disease_yml
-import sys
-
-from os import makedirs, path
 import argparse
 import csv
+import sys
+from datetime import datetime, timedelta
+from os import makedirs, path
 from pprint import pprint
 
-from datetime import datetime, timedelta
+import numpy as np
 
+from facs.base import facs as facs
+from facs.base import measures as measures
+from facs.readers import (read_age_csv, read_building_csv, read_cases_csv,
+                          read_disease_yml)
 
 if __name__ == "__main__":
     # Instantiate the parameters

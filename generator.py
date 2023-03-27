@@ -1,7 +1,8 @@
-import numpy as np
-import yaml
 import argparse
 import os
+
+import numpy as np
+import yaml
 
 
 def population_generator(region, config_file, output_file):

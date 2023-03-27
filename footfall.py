@@ -1,6 +1,8 @@
-import facs.readers.read_age_csv as r
 import sys
+
 import numpy as np
+
+import facs.readers.read_age_csv as r
 
 ages = r.read_age_csv(sys.argv[1])
 

@@ -1,6 +1,7 @@
+import datetime as dt
+
 import pandas as pd
 import plotly.express as px
-import datetime as dt
 
 
 def location_timeline():

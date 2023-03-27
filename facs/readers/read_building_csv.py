@@ -1,8 +1,9 @@
 import csv
-import sys
 import pprint
-import yaml
 import random
+import sys
+
+import yaml
 
 # File to read in CSV files of building definitions.
 # The format is as follows:

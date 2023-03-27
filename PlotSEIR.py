@@ -1,9 +1,9 @@
-import plotly.express as px
-import plotly.graph_objects as go
-import plotly as py
-import pandas as pd
 import sys
 
+import pandas as pd
+import plotly as py
+import plotly.express as px
+import plotly.graph_objects as go
 
 df = pd.read_csv(sys.argv[1], delimiter=",")
 # fig = px.line(df, x="#time", y="susceptible", title='COVID-19 Simulation - London Borough of Brent')

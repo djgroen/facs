@@ -1,5 +1,5 @@
-import plotly.express as px
 import pandas as pd
+import plotly.express as px
 
 
 def plot_location(location, types="all", remove_houses=True):

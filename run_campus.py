@@ -1,17 +1,15 @@
-import facs.base.facs as facs
-import facs.base.measures as measures
-from facs.readers import read_age_csv
-import numpy as np
-from facs.readers import read_building_csv
-from facs.readers import read_cases_csv
-from facs.readers import read_disease_yml
-import sys
-
-from os import makedirs, path
 import argparse
 import csv
+import sys
+from os import makedirs, path
 from pprint import pprint
 
+import numpy as np
+
+import facs.base.facs as facs
+import facs.base.measures as measures
+from facs.readers import (read_age_csv, read_building_csv, read_cases_csv,
+                          read_disease_yml)
 
 if __name__ == "__main__":
     # Instantiate the parser

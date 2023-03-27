@@ -1,7 +1,8 @@
-import sys
-import yaml
 import os
+import sys
 from datetime import datetime, timedelta
+
+import yaml
 
 __mutation_daily_change = 0.0
 __mutation_days_remaining = -1

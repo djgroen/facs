@@ -1,15 +1,15 @@
 # FLu And Coronavirus Simulator
 # Covid-19 model, based on the general Flee paradigm.
-import numpy as np
-import sys
-import random
 import array
 import csv
-import pandas as pd
 import os
-
+import random
+import sys
 # import fastrand
 from datetime import datetime, timedelta
+
+import numpy as np
+import pandas as pd
 
 try:
     from mpi4py import MPI

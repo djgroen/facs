@@ -1,7 +1,9 @@
 import csv
-import sys
 import pprint
+import sys
+
 import yaml
+
 from facs.base import disease
 
 pp = pprint.PrettyPrinter()

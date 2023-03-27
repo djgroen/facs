@@ -1,7 +1,6 @@
 import csv
 import sys
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 # format: x,y,age,date,time (ignored)
 # -0.338880986,51.5628624,27,3/16/2020
