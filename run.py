@@ -9,8 +9,12 @@ import numpy as np
 
 from facs.base import facs as facs
 from facs.base import measures as measures
-from facs.readers import (read_age_csv, read_building_csv, read_cases_csv,
-                          read_disease_yml)
+from facs.readers import (
+    read_age_csv,
+    read_building_csv,
+    read_cases_csv,
+    read_disease_yml,
+)
 
 if __name__ == "__main__":
     # Instantiate the parser
