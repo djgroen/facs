@@ -159,7 +159,7 @@ Visualisation
 	
 
 Basic post-processing (No. of infectious people and ICU admissions)
-------------------------------------------------------------------
+-------------------------------------------------------------------
 
 To perform the post-processing on the output results from a single results directory, simply type:
 

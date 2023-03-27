@@ -66,7 +66,7 @@ out.csv
 
 We also included a simple plotting script. This could be called e.g. as follows::
 
-    python3 PlotSEIR.py out.csv test
+    python3 PlotSEIR.py brent-measures.csv test
 
 (this has not been tested in a while, as we usually use FabCovid19 for plotting these days)
 
