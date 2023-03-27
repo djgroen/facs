@@ -127,7 +127,7 @@ if __name__ == "__main__":
 
     # if simsetting.csv exists -> overwrite the simulation setting parameters
     if path.isfile("simsetting.csv"):
-        with open("simsetting.csv", newline="") as csvfile:
+        with open("simsetting.csv", newline="", encoding="utf-8") as csvfile:
             values = csv.reader(csvfile)
             for row in values:
                 if len(row) > 0:  # skip empty lines in csv
@@ -140,9 +140,9 @@ if __name__ == "__main__":
     if not path.exists(output_dir):
         makedirs(output_dir)
 
-    outfile = "{}/{}-{}.csv".format(output_dir, location, measures_yml)
+    outfile = f"{output_dir}/{output_dir}-{measures_yml}.csv"
     if args.generic_outfile:
-        outfile = "{}/out.csv".format(output_dir)
+        outfile = f"{output_dir}/out.csv"
 
     end_time = 1100
 
@@ -153,30 +153,28 @@ if __name__ == "__main__":
     office_size = args.office_size
 
     print("Running basic Covid-19 simulation kernel.")
-    print("scenario = %s" % (location))
-    print("measures input yml = %s" % (measures_yml))
-    print("disease input yml = %s" % (disease_yml))
-    print("vaccinations input yml = %s" % (vaccinations_yml))
-    print("end_time = %d" % (end_time))
-    print("output_dir  = %s" % (output_dir))
-    print("outfile  = %s" % (outfile))
-    print("data_dir  = %s" % (data_dir))
+    print(f"scenario = {location}")
+    print(f"measures input yml = {measures_yml}")
+    print(f"disease input yml = {disease_yml}")
+    print(f"vaccinations input yml = {vaccinations_yml}")
+    print(f"end_time = {end_time}")
+    print(f"output_dir  = {output_dir}")
+    print(f"outfile  = {outfile}")
+    print(f"data_dir  = {data_dir}")
 
     e = facs.Ecosystem(end_time)
 
-    e.ages = read_age_csv.read_age_csv("{}/age-distr.csv".format(data_dir), location)
+    e.ages = read_age_csv.read_age_csv(f"{data_dir}/age-distr.csv", location)
 
     print("age distribution in system:", e.ages, file=sys.stderr)
 
-    e.disease = read_disease_yml.read_disease_yml(
-        "{}/{}.yml".format(data_dir, disease_yml)
-    )
+    e.disease = read_disease_yml.read_disease_yml(f"{data_dir}/{disease_yml}.yml")
 
-    building_file = "{}/{}_buildings.csv".format(data_dir, location)
+    building_file = f"{data_dir}/{location}_buildings.csv"
     read_building_csv.read_building_csv(
         e,
         building_file,
-        "{}/building_types_map.yml".format(data_dir),
+        f"{data_dir}/building_types_map.yml",
         house_ratio=house_ratio,
         workspace=workspace,
         office_size=office_size,
@@ -217,9 +215,8 @@ if __name__ == "__main__":
         starting_num_infections = 10
 
     print(
-        "THIS SIMULATIONS HAS {} AGENTS. Starting with {} infections.".format(
-            e.num_agents, starting_num_infections
-        )
+        f"THIS SIMULATIONS HAS {e.num_agents} AGENTS."
+        f"Starting with {starting_num_infections} infections."
     )
 
     e.time = -20
