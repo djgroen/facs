@@ -3,16 +3,12 @@ import csv
 import sys
 from datetime import datetime, timedelta
 from os import makedirs, path
-from pprint import pprint
 
-import numpy as np
-
-from facs.base import facs as facs
-from facs.base import measures as measures
+from facs.base import facs
+from facs.base import measures
 from facs.readers import (
     read_age_csv,
     read_building_csv,
-    read_cases_csv,
     read_disease_yml,
 )
 
