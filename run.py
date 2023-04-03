@@ -119,13 +119,25 @@ def parse_arguments() -> dict:
     )
     return parser.parse_args()
 
+def get_house_ratio(test: bool) -> float:
+    """Returns the number of households in a single house
+
+    Args:
+        test (bool): Flag to check if test run
+
+    Returns:
+        float: House ratio
+    """
+
+    return 100 if test else 2
+
 
 if __name__ == "__main__":
     args = parse_arguments()
 
     print(args)
 
-    house_ratio = 100 if args.quicktest else 2
+    house_ratio = get_house_ratio(args.quicktest)
     location = args.location
     measures_yml = args.measures_yml
     disease_yml = args.disease_yml
