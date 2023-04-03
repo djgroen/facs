@@ -119,6 +119,7 @@ def parse_arguments() -> dict:
     )
     return parser.parse_args()
 
+
 def get_house_ratio(test: bool) -> float:
     """Returns the number of households in a single house
 
@@ -132,20 +133,15 @@ def get_house_ratio(test: bool) -> float:
     return 100 if test else 2
 
 
-if __name__ == "__main__":
-    args = parse_arguments()
+def get_measures_file(filename: str) -> str:
+    """Returns the measures filename from simsettings.csv or the given argument
 
-    print(args)
+    Args:
+        filename (str): measures filename argument
 
-    house_ratio = get_house_ratio(args.quicktest)
-    location = args.location
-    measures_yml = args.measures_yml
-    disease_yml = args.disease_yml
-    vaccinations_yml = args.vaccinations_yml
-    output_dir = args.output_dir
-    data_dir = args.data_dir
-    household_size = float(args.household_size)
-    end_time = args.simulation_period if args.simulation_period > 0 else 1100
+    Returns:
+        str: Measures filename to be used
+    """
 
     # if simsetting.csv exists -> overwrite the simulation setting parameters
     if path.isfile("simsetting.csv"):
@@ -156,7 +152,25 @@ if __name__ == "__main__":
                     if row[0][0] == "#":
                         pass
                     elif row[0].lower() == "measures_yml":
-                        measures_yml = str(row[1]).lower()
+                        return str(row[1]).lower()
+
+    return str(filename)
+
+
+if __name__ == "__main__":
+    args = parse_arguments()
+
+    print(args)
+
+    house_ratio = get_house_ratio(args.quicktest)
+    location = args.location
+    measures_yml = get_measures_file(args.measures_yml)
+    disease_yml = args.disease_yml
+    vaccinations_yml = args.vaccinations_yml
+    output_dir = args.output_dir
+    data_dir = args.data_dir
+    household_size = float(args.household_size)
+    end_time = args.simulation_period if args.simulation_period > 0 else 1100
 
     # check if output_dir is exists
     if not path.exists(output_dir):
