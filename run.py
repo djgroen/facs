@@ -157,7 +157,9 @@ def get_measures_file(filename: str) -> str:
     return str(filename)
 
 
-if __name__ == "__main__":
+def main():
+    """The main program"""
+
     args = parse_arguments()
 
     print(args)
@@ -193,17 +195,17 @@ if __name__ == "__main__":
     print(f"outfile  = {outfile}")
     print(f"data_dir  = {data_dir}")
 
-    e = facs.Ecosystem(end_time)
+    eco = facs.Ecosystem(end_time)
 
-    e.ages = read_age_csv.read_age_csv(f"{data_dir}/age-distr.csv", location)
+    eco.ages = read_age_csv.read_age_csv(f"{data_dir}/age-distr.csv", location)
 
-    print("age distribution in system:", e.ages, file=sys.stderr)
+    print("age distribution in system:", eco.ages, file=sys.stderr)
 
-    e.disease = read_disease_yml.read_disease_yml(f"{data_dir}/{disease_yml}.yml")
+    eco.disease = read_disease_yml.read_disease_yml(f"{data_dir}/{disease_yml}.yml")
 
     building_file = f"{data_dir}/{location}_buildings.csv"
     read_building_csv.read_building_csv(
-        e,
+        eco,
         building_file,
         f"{data_dir}/building_types_map.yml",
         house_ratio=house_ratio,
@@ -227,7 +229,7 @@ if __name__ == "__main__":
     #                              start_date=args.start_date,
     #                              date_format="%m/%d/%Y")
 
-    e.print_status(
+    eco.print_status(
         outfile, silent=True
     )  # silent print to initialise log data structures.
 
@@ -235,7 +237,7 @@ if __name__ == "__main__":
     if args.starting_infections:
         if int(args.starting_infections[0]) == 0:
             # Aggregate the num agents before using the starting infections multiplier.
-            num_agents_all = e.mpi.CalcCommWorldTotalSingle(float(e.num_agents))
+            num_agents_all = eco.mpi.CalcCommWorldTotalSingle(float(eco.num_agents))
             print("Num agents all:", num_agents_all)
             starting_num_infections = int(
                 (num_agents_all * float(args.starting_infections))
@@ -246,48 +248,52 @@ if __name__ == "__main__":
         starting_num_infections = 10
 
     print(
-        f"THIS SIMULATIONS HAS {e.num_agents} AGENTS."
+        f"THIS SIMULATIONS HAS {eco.num_agents} AGENTS."
         f"Starting with {starting_num_infections} infections."
     )
 
-    e.time = -20
-    e.date = datetime.strptime(args.start_date, "%d/%m/%Y")
-    e.date = e.date - timedelta(days=20)
-    e.print_header(outfile)
+    eco.time = -20
+    eco.date = datetime.strptime(args.start_date, "%d/%m/%Y")
+    eco.date = eco.date - timedelta(days=20)
+    eco.print_header(outfile)
     for i in range(0, 20):
         # Roughly evenly spread infections over the days.
         num = int(starting_num_infections / 20)
         if starting_num_infections % 20 > i:
             num += 1
 
-        e.add_infections(num)
+        eco.add_infections(num)
 
         measures.enact_measures_and_evolutions(
-            e, e.time, measures_yml, vaccinations_yml, disease_yml
+            eco, eco.time, measures_yml, vaccinations_yml, disease_yml
         )
 
-        e.evolve(reduce_stochasticity=False)
+        eco.evolve(reduce_stochasticity=False)
 
-        print(e.time)
+        print(eco.time)
         if args.dbg:
-            e.debug_mode = True
-            e.print_status(outfile)
+            eco.debug_mode = True
+            eco.print_status(outfile)
         else:
-            e.debug_mode = False
-            e.print_status(outfile, silent=True)
+            eco.debug_mode = False
+            eco.print_status(outfile, silent=True)
 
-    for t in range(0, end_time):
+    for time in range(0, end_time):
         measures.enact_measures_and_evolutions(
-            e, e.time, measures_yml, vaccinations_yml, disease_yml
+            eco, eco.time, measures_yml, vaccinations_yml, disease_yml
         )
 
         # Propagate the model by one time step.
-        e.evolve(reduce_stochasticity=False)
+        eco.evolve(reduce_stochasticity=False)
 
-        print(t, e.get_date_string(), e.vac_no_symptoms, e.vac_no_transmission)
-        e.print_status(outfile)
+        print(time, eco.get_date_string(), eco.vac_no_symptoms, eco.vac_no_transmission)
+        eco.print_status(outfile)
 
     # calculate cumulative sums.
-    e.add_cum_column(outfile, ["num hospitalisations today", "num infections today"])
+    eco.add_cum_column(outfile, ["num hospitalisations today", "num infections today"])
 
     print("Simulation complete.", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()
