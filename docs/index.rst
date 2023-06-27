@@ -36,7 +36,23 @@ To install FACS,
 
         cd facs
 
-3. Install all the required dependencies using
+3. Running requirements.txt will set up Python-required dependencies, however, you must first carry out the steps listed below if your computer does not already have a Meggase Passing Interface (MPI) installation. 
+
+Note: Since we are installing software, we need admin or root privileges in Linux distributions.
+
+We have provided instructions for installing MPICH (a variant of MPI) on Ubuntu, however, for other Linux distributions, please refer to MPI user guide and manual.
+
+.. code:: console
+
+        sudo apt-get install python3 python3-dev python3-pip
+
+        sudo apt-get install mpich
+
+        pip install --no-cache-dir mpi4py
+
+
+4. With MPI and mpi4py (MPI for Python) installed, we can continue with installing dependencies:
+
 
 .. code:: console
 
