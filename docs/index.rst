@@ -38,7 +38,7 @@ To install FACS,
 
 3. Running requirements.txt will set up Python-required dependencies, however, you must first carry out the steps listed below if your computer does not already have a Meggase Passing Interface (MPI) installation. 
 
-Note: Since we are installing software, we need admin or root privileges in Linux distributions.
+Note: In the next step, since we are installing software, we would need admin or root privileges.
 
 We have provided instructions for installing MPICH (a variant of MPI) on Ubuntu, however, for other Linux distributions, please refer to MPI user guide and manual.
 
@@ -56,7 +56,7 @@ We have provided instructions for installing MPICH (a variant of MPI) on Ubuntu,
 
 .. code:: console
 
-        pip3 install -r requirements.txt
+        pip install -r requirements.txt
 
 
 How to run the code
