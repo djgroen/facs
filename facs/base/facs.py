@@ -24,10 +24,6 @@ try:
 except ImportError:
     print("MPI4Py module is not loaded, mode=parallel will not work.")
 
-# TODO: store all this in a YaML file
-
-# building_types_dict = building_types
-# building_types = list(building_types.keys())
 avg_visit_times = [90, 60, 60, 360, 360, 60, 60]  # average time spent per visit
 home_interaction_fraction = (
     0.2  # people are within 2m at home of a specific other person 20% of the time.
