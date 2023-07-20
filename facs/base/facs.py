@@ -1,16 +1,23 @@
+"""Main module for the FACS package."""
+
+
 # FLu And Coronavirus Simulator
 # Covid-19 model, based on the general Flee paradigm.
-import array
+
 import csv
 import os
 import random
 import sys
 
 # import fastrand
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import numpy as np
 import pandas as pd
+
+# pylint: disable=import-error, no-name-in-module
+from facs.base.needs import Needs
+from facs.base.location_types import building_types_dict, building_types
 
 try:
     from mpi4py import MPI
@@ -18,16 +25,9 @@ except ImportError:
     print("MPI4Py module is not loaded, mode=parallel will not work.")
 
 # TODO: store all this in a YaML file
-lids = {
-    "park": 0,
-    "hospital": 1,
-    "supermarket": 2,
-    "office": 3,
-    "school": 4,
-    "leisure": 5,
-    "shopping": 6,
-}  # location ids and labels
-lnames = list(lids.keys())
+
+# building_types_dict = building_types
+# building_types = list(building_types.keys())
 avg_visit_times = [90, 60, 60, 360, 360, 60, 60]  # average time spent per visit
 home_interaction_fraction = (
     0.2  # people are within 2m at home of a specific other person 20% of the time.
@@ -100,56 +100,8 @@ class MPIManager:
         print(e.global_stats)
 
 
-class Needs:
-    def __init__(self, csvfile):
-        self.add_needs(csvfile)
-        print("Needs created.")
-
-    def i(self, name):
-        for k, e in enumerate(self.labels):
-            if e == name:
-                return k
-
-    def add_needs(self, csvfile=""):
-        if csvfile == "":
-            self.add_hardcoded_needs()
-            return
-        self.needs = np.zeros((len(lids), 120))
-        needs_cols = [0] * len(lids)
-        with open(csvfile) as csvfile:
-            needs_reader = csv.reader(csvfile)
-            row_number = 0
-            for row in needs_reader:
-                if row_number == 0:
-                    for k, element in enumerate(row):
-                        if element in lids.keys():
-                            # Debug symbols in to debug custom sets of needs.
-                            # print(element,k)
-                            # print("NC:",needs_cols)
-
-                            needs_cols[lids[element]] = k
-                else:
-                    for i in range(0, len(needs_cols)):
-                        self.needs[i, row_number - 1] = int(row[needs_cols[i]])
-                    self.needs[i, lids["school"]] = int(
-                        0.75 * int(row[needs_cols[i]])
-                    )  # assuming 25% of school time is outside of the building (PE or breaks)
-                row_number += 1
-
-    def get_needs(self, person):
-        if not person.hospitalised:
-            n = self.needs[:, person.age].copy()
-            if person.work_from_home:
-                n[lids["office"]] = 0
-            if person.school_from_home:
-                n[lids["school"]] = 0
-            return n
-        else:
-            return np.array([0, 5040, 0, 0, 0, 0, 0])
-
-
 # Global storage for needs now, to keep it simple.
-needs = Needs("covid_data/needs.csv")
+needs = Needs("covid_data/needs.csv", building_types)
 num_infections_today = 0
 num_hospitalisations_today = 0
 num_deaths_today = 0
@@ -261,7 +213,7 @@ class Person:
         """
         if not hasattr(self, "groups"):
             self.groups = {}
-        self.groups[lids[location_type]] = get_rndint(num_groups)
+        self.groups[building_types_dict[location_type]] = get_rndint(num_groups)
 
     def location_has_grouping(self, lid):
         """
@@ -307,16 +259,20 @@ class Person:
 
                 if minutes < 1:
                     continue
-                elif k == lids["hospital"] and self.hospitalised:
+                elif k == building_types_dict["hospital"] and self.hospitalised:
                     location_to_visit = self.hospital
 
-                elif k == lids["office"] and self.job > 0:
+                elif k == building_types_dict["office"] and self.job > 0:
                     if self.job == 1:  # teacher
-                        location_to_visit = nearest_locs[lids["school"]]
+                        location_to_visit = nearest_locs[building_types_dict["school"]]
                     if self.job == 2:  # shop employee
-                        location_to_visit = nearest_locs[lids["shopping"]]
+                        location_to_visit = nearest_locs[
+                            building_types_dict["shopping"]
+                        ]
                     if self.job == 3:  # health worker
-                        location_to_visit = nearest_locs[lids["hospital"]]
+                        location_to_visit = nearest_locs[
+                            building_types_dict["hospital"]
+                        ]
 
                 elif self.location_has_grouping(k):
                     location_to_visit = e.get_location_by_group(k, self.groups[k])
@@ -539,7 +495,7 @@ class House:
         """
         n = []
         ni = []
-        for l in lnames:
+        for l in building_types:
             if l not in e.locations.keys():
                 n.append(None)
                 print("WARNING: location type missing")
@@ -617,9 +573,9 @@ class House:
 
 class Location:
     def __init__(self, name, loc_type="park", x=0.0, y=0.0, sqm=400):
-        if loc_type not in lids.keys():
+        if loc_type not in building_types_dict.keys():
             print(
-                "Error: location type {} is not in the recognised lists of location ids (lids).".format(
+                "Error: location type {} is not in the recognised lists of location ids (building_types_dict).".format(
                     loc_type
                 )
             )
@@ -638,9 +594,9 @@ class Location:
             self.sqm *= 10  # https://www.medrxiv.org/content/10.1101/2020.02.28.20029272v2 (I took a factor of 10 instead of 19 due to the large error bars)
 
         self.visits = []
-        # print(loc_type, len(lids), lids[loc_type], len(avg_visit_times))
+        # print(loc_type, len(building_types_dict), building_types_dict[loc_type], len(avg_visit_times))
         self.avg_visit_time = avg_visit_times[
-            lids[loc_type]
+            building_types_dict[loc_type]
         ]  # using averages for all visits for now. Can replace with a distribution later.
         # print(self.avg_visit_time)
         self.visit_probability_counter = (
@@ -984,7 +940,7 @@ class Ecosystem:
                     a.assign_group(loc_type, max_groups)
 
     def get_location_by_group(self, loc_type_id, group_num):
-        loc_type = lnames[loc_type_id]
+        loc_type = building_types[loc_type_id]
         return self.loc_groups[loc_type][group_num]
 
     def print_contact_rate(self, measure):
@@ -1084,7 +1040,7 @@ class Ecosystem:
 
             header_row = next(near_reader)
             # print(header_row)
-            # print(lnames)
+            # print(building_types)
             # sys.exit()
 
             for row in near_reader:
@@ -1097,7 +1053,7 @@ class Ecosystem:
                     except:
                         print("ERROR: nearest building lookup from file failed:")
                         print("row in CSV: ", i)
-                        print("lnames index: ", j, " len:", len(header_row))
+                        print("building_types index: ", j, " len:", len(header_row))
                         print(
                             "self.locations [key][]: ",
                             header_row[j],
@@ -1125,7 +1081,7 @@ class Ecosystem:
 
         if dump_and_exit == True:
             # print header row
-            print(",".join(f"{x}" for x in lnames), file=f)
+            print(",".join(f"{x}" for x in building_types), file=f)
 
         count = 0
         for h in self.houses:
@@ -1381,7 +1337,7 @@ class Ecosystem:
                             else:
                                 a.school_from_home = False
             else:
-                needs.needs[lids[loc_type], :] *= 1.0 - fraction
+                needs.scale_needs(loc_type, 1.0 - fraction)
 
         elif loc_type == "office":
             fraction = min(fraction, 1.0 - self.keyworker_fraction)
@@ -1394,13 +1350,13 @@ class Ecosystem:
                             else:
                                 a.work_from_home = False
             else:
-                needs.needs[lids[loc_type], :] *= 1.0 - fraction
+                needs.scale_needs(loc_type, 1.0 - fraction)
 
         else:
             if loc_type == "school_parttime":
                 loc_type = "school"
 
-            needs.needs[lids[loc_type], :] *= 1.0 - fraction
+            needs.scale_needs(loc_type, 1.0 - fraction)
 
     def undo_partial_closure(self, loc_type, fraction=0.8):
         if loc_type == "school":
@@ -1414,10 +1370,10 @@ class Ecosystem:
                     for a in hh.agents:
                         a.work_from_home = False
         else:
-            needs.needs[lids[loc_type], :] /= 1.0 - fraction
+            needs.scale_needs(loc_type, 1.0 / (1.0 - fraction))
 
     def initialise_social_distance(self, contact_ratio=1.0):
-        for l in lids:
+        for l in building_types_dict:
             self.contact_rate_multiplier[l] = contact_ratio
         self.contact_rate_multiplier["house"] = 1.0
         self.print_contact_rate("Reset to no measures")
@@ -1438,7 +1394,7 @@ class Ecosystem:
         global needs
         self.initialise_social_distance()
         self.remove_closures()
-        needs = Needs(self.needsfile)
+        needs = Needs(self.needsfile, building_types)
         for k, e in enumerate(self.houses):
             for hh in e.households:
                 for a in hh.agents:
@@ -1630,4 +1586,4 @@ class Ecosystem:
 
 
 if __name__ == "__main__":
-    print("No testing functionality here yet.")
+    needs = Needs("covid_data/needs.csv")
