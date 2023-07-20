@@ -9,15 +9,13 @@ import os
 import random
 import sys
 
-# import fastrand
 from datetime import timedelta
 
 import numpy as np
 import pandas as pd
 
-# pylint: disable=import-error, no-name-in-module
-from facs.base.needs import Needs
-from facs.base.location_types import building_types_dict, building_types
+from .needs import Needs
+from .location_types import building_types_dict, building_types
 
 try:
     from mpi4py import MPI
