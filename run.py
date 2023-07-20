@@ -98,7 +98,7 @@ def parse_arguments() -> dict:
         "--simulation_period",
         action="store",
         type=int,
-        default="-1",
+        default="1100",
         help="Simulation duration [days].",
     )
     parser.add_argument(
@@ -172,7 +172,9 @@ def main():
     output_dir = args.output_dir
     data_dir = args.data_dir
     household_size = float(args.household_size)
-    end_time = args.simulation_period if args.simulation_period > 0 else 1100
+    end_time = args.simulation_period
+    workspace = args.workspace
+    office_size = args.office_size
 
     # check if output_dir is exists
     if not path.exists(output_dir):
@@ -181,9 +183,6 @@ def main():
     outfile = f"{output_dir}/{location}-{measures_yml}.csv"
     if args.generic_outfile:
         outfile = f"{output_dir}/out.csv"
-
-    workspace = args.workspace
-    office_size = args.office_size
 
     print("Running basic Covid-19 simulation kernel.")
     print(f"scenario = {location}")
@@ -233,7 +232,7 @@ def main():
         outfile, silent=True
     )  # silent print to initialise log data structures.
 
-    starting_num_infections = 500
+    # starting_num_infections = 500
     if args.starting_infections:
         if int(args.starting_infections[0]) == 0:
             # Aggregate the num agents before using the starting infections multiplier.
