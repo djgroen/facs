@@ -5,7 +5,6 @@
 # Covid-19 model, based on the general Flee paradigm.
 
 import csv
-import os
 import random
 import sys
 
@@ -16,7 +15,7 @@ import pandas as pd
 
 from .needs import Needs
 from .location_types import building_types_dict, building_types
-from .person import Person
+from .household import Household
 from .utils import probability, get_random_int, out_files
 
 try:
@@ -25,9 +24,7 @@ except ImportError:
     print("MPI4Py module is not loaded, mode=parallel will not work.")
 
 avg_visit_times = [90, 60, 60, 360, 360, 60, 60]  # average time spent per visit
-home_interaction_fraction = (
-    0.2  # people are within 2m at home of a specific other person 20% of the time.
-)
+
 log_prefix = "."
 
 
@@ -94,47 +91,6 @@ def write_log_headers(rank):
     print("#time,x,y,age", file=out_inf, flush=True)
     out_inf = out_files.open("{}/covid_out_recoveries_{}.csv".format(log_prefix, rank))
     print("#time,x,y,age", file=out_inf, flush=True)
-
-
-class Household:
-    def __init__(self, house, ages, size=-1):
-        self.house = house
-        if size > -1:
-            self.size = size
-        else:
-            self.size = random.choice([1, 2, 3, 4])
-
-        self.agents = []
-        for i in range(0, self.size):
-            self.agents.append(Person(self.house, self, ages))
-
-    def get_infectious_count(self):
-        ic = 0
-        for i in range(0, self.size):
-            if (
-                self.agents[i].status == "infectious"
-                and self.agents[i].hospitalised == False
-            ):
-                ic += 1
-        return ic
-
-    def is_infected(self):
-        return self.get_infectious_count() > 0
-
-    def evolve(self, e, disease):
-        ic = self.get_infectious_count()
-        for i in range(0, self.size):
-            if self.agents[i].status == "susceptible":
-                if ic > 0:
-                    infection_chance = (
-                        e.contact_rate_multiplier["house"]
-                        * disease.infection_rate
-                        * home_interaction_fraction
-                        * ic
-                    )
-                    # house infection already incorporates airflow, because derived from literature.
-                    if probability(infection_chance):
-                        self.agents[i].infect(e)
 
 
 def calc_dist(x1, y1, x2, y2):
