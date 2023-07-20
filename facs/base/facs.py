@@ -16,6 +16,7 @@ import pandas as pd
 
 from .needs import Needs
 from .location_types import building_types_dict, building_types
+from .utils import probability, get_random_int
 
 try:
     from mpi4py import MPI
@@ -27,27 +28,6 @@ home_interaction_fraction = (
     0.2  # people are within 2m at home of a specific other person 20% of the time.
 )
 log_prefix = "."
-
-
-# Added commented code to shift from random.random if needed
-_rnd_i = 0
-_rnd_nums = np.random.random(10000)
-
-
-def get_rnd():
-    # return random.random()
-    global _rnd_i, _rnd_nums
-    _rnd_i += 1
-    if _rnd_i > 9999:
-        _rnd_i = 0
-        _rnd_nums = np.random.random(10000)
-    return _rnd_nums[_rnd_i]
-
-
-def get_rndint(high):
-    # return random.randrange(0, high)
-    # return fastrand.pcg32bounded(high)
-    return np.random.randint(high)
 
 
 class MPIManager:
@@ -207,7 +187,7 @@ class Person:
         """
         if not hasattr(self, "groups"):
             self.groups = {}
-        self.groups[building_types_dict[location_type]] = get_rndint(num_groups)
+        self.groups[building_types_dict[location_type]] = get_random_int(num_groups)
 
     def location_has_grouping(self, lid):
         """
@@ -230,9 +210,9 @@ class Person:
             else:
                 self.phase_duration = np.poisson(vac_duration)
         if self.status == "susceptible":
-            if get_rnd() < vac_no_transmission:
+            if probability(vac_no_transmission):
                 self.status = "immune"
-            elif get_rnd() < vac_no_symptoms:
+            elif probability(vac_no_symptoms):
                 self.symptoms_suppressed = True
         # print("vac", self.status, self.symptoms_suppressed, self.phase_duration)
 
@@ -328,7 +308,7 @@ class Person:
                 self.status = "infectious"
                 self.status_change_time = t
                 if (
-                    get_rnd() < self.get_hospitalisation_chance(disease)
+                    probability(self.get_hospitalisation_chance(disease))
                     and self.symptoms_suppressed == False
                 ):
                     self.mild_version = False
@@ -370,11 +350,11 @@ class Person:
                         )
 
                         self.status_change_time = t  # hospitalisation is a status change, because recovery_period is from date of hospitalisation.
-                        if get_rnd() < self.get_mortality_chance(
-                            disease
-                        ) / self.get_hospitalisation_chance(
-                            disease
-                        ):  # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
+                        if probability(
+                            self.get_mortality_chance(disease)
+                            / self.get_hospitalisation_chance(disease)
+                        ):
+                            # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
                             self.dying = True
                             self.phase_duration = np.random.poisson(
                                 disease.mortality_period
@@ -447,7 +427,7 @@ class Household:
                         * ic
                     )
                     # house infection already incorporates airflow, because derived from literature.
-                    if get_rnd() < infection_chance:
+                    if probability(infection_chance):
                         self.agents[i].infect(e)
 
 
@@ -494,7 +474,7 @@ class House:
                 n.append(None)
                 print("WARNING: location type missing")
             elif l == "office":  # offices are picked randomly, not based on proximity.
-                nearest_loc_index = get_rndint(len(e.locations[l]))
+                nearest_loc_index = get_random_int(len(e.locations[l]))
 
                 n.append(e.locations[l][nearest_loc_index])
                 ni.append(nearest_loc_index)
@@ -540,8 +520,8 @@ class House:
     def add_infection(
         self, e, severity="exposed"
     ):  # used to preseed infections (could target using age later on)
-        hh = get_rndint(len(self.households))
-        p = get_rndint(len(self.households[hh].agents))
+        hh = get_random_int(len(self.households))
+        p = get_random_int(len(self.households[hh].agents))
         if self.households[hh].agents[p].status == "susceptible":
             # because we do pre-seeding we need to ensure we add exactly 1 infection.
             self.households[hh].agents[p].infect(e, severity)
@@ -639,7 +619,7 @@ class Location:
                 if person.status == "infectious":
                     e.loc_inf_minutes[self.loc_inf_minutes_id] += visit_time
 
-        elif get_rnd() < visit_probability:
+        elif probability(visit_probability):
             self.visits.append([person, visit_time])
             if person.status == "infectious":
                 e.loc_inf_minutes[self.loc_inf_minutes_id] += visit_time
@@ -767,7 +747,7 @@ class Location:
                     infection_probability = v[1] * base_rate
                     if infection_probability > 0.0:
                         # print("{} = {} * ({}/360.0) * ({}/{}) * ({}/{})".format(infection_probability, e.contact_rate_multiplier[self.type], e.disease.infection_rate, v[1], minutes_opened, e.loc_inf_minutes[self.loc_inf_minutes_id], self.sqm))
-                        if get_rnd() < infection_probability:
+                        if probability(infection_probability):
                             v[0].infect(e, location_type=self.type)
 
 
@@ -1013,7 +993,7 @@ class Ecosystem:
             h = self.houses[i]
             for hh in h.households:
                 for a in hh.agents:
-                    if get_rnd() < infection_probability:
+                    if probability(infection_probability):
                         a.infect(self, location_type="traffic")
                         num_inf += 1
 
@@ -1116,7 +1096,7 @@ class Ecosystem:
             infected = False
             attempts = 0
             while infected == False and attempts < 500:
-                house = get_rndint(len(self.houses))
+                house = get_random_int(len(self.houses))
                 infected = self.houses[house].add_infection(self, severity)
                 attempts += 1
             if attempts > 499:
@@ -1326,7 +1306,7 @@ class Ecosystem:
                 for k, e in enumerate(self.houses):
                     for hh in e.households:
                         for a in hh.agents:
-                            if get_rnd() < fraction:
+                            if probability(fraction):
                                 a.school_from_home = True
                             else:
                                 a.school_from_home = False
@@ -1339,7 +1319,7 @@ class Ecosystem:
                 for k, e in enumerate(self.houses):
                     for hh in e.households:
                         for a in hh.agents:
-                            if get_rnd() < fraction:
+                            if probability(fraction):
                                 a.work_from_home = True
                             else:
                                 a.work_from_home = False
