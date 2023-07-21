@@ -83,3 +83,26 @@ def calc_dist(x1, y1, x2, y2):
 
 def calc_dist_cheap(x1, y1, x2, y2):
     return np.abs(x1 - x2) + np.abs(y1 - y2)
+
+
+def write_log_headers(rank):
+    out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, rank))
+    print("#time,x,y,location_type,rank,incubation_time", file=out_inf, flush=True)
+    out_inf = out_files.open(
+        "{}/covid_out_hospitalisations_{}.csv".format(log_prefix, rank)
+    )
+    print("#time,x, y,age", file=out_inf, flush=True)
+    out_inf = out_files.open("{}/covid_out_deaths_{}.csv".format(log_prefix, rank))
+    print("#time,x,y,age", file=out_inf, flush=True)
+    out_inf = out_files.open("{}/covid_out_recoveries_{}.csv".format(log_prefix, rank))
+    print("#time,x,y,age", file=out_inf, flush=True)
+
+
+def check_vac_eligibility(a):
+    if (
+        a.status == "susceptible"
+        and a.symptoms_suppressed == False
+        and a.antivax == False
+    ):
+        return True
+    return False
