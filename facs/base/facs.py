@@ -186,6 +186,7 @@ class Ecosystem:
             self.size = (
                 self.mpi.comm.Get_size()
             )  # this is stored outside of the MPI manager, to have one code for seq and parallel.
+            self.global_stats = np.zeros(6, dtype="int64")
 
             print("Hello from process {} out of {}".format(self.rank, self.size))
 
@@ -437,7 +438,7 @@ class Ecosystem:
             infected = False
             attempts = 0
             while infected == False and attempts < 500:
-                house = get_random_int(len(self.houses))
+                house = int(get_random_int(len(self.houses)))
                 infected = self.houses[house].add_infection(self, severity)
                 attempts += 1
             if attempts > 499:
