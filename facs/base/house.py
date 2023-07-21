@@ -5,15 +5,20 @@ import sys
 
 import numpy as np
 
+from dataclasses import dataclass, field
+
 from .household import Household
 from .utils import get_random_int, calc_dist
 from .location_types import building_types
 
 
+@dataclass
 class House:
+    """Class for House."""
+
     def __init__(self, e, x, y, num_households=1):
-        self.x = x
-        self.y = y
+        self.location_x = x
+        self.location_y = y
         self.households = []
         self.num_agents = 0
         for i in range(0, num_households):
@@ -57,9 +62,9 @@ class House:
                 ):  # using 'element' to avoid clash with Ecosystem e.
                     # d = calc_dist_cheap(self.x, self.y, element.x, element.y)
                     if element.sqm > 0:
-                        d = calc_dist(self.x, self.y, element.x, element.y) / np.sqrt(
-                            element.sqm
-                        )
+                        d = calc_dist(
+                            self.location_x, self.location_y, element.x, element.y
+                        ) / np.sqrt(element.sqm)
                         if d < min_score:
                             min_score = d
                             nearest_loc_index = k

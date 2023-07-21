@@ -154,8 +154,8 @@ class Person:
         self.phase_duration = max(1, np.random.poisson(e.disease.incubation_period))
         log_infection(
             e.time,
-            self.location.x,
-            self.location.y,
+            self.location.location_x,
+            self.location.location_y,
             location_type,
             e.rank,
             self.phase_duration,
@@ -168,7 +168,9 @@ class Person:
             )  # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
         self.status = "recovered"
         self.status_change_time = e.time
-        log_recovery(e.time, self.location.x, self.location.y, location, e.rank)
+        log_recovery(
+            e.time, self.location.location_x, self.location.location_x, location, e.rank
+        )
 
     def progress_condition(self, e, t, disease):
         if self.status_change_time > t:
@@ -217,7 +219,11 @@ class Person:
                             sys.exit()
                         e.num_hospitalised += 1
                         log_hospitalisation(
-                            t, self.location.x, self.location.y, self.age, e.rank
+                            t,
+                            self.location.location_x,
+                            self.location.location_y,
+                            self.age,
+                            e.rank,
                         )
 
                         self.status_change_time = t  # hospitalisation is a status change, because recovery_period is from date of hospitalisation.
@@ -246,7 +252,11 @@ class Person:
                         if self.dying:
                             self.status = "dead"
                             log_death(
-                                t, self.location.x, self.location.y, "hospital", e.rank
+                                t,
+                                self.location.location_x,
+                                self.location.location_y,
+                                "hospital",
+                                e.rank,
                             )
                         # hospital discharge
                         else:
