@@ -106,3 +106,14 @@ def check_vac_eligibility(a):
     ):
         return True
     return False
+
+
+def get_interpolated_lists(interpolated_size: int, data: list[list[float]]) -> list:
+    """Return interpolated lists of data."""
+
+    interpolated_data = [0.0] * interpolated_size
+    data = np.asarray(data)
+    for age in range(interpolated_size):
+        interpolated_data[age] = np.interp(age, data[:, 0], data[:, 1])
+
+    return interpolated_data

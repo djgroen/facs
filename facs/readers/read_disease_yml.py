@@ -1,30 +1,27 @@
-import csv
-import pprint
-import sys
+"""Module to read disease parameters and create a Disease object."""
 
 import yaml
-
-from facs.base import disease
-
-pp = pprint.PrettyPrinter()
+from facs.base.disease import Disease
 
 
-def read_disease_yml(ymlfile="covid_data/disease_covid19.yml"):
-    with open(ymlfile) as f:
-        dp = yaml.safe_load(f)
+def read_disease_yml(ymlfile: str) -> Disease:
+    """Read disease parameters from a YAML file and create a Disease object."""
 
-    print(dp)
-    d = disease.Disease(
-        dp["infection_rate"],
-        dp["incubation_period"],
-        dp["mild_recovery_period"],
-        dp["recovery_period"],
-        dp["mortality_period"],
-        dp["period_to_hospitalisation"],
-        dp["immunity_duration"],
+    with open(ymlfile, "r", encoding="utf-8") as file:
+        data = yaml.safe_load(file)
+        print(data)
+
+    disease = Disease(
+        data["infection_rate"],
+        data["incubation_period"],
+        data["mild_recovery_period"],
+        data["recovery_period"],
+        data["mortality_period"],
+        data["period_to_hospitalisation"],
+        data["immunity_duration"],
     )
-    d.addHospitalisationChances(dp["hospitalised"])
-    d.addMortalityChances(dp["mortality"])
-    d.addMutations(dp["mutations"])
-    d.print()
-    return d
+    disease.add_hospitalisation_chances(data["hospitalised"])
+    disease.add_mortality_chances(data["mortality"])
+    disease.add_mutations(data["mutations"])
+    print(disease)
+    return disease
