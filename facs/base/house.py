@@ -5,14 +5,11 @@ import sys
 
 import numpy as np
 
-from dataclasses import dataclass, field
-
 from .household import Household
 from .utils import get_random_int, calc_dist
 from .location_types import building_types
 
 
-@dataclass
 class House:
     """Class for House."""
 
