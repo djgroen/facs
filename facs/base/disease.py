@@ -1,50 +1,42 @@
+"""Module for Disease class."""
+
 import sys
+from dataclasses import dataclass, field
+from .utils import get_interpolated_lists
 
-import numpy as np
+AGE_CLASSES = 91
 
 
+@dataclass
 class Disease:
-    def __init__(
-        self,
-        infection_rate,
-        incubation_period,
-        mild_recovery_period,
-        recovery_period,
-        mortality_period,
-        period_to_hospitalisation,
-        immunity_duration,
-    ):
-        self.infection_rate = min(1.0, infection_rate)
-        # infection rate is doubled because the default setting has 50% infectious persons, whereas the baseline we use for our calculations is
-        # 100% infectious persons. However, since it's a probability the value should never be higher than 1.0.
-        self.incubation_period = incubation_period
-        self.mild_recovery_period = mild_recovery_period
-        self.recovery_period = recovery_period
-        self.mortality_period = mortality_period
-        self.period_to_hospitalisation = period_to_hospitalisation
-        self.hospital = np.zeros(91)
-        self.mortality = np.zeros(91)
-        self.immunity_duration = immunity_duration
+    """Class for Disease."""
 
-    def addHospitalisationChances(self, hosp_array):
-        hosp_array = np.asarray(hosp_array)
-        for a in range(0, len(self.hospital)):
-            self.hospital[a] = np.interp(a, hosp_array[:, 0], hosp_array[:, 1])
+    # pylint: disable=too-many-instance-attributes
 
-    def addMortalityChances(self, mort_array):
-        mort_array = np.asarray(mort_array)
-        for a in range(0, len(self.mortality)):
-            self.mortality[a] = np.interp(a, mort_array[:, 0], mort_array[:, 1])
+    infection_rate: float
+    incubation_period: float
+    mild_recovery_period: float
+    recovery_period: float
+    mortality_period: float
+    period_to_hospitalisation: float
+    immunity_duration: float
 
-    def addMutations(self, mutations):
+    hospital: list[float] = field(default_factory=list, init=False, repr=False)
+    mortality: list[float] = field(default_factory=list, init=False, repr=False)
+    mutations: dict[str, dict] = field(default_factory=list, init=False, repr=False)
+
+    def add_hospitalisation_chances(self, hosp_array: list[list[float]]):
+        """Add age-dependent hospitalisation chances."""
+
+        self.hospital = get_interpolated_lists(AGE_CLASSES, hosp_array)
+
+    def add_mortality_chances(self, mort_array: list[list[float]]):
+        """Add age-dependent mortality chances."""
+
+        self.mortality = get_interpolated_lists(AGE_CLASSES, mort_array)
+
+    def add_mutations(self, mutations: dict[str, dict]):
+        """Add mutations."""
+
         print("Loading mutations:", mutations, file=sys.stderr)
         self.mutations = mutations
-
-    def print(self):
-        print(
-            self.infection_rate,
-            self.incubation_period,
-            self.mild_recovery_period,
-            self.recovery_period,
-            self.mortality_period,
-        )
