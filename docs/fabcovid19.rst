@@ -144,7 +144,7 @@ To run a validation simulation, simply type:
 
 .. code-block:: sh
 
-	fabsim localhost facs_validation
+	fabsim localhost validate_facs
 
 
 Visualisation
