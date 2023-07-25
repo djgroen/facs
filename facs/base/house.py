@@ -3,6 +3,8 @@
 
 import sys
 
+from dataclasses import dataclass, field
+
 import numpy as np
 
 from .household import Household
@@ -10,28 +12,40 @@ from .utils import get_random_int, calc_dist
 from .location_types import building_types
 
 
+@dataclass
 class House:
     """Class for House."""
 
-    def __init__(self, e, x, y, num_households=1):
-        self.location_x = x
-        self.location_y = y
-        self.households = []
-        self.num_agents = 0
-        for i in range(0, num_households):
-            size = 1 + np.random.poisson(e.household_size - 1)
-            e.num_agents += size
-            self.households.append(Household(self, e.ages, size))
+    location_x: float
+    location_y: float
+    households: list[Household] = field(default_factory=list)
+    nearest_locations: list = field(default_factory=list)
+    num_agents: int = 0
+    total_size: int = 0
+
+    def add_households(self, household_size, ages, num_households):
+        """Add households to the house."""
+
+        for _ in range(num_households):
+            size = 1 + np.random.poisson(household_size - 1)
+            self.total_size += size
+            self.households.append(Household(self, ages, size))
 
     def IncrementNumAgents(self):
+        """Add an agent to the house."""
+
         self.num_agents += 1
 
     def DecrementNumAgents(self):
+        """Remove an agent from the house."""
+
         self.num_agents -= 1
 
-    def evolve(self, e, time, disease):
-        for hh in self.households:
-            hh.evolve(e, disease)
+    def evolve(self, e, disease):
+        """Evolve the house."""
+
+        for household in self.households:
+            household.evolve(e, disease)
 
     def find_nearest_locations(self, e):
         """
@@ -90,27 +104,32 @@ class House:
         self.nearest_locations = n
         return ni
 
-    def add_infection(
-        self, e, severity="exposed"
-    ):  # used to preseed infections (could target using age later on)
+    def add_infection(self, e, severity="exposed"):
+        """Pre-seed infections in the house."""
+
+        # could target using age later on
+
         hh = int(get_random_int(len(self.households)))
         p = get_random_int(len(self.households[hh].agents))
         if self.households[hh].agents[p].status == "susceptible":
             # because we do pre-seeding we need to ensure we add exactly 1 infection.
             self.households[hh].agents[p].infect(e, severity)
-            infection_pending = False
             return True
         return False
 
-    def has_age(self, age):
-        for hh in self.households:
-            for a in hh.agents:
-                if a.age == age:
-                    if a.status == "susceptible":
+    def has_age_susceptible(self, age: int) -> bool:
+        """Check if the house has an agent of a given age."""
+
+        for household in self.households:
+            for agent in household.agents:
+                if agent.age == age:
+                    if age.status == "susceptible":
                         return True
         return False
 
     def add_infection_by_age(self, e, age):
+        """Add an infection to the house by age."""
+
         for hh in self.households:
             for a in hh.agents:
                 if a.age == age:
