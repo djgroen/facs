@@ -31,15 +31,10 @@ class House:
             self.total_size += size
             self.households.append(Household(self, ages, size))
 
-    def IncrementNumAgents(self):
+    def increment_num_agents(self):
         """Add an agent to the house."""
 
         self.num_agents += 1
-
-    def DecrementNumAgents(self):
-        """Remove an agent from the house."""
-
-        self.num_agents -= 1
 
     def evolve(self, e, disease):
         """Evolve the house."""

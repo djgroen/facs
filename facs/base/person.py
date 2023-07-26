@@ -24,7 +24,7 @@ class Person:
 
     def __init__(self, location, household, ages):
         self.location = location  # current location
-        self.location.IncrementNumAgents()
+        self.location.increment_num_agents()
         self.home_location = location
         self.household = household
         self.mild_version = True
