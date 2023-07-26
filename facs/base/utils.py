@@ -22,7 +22,9 @@ def get_random_int(high) -> int:
     return np.random.randint(0, high)
 
 
-class OUTPUT_FILES:
+class OutputFiles:
+    """Class to manage output files."""
+
     def __init__(self):
         self.files = {}
 
@@ -30,7 +32,7 @@ class OUTPUT_FILES:
         if not file_name in self.files:
             if os.path.exists(file_name):
                 os.remove(file_name)
-            self.files[file_name] = open(file_name, "a")
+            self.files[file_name] = open(file_name, "a", encoding="utf-8")
 
         return self.files[file_name]
 
@@ -39,7 +41,7 @@ class OUTPUT_FILES:
             self.files[out_file].close()
 
 
-out_files = OUTPUT_FILES()
+out_files = OutputFiles()
 
 
 def log_infection(t, x, y, loc_type, rank, phase_duration):
