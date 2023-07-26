@@ -2,6 +2,8 @@
 
 import random
 
+from dataclasses import dataclass, field
+
 from .person import Person
 from .utils import probability
 
@@ -11,17 +13,29 @@ home_interaction_fraction = (
 )
 
 
+@dataclass
+class House:
+    """Dummy class for House for typehints."""
+
+
+@dataclass
 class Household:
-    def __init__(self, house, ages, size=-1):
-        self.house = house
-        if size > -1:
-            self.size = size
-        else:
+    """Class for Household."""
+
+    house: House
+    ages: list[float]
+    size: int = -1
+
+    agents: list[Person] = field(default_factory=list, init=False)
+
+    def __post_init__(self):
+        """Post init function."""
+
+        if self.size <= -1:
             self.size = random.choice([1, 2, 3, 4])
 
-        self.agents = []
-        for i in range(0, self.size):
-            self.agents.append(Person(self.house, self, ages))
+        for _ in range(self.size):
+            self.agents.append(Person(self.house, self, self.ages))
 
     def get_infectious_count(self):
         ic = 0
