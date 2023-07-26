@@ -40,7 +40,8 @@ class Person:
         if np.random.rand() < 0.05:  # 5% are antivaxxers.
             self.antivax = True
 
-        self.status = "susceptible"  # states: susceptible, exposed, infectious, recovered, dead, immune.
+        self.status = "susceptible"
+        # states: susceptible, exposed, infectious, recovered, dead, immune.
         self.symptomatic = False  # may be symptomatic if infectious
         self.status_change_time = -1
 
@@ -48,13 +49,15 @@ class Person:
         self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[
             0
         ]  # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
+        self.groups = None  # used to assign a grouping to a person.
 
     def assign_group(self, location_type, num_groups):
         """
         Used to assign a grouping to a person.
         For example, a campus may have 30 classes (num_groups = 30). Then you would use:
         assign_group("school", 30)
-        The location type should match the corresponding personal needs category (e.g., school or supermarket).
+        The location type should match the corresponding personal needs category
+        (e.g., school or supermarket).
         """
         if not hasattr(self, "groups"):
             self.groups = {}
