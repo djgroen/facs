@@ -49,7 +49,7 @@ class Person:
         self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[
             0
         ]  # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
-        self.groups = None  # used to assign a grouping to a person.
+        self.groups = {}  # used to assign a grouping to a person.
 
     def assign_group(self, location_type, num_groups):
         """
