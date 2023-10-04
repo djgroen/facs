@@ -60,30 +60,26 @@ class Person:
         The location type should match the corresponding personal needs category
         (e.g., school or supermarket).
         """
-        if not hasattr(self, "groups"):
-            self.groups = {}
         self.groups[building_types_dict[location_type]] = get_random_int(num_groups)
 
     def location_has_grouping(self, lid):
-        """
-        Takes a location type ID: return True or False
-        """
-        if hasattr(self, "groups"):
-            if lid in list(self.groups.keys()):
-                # print(lid, list(self.groups.keys()))
-                return True
-        return False
+        """Check if a location has a particular grouping."""
+
+        return lid in list(self.groups)
 
     def vaccinate(self, time, vac_no_symptoms, vac_no_transmission, vac_duration):
+        """Vaccinate a person."""
+
         self.status_change_time = time  # necessary if vaccines give temporary immunity.
         if vac_duration > 0:
             if vac_duration > 100:
-                self.phase_duration = np.random.gamma(
-                    vac_duration / 20.0, 20.0
-                )  # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
+                self.phase_duration = np.random.gamma(vac_duration / 20.0, 20.0)
+                # shape parameter is changed with variable, scale parameter is kept
+                # fixed at 20 (assumption).
 
             else:
                 self.phase_duration = np.poisson(vac_duration)
+
         if self.status == "susceptible":
             if probability(vac_no_transmission):
                 self.status = "immune"
