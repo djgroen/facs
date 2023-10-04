@@ -145,3 +145,5 @@ offices.csv
 *.pkl
 *.swp
 .vscode
+
+openmpi*
