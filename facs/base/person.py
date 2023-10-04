@@ -50,6 +50,7 @@ class Person:
             0
         ]  # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
         self.groups = {}  # used to assign a grouping to a person.
+        self.hospital = None  # hospital location
 
     def assign_group(self, location_type, num_groups):
         """
