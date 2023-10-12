@@ -1,5 +1,6 @@
 import os
 import sys
+import warnings
 from datetime import datetime, timedelta
 
 import yaml
@@ -10,21 +11,29 @@ __mutation_days_remaining = -1
 
 def read_vaccine_yml(e, base_date, ymlfile, diseasefile):
     global __mutation_daily_change, __mutation_days_remaining
-    with open(ymlfile) as f:
+    with open(ymlfile, "r", encoding="utf-8") as f:
         v = yaml.safe_load(f)
 
-        e.vaccine_effect_time = 14
+    with open(diseasefile, "r", encoding="utf-8") as g:
+        w = yaml.safe_load(g)
+
         if "vaccine_effect_time" in v:
             e.vaccine_effect_time = v["vaccine_effect_time"]
         else:
-            print(
-                "warning, {} does not contain field vaccine_effect time.".format(
-                    ymlfile
-                )
+            e.vaccine_effect_time = 14
+            warnings.warn(
+                f"vaccine_effect_time not found in {ymlfile}, using default value of 14 days."
             )
 
-        if "immunity_duration" in v:
-            e.vac_duration = v["immunity_duration"]
+        if "immunity_duration" not in w:
+            raise KeyError(
+                f"immunity_duration not found in {diseasefile}, please add it."
+            )
+
+        e.vac_duration = w["immunity_duration"]
+
+        if e.vac_duration < 0:
+            raise ValueError("immunity_duration cannot be negative")
 
         tmpdate = datetime.strptime(base_date, "%d/%m/%Y")
         tmpdate = tmpdate - timedelta(days=e.vaccine_effect_time)

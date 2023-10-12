@@ -741,10 +741,8 @@ class Ecosystem:
             df.to_csv(csv_file, index=False)
 
     def find_hospital(self):
-        n = []
         hospitals = []
         sqms = []
-        total_sqms = 0
         if "hospital" not in self.locations.keys():
             print("Error: couldn't find hospitals with more than 4000 sqm.")
             sys.exit()
