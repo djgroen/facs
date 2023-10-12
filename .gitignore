@@ -141,6 +141,7 @@ nearest_locations.csv
 
 # output files
 covid_out_*.csv
+*measures*.csv
 offices.csv
 *.pkl
 *.swp
