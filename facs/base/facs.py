@@ -64,6 +64,7 @@ class Ecosystem:
         # 75% reduction in social contacts for 70 percent of the cases.
         # (0.25*0.7)+0.3=0.475
         self.num_agents = 0
+        self.household_size = 0
 
         self.work_from_home = False
         self.ages = np.ones(91)  # by default equal probability of all ages 0 to 90.
@@ -397,7 +398,7 @@ class Ecosystem:
         for h in self.houses:
             dist_h = calc_dist(h.x, h.y, x, y)
             if dist_h < min_dist:
-                if h.has_age(age):
+                if h.has_age_susceptible(age):
                     selected_house = h
                     min_dist = dist_h
 
@@ -528,7 +529,7 @@ class Ecosystem:
         # process intra-household infection spread.
         for i in range(0, len(self.houses)):
             h = self.houses[i]
-            h.evolve(self, self.time, self.disease)
+            h.evolve(self, self.disease)
 
         # process infection via public transport.
         self.evolve_public_transport()
@@ -538,10 +539,13 @@ class Ecosystem:
         self.seasonal_effect = self.get_seasonal_effect()
 
     def addHouse(self, name, x, y, num_households=1):
-        h = House(self, x, y, num_households)
-        self.houses.append(h)
+        house = House(x, y)
+        house.add_households(self.household_size, self.ages, num_households)
+        self.num_agents += house.total_size
+        self.houses.append(house)
+
         self.house_names.append(name)
-        return h
+        return house
 
     def addRandomOffice(self, office_log, name, xbounds, ybounds, office_size):
         """
@@ -737,10 +741,8 @@ class Ecosystem:
             df.to_csv(csv_file, index=False)
 
     def find_hospital(self):
-        n = []
         hospitals = []
         sqms = []
-        total_sqms = 0
         if "hospital" not in self.locations.keys():
             print("Error: couldn't find hospitals with more than 4000 sqm.")
             sys.exit()

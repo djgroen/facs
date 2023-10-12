@@ -24,7 +24,7 @@ class Person:
 
     def __init__(self, location, household, ages):
         self.location = location  # current location
-        self.location.IncrementNumAgents()
+        self.location.increment_num_agents()
         self.home_location = location
         self.household = household
         self.mild_version = True
@@ -40,7 +40,8 @@ class Person:
         if np.random.rand() < 0.05:  # 5% are antivaxxers.
             self.antivax = True
 
-        self.status = "susceptible"  # states: susceptible, exposed, infectious, recovered, dead, immune.
+        self.status = "susceptible"
+        # states: susceptible, exposed, infectious, recovered, dead, immune.
         self.symptomatic = False  # may be symptomatic if infectious
         self.status_change_time = -1
 
@@ -48,38 +49,37 @@ class Person:
         self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[
             0
         ]  # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
+        self.groups = {}  # used to assign a grouping to a person.
+        self.hospital = None  # hospital location
 
     def assign_group(self, location_type, num_groups):
         """
         Used to assign a grouping to a person.
         For example, a campus may have 30 classes (num_groups = 30). Then you would use:
         assign_group("school", 30)
-        The location type should match the corresponding personal needs category (e.g., school or supermarket).
+        The location type should match the corresponding personal needs category
+        (e.g., school or supermarket).
         """
-        if not hasattr(self, "groups"):
-            self.groups = {}
         self.groups[building_types_dict[location_type]] = get_random_int(num_groups)
 
     def location_has_grouping(self, lid):
-        """
-        Takes a location type ID: return True or False
-        """
-        if hasattr(self, "groups"):
-            if lid in list(self.groups.keys()):
-                # print(lid, list(self.groups.keys()))
-                return True
-        return False
+        """Check if a location has a particular grouping."""
+
+        return lid in list(self.groups)
 
     def vaccinate(self, time, vac_no_symptoms, vac_no_transmission, vac_duration):
+        """Vaccinate a person."""
+
         self.status_change_time = time  # necessary if vaccines give temporary immunity.
         if vac_duration > 0:
             if vac_duration > 100:
-                self.phase_duration = np.random.gamma(
-                    vac_duration / 20.0, 20.0
-                )  # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
+                self.phase_duration = np.random.gamma(vac_duration / 20.0, 20.0)
+                # shape parameter is changed with variable, scale parameter is kept
+                # fixed at 20 (assumption).
 
             else:
                 self.phase_duration = np.poisson(vac_duration)
+
         if self.status == "susceptible":
             if probability(vac_no_transmission):
                 self.status = "immune"
