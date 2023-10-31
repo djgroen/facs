@@ -31,10 +31,6 @@ log_prefix = "."
 
 # Global storage for needs now, to keep it simple.
 needs = Needs("covid_data/needs.csv", building_types)
-num_infections_today = 0
-num_hospitalisations_today = 0
-num_deaths_today = 0
-num_recoveries_today = 0
 
 
 class Ecosystem:
@@ -109,6 +105,11 @@ class Ecosystem:
         self.base_rate = 0.0
         self.loc_evolves = 0.0
         self.number_of_non_house_locations = 0
+
+        self.num_infections_today = 0
+        self.num_recoveries_today = 0
+        self.num_hospitalisations_today = 0
+        self.num_deaths_today = 0
 
         self.size = 1  # number of processes
         self.rank = 0  # rank of current process
@@ -424,10 +425,8 @@ class Ecosystem:
         return rank
 
     def evolve(self, reduce_stochasticity=False):
-        global num_infections_today
-        global num_hospitalisations_today
-        num_infections_today = 0
-        num_hospitalisations_today = 0
+        self.num_infections_today = 0
+        self.num_hospitalisations_today = 0
         self.vaccinations_today = 0
 
         if self.mode == "parallel" and reduce_stochasticity == True:
@@ -785,8 +784,8 @@ class Ecosystem:
             "recovered": 0,
             "dead": 0,
             "immune": 0,
-            "num_infections_today": num_infections_today,
-            "num_hospitalisations_today": num_hospitalisations_today,
+            "num_infections_today": self.num_infections_today,
+            "num_hospitalisations_today": self.num_hospitalisations_today,
             "num_hospitalised": self.num_hospitalised,
         }
         for k, elem in enumerate(self.houses):

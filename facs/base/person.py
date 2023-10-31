@@ -152,7 +152,7 @@ class Person:
         self.mild_version = True
         self.hospitalised = False
         self.phase_duration = max(1, np.random.poisson(e.disease.incubation_period))
-        log_infection(
+        e.num_infections_today += log_infection(
             e.time,
             self.location.location_x,
             self.location.location_y,
@@ -168,7 +168,7 @@ class Person:
             )  # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
         self.status = "recovered"
         self.status_change_time = e.time
-        log_recovery(
+        e.num_recoveries_today = log_recovery(
             e.time, self.location.location_x, self.location.location_x, location, e.rank
         )
 
@@ -218,7 +218,7 @@ class Person:
                             )
                             sys.exit()
                         e.num_hospitalised += 1
-                        log_hospitalisation(
+                        e.num_hospitalisations_today = log_hospitalisation(
                             t,
                             self.location.location_x,
                             self.location.location_y,
@@ -251,7 +251,7 @@ class Person:
                         # decease
                         if self.dying:
                             self.status = "dead"
-                            log_death(
+                            e.num_deaths_today = log_death(
                                 t,
                                 self.location.location_x,
                                 self.location.location_y,
