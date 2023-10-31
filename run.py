@@ -7,11 +7,13 @@ from datetime import datetime, timedelta
 from os import makedirs, path
 
 from facs.base import facs
-from facs.base import measures
+from facs.base.measures import Measures
 from facs.readers import (
     read_age_csv,
     read_building_csv,
     read_disease_yml,
+    read_measures_yml,
+    read_vaccinations_yml
 )
 
 
@@ -194,6 +196,8 @@ def main():
     print(f"output_dir  = {output_dir}")
     print(f"outfile  = {outfile}")
     print(f"data_dir  = {data_dir}")
+    
+    measures = Measures()
 
     eco = facs.Ecosystem(end_time)
 
