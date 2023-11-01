@@ -95,4 +95,4 @@ def read_measures_yml(e, ymlfile="covid_data/measures.yml"):
             e.track_trace__multiplier = 1.0 - float(dm["track_trace_efficiency"])
 
         print(date)
-        print(dm)
+        # print(dm)

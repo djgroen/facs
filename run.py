@@ -290,7 +290,7 @@ def main():
         # Propagate the model by one time step.
         eco.evolve(reduce_stochasticity=False)
 
-        print(time, eco.get_date_string(), eco.vac_no_symptoms, eco.vac_no_transmission)
+        # print(time, eco.get_date_string(), eco.vac_no_symptoms, eco.vac_no_transmission)
         eco.print_status(outfile)
 
     # calculate cumulative sums.

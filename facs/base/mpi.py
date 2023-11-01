@@ -49,4 +49,4 @@ class MPIManager:
 
     def gather_stats(self, e, local_stats):
         e.global_stats = self.CalcCommWorldTotal(np.array(local_stats))
-        print(e.global_stats)
+        # print(e.global_stats)
