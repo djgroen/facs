@@ -3,6 +3,7 @@
 import sys
 
 import numpy as np
+import yaml
 
 from .needs import Needs
 from .location_types import building_types_dict
@@ -17,6 +18,7 @@ from .utils import (
 
 
 needs = Needs("covid_data/needs.csv", list(building_types_dict.keys()))
+antivax_chance = yaml.safe_load(open("covid_data/vaccinations.yml"))["antivax_fraction"]
 
 
 class Person:
@@ -36,8 +38,9 @@ class Person:
         self.symptoms_suppressed = (
             False  # Symptoms suppressed, e.g. due to vaccination, but still infectious.
         )
+
         self.antivax = False  # Refuses vaccines if true.
-        if np.random.rand() < 0.05:  # 5% are antivaxxers.
+        if np.random.rand() < antivax_chance:  # 5% are antivaxxers.
             self.antivax = True
 
         self.status = "susceptible"
