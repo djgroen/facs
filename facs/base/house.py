@@ -90,12 +90,9 @@ class House:
                         )
                         sys.exit()
 
-                n.append(e.locations[l][nearest_loc_index])
+                n.append(list(e.locations[l][nearest_loc_index:]))
                 ni.append(nearest_loc_index)
 
-        # for i in n:
-        #  if i:
-        #    print(i.name, i.type)
         self.nearest_locations = n
         return ni
 

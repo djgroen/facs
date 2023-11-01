@@ -1,1 +1,11 @@
-#time,date,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,hospital bed occupancy,num hospitalisations today (data)
+#time,date,susceptible,exposed,infectious,recovered,dead,immune,num infections today,num hospitalisations today,hospital bed occupancy,num hospitalisations today (data),cum num hospitalisations today,cum num infections today
+1,2/3/2020,326703,1441,1067,738,0,0,438,1,10,0.0,1,438
+2,3/3/2020,326207,1604,1253,885,0,0,496,1,14,0.0,2,934
+3,4/3/2020,325626,1857,1419,1047,0,0,582,1,19,0.0,3,1516
+4,5/3/2020,324978,2113,1622,1236,0,0,648,1,25,0.0,4,2164
+5,6/3/2020,324251,2387,1853,1458,0,0,727,1,28,0.0,5,2891
+6,7/3/2020,323436,2660,2137,1716,0,0,815,1,35,0.0,6,3706
+7,8/3/2020,322497,3002,2435,2015,0,0,939,1,45,0.0,7,4645
+8,9/3/2020,321515,3322,2750,2362,0,0,982,1,55,0.0,8,5627
+9,10/3/2020,320315,3764,3131,2739,0,0,1200,1,65,0.0,9,6827
+10,11/3/2020,318938,4308,3515,3188,0,0,1378,1,78,0.0,10,8205
