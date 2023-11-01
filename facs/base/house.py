@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from .household import Household
+from .location import Location
 from .utils import get_random_int, calc_dist
 from .location_types import building_types
 
@@ -19,7 +20,7 @@ class House:
     location_x: float
     location_y: float
     households: list[Household] = field(default_factory=list)
-    nearest_locations: list = field(default_factory=list)
+    nearest_locations: list[list[Location]] = field(default_factory=list)
     num_agents: int = 0
     total_size: int = 0
 
