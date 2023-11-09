@@ -93,10 +93,6 @@ def calc_dist(x1, y1, x2, y2):
     return (np.abs(x1 - x2) ** 2 + np.abs(y1 - y2) ** 2) ** 0.5
 
 
-def calc_dist_cheap(x1, y1, x2, y2):
-    return np.abs(x1 - x2) + np.abs(y1 - y2)
-
-
 def write_log_headers(rank):
     """Write the headers for the log files."""
 
