@@ -131,8 +131,8 @@ class Person:
                 e.visit_minutes += minutes
 
                 if type(location_to_visit) == list: 
-                    location_to_visit = location_to_visit[0]
-                    # location_to_visit = random.choice(location_to_visit)
+                    # location_to_visit = location_to_visit[0]
+                    location_to_visit = np.random.choice(location_to_visit)
 
                 location_to_visit.register_visit(e, self, minutes, deterministic)
 
