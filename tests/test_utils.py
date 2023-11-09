@@ -170,3 +170,33 @@ def test_log_recovery(mock_print, mock_open):
     mock_print.assert_called_once_with(
         "1,2,3,4", file=mock_open.return_value, flush=True
     )
+
+
+def test_calc_dist_zero_distance():
+    """Test that the distance is zero when both points are the same."""
+    assert utils.calc_dist(0, 0, 0, 0) == 0
+
+
+def test_calc_dist_positive_numbers():
+    """Test the distance between two points with positive integer coordinates."""
+    assert utils.calc_dist(1, 2, 4, 6) == 5
+
+
+def test_calc_dist_negative_numbers():
+    """Test the distance between two points with negative integer coordinates."""
+    assert utils.calc_dist(-1, -2, -4, -6) == 5
+
+
+def test_calc_dist_mixed_numbers():
+    """Test the distance between points with mixed sign coordinates."""
+    assert utils.calc_dist(-1, 2, 4, -6) == pytest.approx(10.0)
+
+
+def test_calc_dist_large_numbers():
+    """Test the distance between points with large integer coordinates."""
+    assert utils.calc_dist(1000, 2000, 4000, 6000) == pytest.approx(5000.0)
+
+
+def test_calc_dist_floats():
+    """Test the distance between points with floating-point coordinates."""
+    assert utils.calc_dist(1.5, 2.5, 4.5, 6.5) == pytest.approx(5.0)
