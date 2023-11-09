@@ -4,7 +4,7 @@ import os
 
 import numpy as np
 
-log_prefix = "."
+LOG_PREFIX = "."
 
 
 def probability(prob):
@@ -32,25 +32,32 @@ class OutputFiles:
         self.files = {}
 
     def open(self, file_name):
+        """Return a file handle for the given file name."""
+
         if not file_name in self.files:
             if os.path.exists(file_name):
                 os.remove(file_name)
+
+            # pylint: disable=consider-using-with
             self.files[file_name] = open(file_name, "a", encoding="utf-8")
 
         return self.files[file_name]
 
     def __del__(self) -> None:
-        for out_file in self.files:
-            self.files[out_file].close()
+        for _, value in self.files.items():
+            value.close()
 
 
 out_files = OutputFiles()
 
 
 def log_infection(t, x, y, loc_type, rank, phase_duration):
-    out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, rank))
+    """Log an infection event."""
+    # pylint: disable=too-many-arguments
+
+    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_infections_{rank}.csv")
     print(
-        "{},{},{},{},{},{}".format(t, x, y, loc_type, rank, phase_duration),
+        f"{t},{x},{y},{loc_type},{rank},{phase_duration}",
         file=out_inf,
         flush=True,
     )
@@ -58,27 +65,31 @@ def log_infection(t, x, y, loc_type, rank, phase_duration):
 
 
 def log_hospitalisation(t, x, y, age, rank):
-    out_inf = out_files.open(
-        "{}/covid_out_hospitalisations_{}.csv".format(log_prefix, rank)
-    )
-    print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
+    """Log a hospitalisation event."""
+
+    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_hospitalisations_{rank}.csv")
+    print(f"{t},{x},{y},{age}", file=out_inf, flush=True)
     return 1
 
 
 def log_death(t, x, y, age, rank):
-    out_inf = out_files.open("{}/covid_out_deaths_{}.csv".format(log_prefix, rank))
-    print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
+    """Log a death event."""
+
+    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_deaths_{rank}.csv")
+    print(f"{t},{x},{y},{age}", file=out_inf, flush=True)
     return 1
 
 
 def log_recovery(t, x, y, age, rank):
-    out_inf = out_files.open("{}/covid_out_recoveries_{}.csv".format(log_prefix, rank))
+    """Log a recovery event."""
+    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_recoveries_{rank}.csv")
 
-    print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
+    print(f"{t},{x},{y},{age}", file=out_inf, flush=True)
     return 1
 
 
 def calc_dist(x1, y1, x2, y2):
+    """Return the distance between two points."""
     return (np.abs(x1 - x2) ** 2 + np.abs(y1 - y2) ** 2) ** 0.5
 
 
@@ -87,23 +98,25 @@ def calc_dist_cheap(x1, y1, x2, y2):
 
 
 def write_log_headers(rank):
-    out_inf = out_files.open("{}/covid_out_infections_{}.csv".format(log_prefix, rank))
+    """Write the headers for the log files."""
+
+    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_infections_{rank}.csv")
     print("#time,x,y,location_type,rank,incubation_time", file=out_inf, flush=True)
-    out_inf = out_files.open(
-        "{}/covid_out_hospitalisations_{}.csv".format(log_prefix, rank)
-    )
-    print("#time,x, y,age", file=out_inf, flush=True)
-    out_inf = out_files.open("{}/covid_out_deaths_{}.csv".format(log_prefix, rank))
+    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_hospitalisations_{rank}.csv")
     print("#time,x,y,age", file=out_inf, flush=True)
-    out_inf = out_files.open("{}/covid_out_recoveries_{}.csv".format(log_prefix, rank))
+    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_deaths_{rank}.csv")
+    print("#time,x,y,age", file=out_inf, flush=True)
+    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_recoveries_{rank}.csv")
     print("#time,x,y,age", file=out_inf, flush=True)
 
 
 def check_vac_eligibility(a):
+    """Check if an agent is eligible for vaccination."""
+
     if (
         a.status == "susceptible"
-        and a.symptoms_suppressed == False
-        and a.antivax == False
+        and a.symptoms_suppressed is False
+        and a.antivax is False
     ):
         return True
     return False
