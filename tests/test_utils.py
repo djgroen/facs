@@ -1,23 +1,32 @@
-import pytest
+"""Tests for the utils module."""
 
 from unittest import mock
-import facs.base.utils as utils
+
+import pytest
+
+from facs.base import utils
 
 
 def test_probability_general():
-    assert utils.probability(0) == False
-    assert utils.probability(1) == True
+    """Test the probability function."""
+
+    assert utils.probability(0) is False
+    assert utils.probability(1) is True
     assert utils.probability(0.5) in [True, False]
 
 
 @mock.patch("numpy.random.random")
 def test_probability_with_mock(mock_random):
+    """Test the probability function with a mock."""
+
     mock_random.return_value = 0.5
-    assert utils.probability(0.6) == True
-    assert utils.probability(0.4) == False
+    assert utils.probability(0.6) is True
+    assert utils.probability(0.4) is False
 
 
 def test_probability_raises_error():
+    """Test the probability function raises an error."""
+
     with pytest.raises(ValueError):
         utils.probability(-0.1)
     with pytest.raises(ValueError):
@@ -26,6 +35,8 @@ def test_probability_raises_error():
 
 @mock.patch("numpy.random.randint")
 def test_get_random_int_valid(mock_randint):
+    """Test the get_random_int function."""
+
     mock_randint.return_value = 3
     high = 10
     result = utils.get_random_int(high)
@@ -34,6 +45,8 @@ def test_get_random_int_valid(mock_randint):
 
 
 def test_get_random_int_negative_high():
+    """Test the get_random_int function raises an error."""
+
     with pytest.raises(ValueError):
         utils.get_random_int(-1)
 
@@ -41,6 +54,8 @@ def test_get_random_int_negative_high():
 @mock.patch("os.path.exists", return_value=False)
 @mock.patch("builtins.open", new_callable=mock.mock_open)
 def test_open_new_file(mock_open, mock_exists):
+    """Test the open function when the file does not exist."""
+
     out_files = utils.OutputFiles()
     file_name = "test_file.txt"
 
@@ -56,6 +71,8 @@ def test_open_new_file(mock_open, mock_exists):
 @mock.patch("os.path.exists", return_value=True)
 @mock.patch("builtins.open", new_callable=mock.mock_open)
 def test_open_existing_file(mock_open, mock_exists, mock_remove):
+    """Test the open function when the file exists."""
+
     out_files = utils.OutputFiles()
     file_name = "test_file.txt"
 
@@ -70,6 +87,8 @@ def test_open_existing_file(mock_open, mock_exists, mock_remove):
 
 @mock.patch("builtins.open", new_callable=mock.mock_open)
 def test_close_files_on_delete(mock_open):
+    """Test the __del__ function."""
+
     out_files = utils.OutputFiles()
     file_name = "test_file.txt"
     out_files.open(file_name)
@@ -82,6 +101,8 @@ def test_close_files_on_delete(mock_open):
 @mock.patch("builtins.open", new_callable=mock.mock_open)
 @mock.patch("builtins.print")
 def test_log_infection(mock_print, mock_open):
+    """Test the log_infection function."""
+
     utils.log_infection(1, 2, 3, 4, 5, 6)
 
     mock_open.assert_called_once_with(
