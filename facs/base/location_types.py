@@ -40,3 +40,5 @@ def get_building_types(types):
 _data = read_building_types("covid_data/building_types_map.yml")
 building_types_dict = get_building_types(_data)
 building_types = _data.keys()
+
+building_types_data = yaml.safe_load(open("covid_data/building_types_map.yml"))
