@@ -8,8 +8,9 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from .household import Household
+from .location import Location
 from .utils import get_random_int, calc_dist
-from .location_types import building_types
+from .location_types import building_types, building_types_data
 
 
 @dataclass
@@ -19,7 +20,7 @@ class House:
     location_x: float
     location_y: float
     households: list[Household] = field(default_factory=list)
-    nearest_locations: list = field(default_factory=list)
+    nearest_locations: list[list[Location]] = field(default_factory=list)
     num_agents: int = 0
     total_size: int = 0
 
@@ -55,47 +56,36 @@ class House:
             if l not in e.locations.keys():
                 n.append(None)
                 print("WARNING: location type missing")
-            elif l == "office":  # offices are picked randomly, not based on proximity.
-                nearest_loc_index = get_random_int(len(e.locations[l]))
 
-                n.append(e.locations[l][nearest_loc_index])
-                ni.append(nearest_loc_index)
-            else:
-                min_score = 99999.0
-                nearest_loc_index = 0
-                for k, element in enumerate(
-                    e.locations[l]
-                ):  # using 'element' to avoid clash with Ecosystem e.
-                    # d = calc_dist_cheap(self.x, self.y, element.x, element.y)
-                    if element.sqm > 0:
-                        d = calc_dist(
-                            self.location_x, self.location_y, element.x, element.y
-                        ) / np.sqrt(element.sqm)
-                        if d < min_score:
-                            min_score = d
-                            nearest_loc_index = k
-                    else:
-                        print("ERROR: location found with 0 sqm area.")
-                        print(
-                            "name: {}, x: {}, y: {}, position in array: {}, type: {}".format(
-                                element.name, element.x, element.y, k, l
-                            )
-                        )
-                        print(
-                            "These errors are commonly caused by corruptions in the <building>.csv file."
-                        )
-                        print("To detect these, you can use the following command:")
-                        print(
-                            'cat <buildings file name>.csv | grep -v house | grep ",0$"'
-                        )
-                        sys.exit()
+            if min([element.sqm for element in e.locations[l]]) <= 0:
+                print("WARNING: location type with 0 sqm")
+                print(f"type: {l}")
+                print(
+                    "These errors are commonly caused by corruptions in the <building>.csv file."
+                )
+                print("To detect these, you can use the following command:")
+                print('cat <buildings file name>.csv | grep -v house | grep ",0$"')
+                sys.exit()
 
-                n.append(e.locations[l][nearest_loc_index])
-                ni.append(nearest_loc_index)
+            scaled_distances = [
+                calc_dist(self.location_x, self.location_y, element.x, element.y)
+                / np.sqrt(element.sqm)
+                for element in e.locations[l]
+            ]
+            sorted_indices = sorted(
+                range(len(scaled_distances)), key=lambda k: scaled_distances[k]
+            )
+            num_neighbours = building_types_data[l]["neighbours"]
+            sorted_indices_truncated = sorted_indices[:num_neighbours]
 
-        # for i in n:
-        #  if i:
-        #    print(i.name, i.type)
+            if building_types_data[l]["fixed"]:
+                sorted_indices_truncated = list(
+                    np.random.choice(sorted_indices_truncated, 1)
+                )
+
+            n.append([e.locations[l][i] for i in sorted_indices_truncated])
+            ni.append(sorted_indices_truncated)
+
         self.nearest_locations = n
         return ni
 

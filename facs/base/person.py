@@ -1,12 +1,13 @@
 """Module for the Person class."""
 
+import random
 import sys
 
 import numpy as np
 import yaml
 
 from .needs import Needs
-from .location_types import building_types_dict
+from .location_types import building_types_dict, building_types_data
 from .utils import (
     probability,
     get_random_int,
@@ -131,7 +132,19 @@ class Person:
                     continue
 
                 e.visit_minutes += minutes
-                location_to_visit.register_visit(e, self, minutes, deterministic)
+
+                if type(location_to_visit) == list:
+                    loc_type = location_to_visit[0].loc_type
+
+                    if building_types_data[loc_type]["weighted"]:
+                        sizes = [x.sqm for x in location_to_visit]
+                        probability = [x / sum(sizes) for x in sizes]
+                        location_to_visit = np.random.choice(
+                            location_to_visit, p=probability
+                        )
+
+                    else:
+                        location_to_visit = random.choice(location_to_visit)
 
     def print_needs(self):
         print(self.age, needs.get_needs(self))
