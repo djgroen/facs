@@ -98,6 +98,22 @@ def test_close_files_on_delete(mock_open):
     mock_open.return_value.close.assert_called_once()
 
 
+@mock.patch("facs.base.utils.out_files.open", new_callable=mock.mock_open)
+@mock.patch("builtins.print")
+def test_log_to_file(mock_print, mocked_file):
+    """Test the log_to_file function."""
+
+    category = "test_category"
+    rank = 1
+    data = [1, 2.5, "test"]
+    expected_output = "1,2.5,test"
+
+    utils.log_to_file(category, rank, data)
+
+    mocked_file.assert_called_once_with(f"./covid_out_{category}_{rank}.csv")
+    mock_print.assert_called_once_with(expected_output, file=mocked_file(), flush=True)
+
+
 @mock.patch("builtins.open", new_callable=mock.mock_open)
 @mock.patch("builtins.print")
 def test_log_infection(mock_print, mock_open):
