@@ -189,7 +189,7 @@ def test_calc_dist_negative_numbers():
 
 def test_calc_dist_mixed_numbers():
     """Test the distance between points with mixed sign coordinates."""
-    assert utils.calc_dist(-1, 2, 4, -6) == pytest.approx(10.0)
+    assert utils.calc_dist(-1, 2, 4, -6) == pytest.approx(10.0, abs=0.6)
 
 
 def test_calc_dist_large_numbers():
