@@ -127,3 +127,46 @@ def test_log_infection(mock_print, mock_open):
     mock_print.assert_called_once_with(
         "1,2,3,4,5,6", file=mock_open.return_value, flush=True
     )
+
+
+@mock.patch("builtins.open", new_callable=mock.mock_open)
+@mock.patch("builtins.print")
+def test_log_hospitalisation(mock_print, mock_open):
+    """Test the log_hospitalisation function."""
+
+    utils.log_hospitalisation(1, 2, 3, 4, 5)
+
+    mock_open.assert_called_once_with(
+        "./covid_out_hospitalisations_5.csv", "a", encoding="utf-8"
+    )
+    mock_print.assert_called_once_with(
+        "1,2,3,4", file=mock_open.return_value, flush=True
+    )
+
+
+@mock.patch("builtins.open", new_callable=mock.mock_open)
+@mock.patch("builtins.print")
+def test_log_death(mock_print, mock_open):
+    """Test the log_death function."""
+
+    utils.log_death(1, 2, 3, 4, 5)
+
+    mock_open.assert_called_once_with("./covid_out_deaths_5.csv", "a", encoding="utf-8")
+    mock_print.assert_called_once_with(
+        "1,2,3,4", file=mock_open.return_value, flush=True
+    )
+
+
+@mock.patch("builtins.open", new_callable=mock.mock_open)
+@mock.patch("builtins.print")
+def test_log_recovery(mock_print, mock_open):
+    """Test the log_death function."""
+
+    utils.log_recovery(1, 2, 3, 4, 5)
+
+    mock_open.assert_called_once_with(
+        "./covid_out_recoveries_5.csv", "a", encoding="utf-8"
+    )
+    mock_print.assert_called_once_with(
+        "1,2,3,4", file=mock_open.return_value, flush=True
+    )
