@@ -9,11 +9,19 @@ log_prefix = "."
 
 def probability(prob):
     """Return True with probability prob."""
+
+    if prob < 0 or prob > 1:
+        raise ValueError("prob must be between 0 and 1")
+
     return np.random.random() < prob
 
 
 def get_random_int(high) -> int:
     """Return a random integer between 0 and high."""
+
+    if high < 0:
+        raise ValueError("high must be greater than 0")
+
     return np.random.randint(0, high)
 
 
@@ -68,6 +76,7 @@ def log_recovery(t, x, y, age, rank):
 
     print("{},{},{},{}".format(t, x, y, age), file=out_inf, flush=True)
     return 1
+
 
 def calc_dist(x1, y1, x2, y2):
     return (np.abs(x1 - x2) ** 2 + np.abs(y1 - y2) ** 2) ** 0.5
