@@ -51,40 +51,44 @@ class OutputFiles:
 out_files = OutputFiles()
 
 
+def log_to_file(category: str, rank: int, data: list[int | float | str]):
+    """Log data to a file."""
+
+    out_file = out_files.open(f"{LOG_PREFIX}/covid_out_{category}_{rank}.csv")
+    data = ",".join([str(x) for x in data])
+    print(data, file=out_file, flush=True)
+
+
 def log_infection(t, x, y, loc_type, rank, phase_duration):
     """Log an infection event."""
     # pylint: disable=too-many-arguments
 
-    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_infections_{rank}.csv")
-    print(
-        f"{t},{x},{y},{loc_type},{rank},{phase_duration}",
-        file=out_inf,
-        flush=True,
-    )
+    data = [t, x, y, loc_type, rank, phase_duration]
+    log_to_file("infections", rank, data)
     return 1
 
 
 def log_hospitalisation(t, x, y, age, rank):
     """Log a hospitalisation event."""
 
-    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_hospitalisations_{rank}.csv")
-    print(f"{t},{x},{y},{age}", file=out_inf, flush=True)
+    data = [t, x, y, age]
+    log_to_file("hospitalisations", rank, data)
     return 1
 
 
 def log_death(t, x, y, age, rank):
     """Log a death event."""
 
-    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_deaths_{rank}.csv")
-    print(f"{t},{x},{y},{age}", file=out_inf, flush=True)
+    data = [t, x, y, age]
+    log_to_file("deaths", rank, data)
     return 1
 
 
 def log_recovery(t, x, y, age, rank):
     """Log a recovery event."""
-    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_recoveries_{rank}.csv")
 
-    print(f"{t},{x},{y},{age}", file=out_inf, flush=True)
+    data = [t, x, y, age]
+    log_to_file("recoveries", rank, data)
     return 1
 
 
@@ -96,14 +100,17 @@ def calc_dist(x1, y1, x2, y2):
 def write_log_headers(rank):
     """Write the headers for the log files."""
 
-    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_infections_{rank}.csv")
-    print("#time,x,y,location_type,rank,incubation_time", file=out_inf, flush=True)
-    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_hospitalisations_{rank}.csv")
-    print("#time,x,y,age", file=out_inf, flush=True)
-    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_deaths_{rank}.csv")
-    print("#time,x,y,age", file=out_inf, flush=True)
-    out_inf = out_files.open(f"{LOG_PREFIX}/covid_out_recoveries_{rank}.csv")
-    print("#time,x,y,age", file=out_inf, flush=True)
+    data = ["#time", "x", "y", "location_type", "rank", "incubation_time"]
+    log_to_file("infections", rank, data)
+
+    data = ["#time", "x", "y", "age"]
+    log_to_file("hospitalisations", rank, data)
+
+    data = ["#time", "x", "y", "age"]
+    log_to_file("deaths", rank, data)
+
+    data = ["#time", "x", "y", "age"]
+    log_to_file("recoveries", rank, data)
 
 
 def check_vac_eligibility(a):
