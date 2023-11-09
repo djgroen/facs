@@ -6,7 +6,7 @@ import sys
 import numpy as np
 
 from .needs import Needs
-from .location_types import building_types_dict
+from .location_types import building_types_dict, building_types_data
 from .utils import (
     probability,
     get_random_int,
@@ -130,9 +130,20 @@ class Person:
 
                 e.visit_minutes += minutes
 
-                if type(location_to_visit) == list: 
-                    # location_to_visit = location_to_visit[0]
-                    location_to_visit = np.random.choice(location_to_visit)
+                if type(location_to_visit) == list:
+                    loc_type = location_to_visit[0].loc_type
+
+                    if building_types_data[loc_type]["weighted"]:
+                        sizes = [x.sqm for x in location_to_visit]
+                        probability = [x / sum(sizes) for x in sizes]
+                    else:
+                        probability = [
+                            1 / len(location_to_visit) for _ in location_to_visit
+                        ]
+
+                    location_to_visit = np.random.choice(
+                        location_to_visit, p=probability
+                    )
 
                 location_to_visit.register_visit(e, self, minutes, deterministic)
 
