@@ -136,16 +136,12 @@ class Person:
                     if building_types_data[loc_type]["weighted"]:
                         sizes = [x.sqm for x in location_to_visit]
                         probability = [x / sum(sizes) for x in sizes]
+                        location_to_visit = np.random.choice(
+                            location_to_visit, p=probability
+                        )
+
                     else:
-                        probability = [
-                            1 / len(location_to_visit) for _ in location_to_visit
-                        ]
-
-                    location_to_visit = np.random.choice(
-                        location_to_visit, p=probability
-                    )
-
-                location_to_visit.register_visit(e, self, minutes, deterministic)
+                        location_to_visit = np.random.choice(location_to_visit)
 
     def print_needs(self):
         print(self.age, needs.get_needs(self))
