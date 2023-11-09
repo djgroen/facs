@@ -141,7 +141,7 @@ class Person:
                         )
 
                     else:
-                        location_to_visit = np.random.choice(location_to_visit)
+                        location_to_visit = random.choice(location_to_visit)
 
     def print_needs(self):
         print(self.age, needs.get_needs(self))
