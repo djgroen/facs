@@ -72,3 +72,124 @@ def test_add_genotypes(disease: Disease):
     genotypes = {"genotype1": {"effect": 1.1}}
     disease.add_genotypes(genotypes)
     assert disease.genotypes == genotypes
+
+
+def test_disease_initialisation_fail_negative_parameters():
+    """Test Disease initialization with negative parameters."""
+
+    with pytest.raises(ValueError):
+        Disease(
+            infection_rate=-0.05,
+            incubation_period=5.0,
+            mild_recovery_period=10.0,
+            recovery_period=15.0,
+            mortality_period=20.0,
+            period_to_hospitalisation=25.0,
+            immunity_duration=30.0,
+        )
+
+
+def test_disease_initialisation_fail_string_parameters():
+    """Test Disease initialization with string parameters."""
+
+    with pytest.raises(TypeError):
+        Disease(
+            infection_rate="0.05",
+            incubation_period=5.0,
+            mild_recovery_period=10.0,
+            recovery_period=15.0,
+            mortality_period=20.0,
+            period_to_hospitalisation=25.0,
+            immunity_duration=30.0,
+        )
+
+
+def test_disease_initialisation_fail_list_parameters():
+    """Test Disease initialization with list parameters."""
+
+    with pytest.raises(TypeError):
+        Disease(
+            infection_rate=[0.05],
+            incubation_period=5.0,
+            mild_recovery_period=10.0,
+            recovery_period=15.0,
+            mortality_period=20.0,
+            period_to_hospitalisation=25.0,
+            immunity_duration=30.0,
+        )
+
+
+def test_disease_initialisation_fail_negative_hospitalisation(disease: Disease):
+    """Test Disease initialization with negative hospitalisation chances."""
+
+    hosp_array = [[0, -0.1], [90, 0.2]]
+    with pytest.raises(ValueError):
+        disease.add_hospitalisation_chances(hosp_array)
+
+
+def test_disease_initialisation_fail_hospitalisation_not_sorted(disease: Disease):
+    """Test Disease initialization with unsorted hospitalisation chances."""
+
+    hosp_array = [[90, 0.2], [0, 0.1]]
+    with pytest.raises(ValueError):
+        disease.add_hospitalisation_chances(hosp_array)
+
+
+def test_disease_initialisation_fail_hospitalisation_not_unique(disease: Disease):
+    """Test Disease initialization with non-unique ages."""
+
+    hosp_array = [[0, 0.1], [0, 0.2]]
+    with pytest.raises(ValueError):
+        disease.add_hospitalisation_chances(hosp_array)
+
+
+def test_disease_initialisation_fail_hospitalisation_age_out_of_range(disease: Disease):
+    """Test Disease initialization with hospitalisation age out of range."""
+
+    hosp_array1 = [[0, 0.1], [91, 0.2]]
+    hosp_array2 = [[-1, 0.1], [90, 0.2]]
+
+    with pytest.raises(ValueError):
+        disease.add_hospitalisation_chances(hosp_array1)
+
+    with pytest.raises(ValueError):
+        disease.add_hospitalisation_chances(hosp_array2)
+
+
+def test_disease_initialisation_fail_hospitalisation_prob_out_of_range(
+    disease: Disease,
+):
+    """Test Disease initialization with hospitalisation probability out of range."""
+
+    hosp_array1 = [[0, -0.1], [90, 0.2]]
+    hosp_array2 = [[0, 0.1], [90, 1.2]]
+
+    with pytest.raises(ValueError):
+        disease.add_hospitalisation_chances(hosp_array1)
+
+    with pytest.raises(ValueError):
+        disease.add_hospitalisation_chances(hosp_array2)
+
+
+def test_disease_initialisation_fail_mortality_uneven_array(disease: Disease):
+    """Test Disease initialization with uneven mortality array."""
+
+    mort_array = [[0, 0.1], [90, 0.2, 0.1]]
+    with pytest.raises(ValueError):
+        disease.add_mortality_chances(mort_array)
+
+
+def test_disease_initialisation_fail_mutation_not_dict(disease: Disease):
+    """Test Disease initialization with non-dict mutation."""
+
+    mutations = {"mutation1": 1.2}
+    with pytest.raises(TypeError):
+        disease.add_mutations(mutations)
+
+
+def test_disease_initialisation_fail_mutation_not_str(disease: Disease):
+    """Test Disease initialization with non-dict mutation."""
+
+    mutations = {1: {"infection_rate": 1.2}}
+    with pytest.raises(TypeError):
+        disease.add_mutations(mutations)
