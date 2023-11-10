@@ -10,6 +10,8 @@ AGE_CLASSES = 91
 
 @pytest.fixture
 def disease():
+    """Return a Disease instance."""
+
     return Disease(
         infection_rate=0.05,
         incubation_period=5.0,
@@ -64,7 +66,7 @@ def test_add_mutations(disease: Disease):
     assert disease.mutations == mutations
 
 
-def test_add_genotypes(disease):
+def test_add_genotypes(disease: Disease):
     """Test adding genotypes."""
 
     genotypes = {"genotype1": {"effect": 1.1}}
