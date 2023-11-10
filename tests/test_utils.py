@@ -231,7 +231,7 @@ def test_write_headers(mock_print, mock_file):
 
 
 def test_check_vac_eligibility_eligible():
-    """Test the check_vac_eligibility function."""
+    """Test the check_vac_eligibility function when eligible."""
 
     person = mock.Mock(status="susceptible", antivax=False, symptoms_suppressed=False)
 
@@ -239,7 +239,7 @@ def test_check_vac_eligibility_eligible():
 
 
 def test_check_vac_eligibility_not_eligible_status():
-    """Test the check_vac_eligibility function."""
+    """Test the check_vac_eligibility function when infected."""
 
     person = mock.Mock(status="infected", antivax=False, symptoms_suppressed=False)
 
@@ -247,7 +247,7 @@ def test_check_vac_eligibility_not_eligible_status():
 
 
 def test_check_vac_eligibility_not_eligible_antivax():
-    """Test the check_vac_eligibility function."""
+    """Test the check_vac_eligibility function when antivax."""
 
     person = mock.Mock(status="susceptible", antivax=True, symptoms_suppressed=False)
 
@@ -255,8 +255,68 @@ def test_check_vac_eligibility_not_eligible_antivax():
 
 
 def test_check_vac_eligibility_not_eligible_suppressed():
-    """Test the check_vac_eligibility function."""
+    """Test the check_vac_eligibility function when symptoms suppressed."""
 
     person = mock.Mock(status="susceptible", antivax=False, symptoms_suppressed=True)
 
     assert utils.check_vac_eligibility(person) is False
+
+
+def test_interpolation_single_point():
+    """Test the get_interpolated_lists function with a single point."""
+
+    data = [[0, 10.0]]
+    interpolated_size = 5
+    expected_result = [10.0] * interpolated_size
+    result = utils.get_interpolated_lists(interpolated_size, data)
+    assert result == expected_result
+
+
+def test_interpolation_linear_data():
+    """Test the get_interpolated_lists function with linear data."""
+
+    data = [[0, 0.0], [10, 10.0]]
+    interpolated_size = 11
+    expected_result = [float(i) for i in range(interpolated_size)]
+    result = utils.get_interpolated_lists(interpolated_size, data)
+    assert result == expected_result
+
+
+def test_interpolation_out_of_bounds():
+    """Test the get_interpolated_lists function with data outside the bounds."""
+
+    data = [[1, 1.0], [2, 2.0]]
+    interpolated_size = 5
+    expected_result = [1.0, 1.0, 2.0, 2.0, 2.0]
+    result = utils.get_interpolated_lists(interpolated_size, data)
+    assert result == expected_result
+
+
+def test_interpolation_with_real_numbers():
+    """Test the get_interpolated_lists function with real numbers."""
+
+    data = [[0.5, 1.5], [1.5, 2.5]]
+    interpolated_size = 3
+    expected_result = [1.5, 2.0, 2.5]
+    result = utils.get_interpolated_lists(interpolated_size, data)
+    assert result == expected_result
+
+
+def test_empty_data():
+    """Test the get_interpolated_lists function with empty data."""
+
+    data = []
+    interpolated_size = 3
+
+    with pytest.raises(IndexError):
+        _ = utils.get_interpolated_lists(interpolated_size, data)
+
+
+def test_invalid_data():
+    """Test the get_interpolated_lists function with invalid data."""
+
+    data = None
+    interpolated_size = 3
+
+    with pytest.raises(IndexError):
+        _ = utils.get_interpolated_lists(interpolated_size, data)
