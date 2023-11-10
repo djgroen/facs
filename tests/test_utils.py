@@ -228,3 +228,35 @@ def test_write_headers(mock_print, mock_file):
     for file_name, header in zip(file_names, headers):
         mock_file.assert_any_call(file_name)
         mock_print.assert_any_call(header, file=mock_file.return_value, flush=True)
+
+
+def test_check_vac_eligibility_eligible():
+    """Test the check_vac_eligibility function."""
+
+    person = mock.Mock(status="susceptible", antivax=False, symptoms_suppressed=False)
+
+    assert utils.check_vac_eligibility(person) is True
+
+
+def test_check_vac_eligibility_not_eligible_status():
+    """Test the check_vac_eligibility function."""
+
+    person = mock.Mock(status="infected", antivax=False, symptoms_suppressed=False)
+
+    assert utils.check_vac_eligibility(person) is False
+
+
+def test_check_vac_eligibility_not_eligible_antivax():
+    """Test the check_vac_eligibility function."""
+
+    person = mock.Mock(status="susceptible", antivax=True, symptoms_suppressed=False)
+
+    assert utils.check_vac_eligibility(person) is False
+
+
+def test_check_vac_eligibility_not_eligible_suppressed():
+    """Test the check_vac_eligibility function."""
+
+    person = mock.Mock(status="susceptible", antivax=False, symptoms_suppressed=True)
+
+    assert utils.check_vac_eligibility(person) is False
