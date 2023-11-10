@@ -1,8 +1,15 @@
 """Module for miscellaneous functions."""
 
+from __future__ import annotations
+
 import os
 
+from typing import TYPE_CHECKING
+
 import numpy as np
+
+if TYPE_CHECKING:
+    from .person import Person
 
 LOG_PREFIX = "."
 
@@ -59,7 +66,9 @@ def log_to_file(category: str, rank: int, data: list[int | float | str]):
     print(data, file=out_file, flush=True)
 
 
-def log_infection(t, x, y, loc_type, rank, phase_duration):
+def log_infection(
+    t: int, x: float, y: float, loc_type: str, rank: int, phase_duration: int
+) -> int:
     """Log an infection event."""
     # pylint: disable=too-many-arguments
 
@@ -68,7 +77,7 @@ def log_infection(t, x, y, loc_type, rank, phase_duration):
     return 1
 
 
-def log_hospitalisation(t, x, y, age, rank):
+def log_hospitalisation(t: int, x: float, y: float, age: int, rank: int) -> int:
     """Log a hospitalisation event."""
 
     data = [t, x, y, age]
@@ -76,7 +85,7 @@ def log_hospitalisation(t, x, y, age, rank):
     return 1
 
 
-def log_death(t, x, y, age, rank):
+def log_death(t: int, x: float, y: float, age: int, rank: int) -> int:
     """Log a death event."""
 
     data = [t, x, y, age]
@@ -84,7 +93,7 @@ def log_death(t, x, y, age, rank):
     return 1
 
 
-def log_recovery(t, x, y, age, rank):
+def log_recovery(t: int, x: float, y: float, age: int, rank: int) -> int:
     """Log a recovery event."""
 
     data = [t, x, y, age]
@@ -92,12 +101,12 @@ def log_recovery(t, x, y, age, rank):
     return 1
 
 
-def calc_dist(x1, y1, x2, y2):
+def calc_dist(x1: float, y1: float, x2: float, y2: float) -> float:
     """Return the distance between two points."""
     return (np.abs(x1 - x2) ** 2 + np.abs(y1 - y2) ** 2) ** 0.5
 
 
-def write_log_headers(rank):
+def write_log_headers(rank) -> None:
     """Write the headers for the log files."""
 
     data = ["#time", "x", "y", "location_type", "rank", "incubation_time"]
@@ -113,7 +122,7 @@ def write_log_headers(rank):
     log_to_file("recoveries", rank, data)
 
 
-def check_vac_eligibility(a):
+def check_vac_eligibility(a: Person) -> bool:
     """Check if an agent is eligible for vaccination."""
 
     if (
