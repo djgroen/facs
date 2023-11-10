@@ -6,6 +6,7 @@ from .utils import get_interpolated_lists
 
 AGE_CLASSES = 91
 
+
 @dataclass
 class Disease:
     """Class for Disease."""
@@ -25,7 +26,6 @@ class Disease:
     mutations: dict[str, dict] = field(default_factory=list, init=False, repr=False)
     genotypes: dict[str, dict] = field(default_factory=list, init=False, repr=False)
 
-
     def add_hospitalisation_chances(self, hosp_array: list[list[float]]):
         """Add age-dependent hospitalisation chances."""
 
@@ -41,9 +41,9 @@ class Disease:
 
         print("Loading mutations:", mutations, file=sys.stderr)
         self.mutations = mutations
-        
+
     def add_genotypes(self, genotypes: dict[str, dict]):
         """Add genotype with its parameters."""
-        
+
         print("Loading genotypes:", genotypes, file=sys.stderr)
         self.genotypes = genotypes
