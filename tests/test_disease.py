@@ -74,6 +74,21 @@ def test_add_genotypes(disease: Disease):
     assert disease.genotypes == genotypes
 
 
+def test_disease_initialisation_warn_zero_parameters():
+    """Test Disease initialization with zero parameters."""
+
+    with pytest.warns(RuntimeWarning):
+        Disease(
+            infection_rate=0.0,
+            incubation_period=5.0,
+            mild_recovery_period=10.0,
+            recovery_period=15.0,
+            mortality_period=20.0,
+            period_to_hospitalisation=25.0,
+            immunity_duration=30.0,
+        )
+
+
 def test_disease_initialisation_fail_negative_parameters():
     """Test Disease initialization with negative parameters."""
 

@@ -1,7 +1,10 @@
 """Module for Disease class."""
 
 import sys
+import warnings
 from dataclasses import dataclass, field
+
+
 from .utils import get_interpolated_lists
 
 AGE_CLASSES = 91
@@ -47,6 +50,9 @@ class Disease:
 
             if getattr(self, attr) < 0:
                 raise ValueError(f"{attr} must not be negative")
+
+            if getattr(self, attr) == 0:
+                warnings.warn(f"{attr} is zero", RuntimeWarning)
 
     def array_sanity_check(self, array: list[list[float]], name: str):
         """Sanity check for Hospitalisation and Mortality parameters."""
