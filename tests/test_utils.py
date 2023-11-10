@@ -200,3 +200,31 @@ def test_calc_dist_large_numbers():
 def test_calc_dist_floats():
     """Test the distance between points with floating-point coordinates."""
     assert utils.calc_dist(1.5, 2.5, 4.5, 6.5) == pytest.approx(5.0)
+
+
+@mock.patch("facs.base.utils.out_files.open", new_callable=mock.mock_open)
+@mock.patch("builtins.print")
+def test_write_headers(mock_print, mock_file):
+    """Test the write_log_headers function."""
+
+    utils.write_log_headers(1)
+
+    headers = [
+        "#time,x,y,location_type,rank,incubation_time",
+        "#time,x,y,age",
+        "#time,x,y,age",
+        "#time,x,y,age",
+    ]
+    file_names = [
+        "./covid_out_infections_1.csv",
+        "./covid_out_hospitalisations_1.csv",
+        "./covid_out_deaths_1.csv",
+        "./covid_out_recoveries_1.csv",
+    ]
+
+    assert mock_file.call_count == 4
+    assert mock_print.call_count == 4
+
+    for file_name, header in zip(file_names, headers):
+        mock_file.assert_any_call(file_name)
+        mock_print.assert_any_call(header, file=mock_file.return_value, flush=True)
