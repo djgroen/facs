@@ -10,6 +10,8 @@ class Needs:
     def __init__(self, filename: str, building_types: list[str]):
         """Add needs from a CSV file."""
 
+        self.exception_handler(filename)
+
         self.needs = pd.read_csv(filename, header=0, index_col=0)
 
         if set(self.needs.columns) != set(building_types):
