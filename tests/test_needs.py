@@ -49,8 +49,7 @@ def failing_needs_instance(
     mock_isfile.return_value = True
     mock_splitext.return_value = ("test_file", ".csv")
     mock_read_csv.return_value = correct_dataframe.copy()
-    needs_instance = Needs("test_file.csv", incorrect_building_types)
-    return needs_instance
+    Needs("test_file.csv", incorrect_building_types)  # This line should fail
 
 
 @patch("os.path.exists")
