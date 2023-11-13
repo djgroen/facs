@@ -55,4 +55,10 @@ class Needs:
     def scale_needs(self, location_type, factor):
         """Scale the needs of a location type by a factor."""
 
+        if location_type not in self.needs.columns:
+            raise ValueError("Location type not found in needs.")
+
+        if factor < 0:
+            raise ValueError("Scale factor must be positive.")
+
         self.needs[location_type] = self.needs[location_type] * factor
