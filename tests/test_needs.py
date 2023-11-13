@@ -154,3 +154,9 @@ def test_scale_needs():
     assert needs.needs["school"].sum() == 31.5
     needs.scale_needs("market", 0.5)
     assert needs.needs["market"].sum() == 52.5
+
+    with pytest.raises(ValueError):
+        needs.scale_needs("hospital", 0.5)
+
+    with pytest.raises(ValueError):
+        needs.scale_needs("office", -0.5)
