@@ -1,9 +1,10 @@
 """Module for the House class."""
 
-
+from __future__ import annotations
 import sys
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -11,6 +12,10 @@ from .household import Household
 from .location import Location
 from .utils import get_random_int, calc_dist
 from .location_types import building_types, building_types_data
+
+if TYPE_CHECKING:
+    from .facs import Ecosystem
+    from .disease import Disease
 
 
 @dataclass
@@ -24,7 +29,9 @@ class House:
     num_agents: int = 0
     total_size: int = 0
 
-    def add_households(self, household_size, ages, num_households):
+    def add_households(
+        self, household_size: int, ages: list[float], num_households: int
+    ):
         """Add households to the house."""
 
         for _ in range(num_households):
@@ -37,13 +44,13 @@ class House:
 
         self.num_agents += 1
 
-    def evolve(self, e, disease):
+    def evolve(self, e: Ecosystem, disease: Disease):
         """Evolve the house."""
 
         for household in self.households:
             household.evolve(e, disease)
 
-    def find_nearest_locations(self, e):
+    def find_nearest_locations(self, e: Ecosystem):
         """
         identify preferred locations for each particular purpose,
         and store in an array.
