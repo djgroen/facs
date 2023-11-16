@@ -19,7 +19,9 @@ from .utils import (
 
 
 needs = Needs("covid_data/needs.csv", list(building_types_dict.keys()))
-antivax_chance = yaml.safe_load(open("covid_data/vaccinations.yml"))["antivax_fraction"]
+antivax_chance = yaml.safe_load(open("covid_data/vaccinations.yml", encoding="utf-8"))[
+    "antivax_fraction"
+]
 
 
 class Person:
@@ -91,7 +93,7 @@ class Person:
                 self.symptoms_suppressed = True
         # print("vac", self.status, self.symptoms_suppressed, self.phase_duration)
 
-    def plan_visits(self, e, deterministic=False):
+    def plan_visits(self, e):
         """
         Plan visits for the day.
         TODO: plan visits to classes not using nearest location (make an override).
@@ -133,15 +135,13 @@ class Person:
 
                 e.visit_minutes += minutes
 
-                if type(location_to_visit) == list:
+                if isinstance(location_to_visit, list):
                     loc_type = location_to_visit[0].loc_type
 
                     if building_types_data[loc_type]["weighted"]:
                         sizes = [x.sqm for x in location_to_visit]
-                        probability = [x / sum(sizes) for x in sizes]
-                        location_to_visit = np.random.choice(
-                            location_to_visit, p=probability
-                        )
+                        prob = [x / sum(sizes) for x in sizes]
+                        location_to_visit = np.random.choice(location_to_visit, p=prob)
 
                     else:
                         location_to_visit = random.choice(location_to_visit)
@@ -181,7 +181,8 @@ class Person:
         if e.disease.immunity_duration > 0:
             self.phase_duration = np.random.gamma(
                 e.disease.immunity_duration / 20.0, 20.0
-            )  # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
+            )  # shape parameter is changed with variable,
+            # scale parameter is kept fixed at 20 (assumption).
         self.status = "recovered"
         self.status_change_time = e.time
         e.num_recoveries_today = log_recovery(
@@ -198,10 +199,12 @@ class Person:
                 self.status_change_time = t
                 if (
                     probability(self.get_hospitalisation_chance(disease))
-                    and self.symptoms_suppressed == False
+                    and self.symptoms_suppressed is False
                 ):
                     self.mild_version = False
-                    # self.phase_duration = np.random.poisson(disease.period_to_hospitalisation - disease.incubation_period)
+                    # self.phase_duration =
+                    # np.random.poisson(disease.period_to_hospitalisation
+                    # - disease.incubation_period)
                     self.phase_duration = max(
                         1,
                         np.random.poisson(disease.period_to_hospitalisation)
@@ -209,7 +212,9 @@ class Person:
                     )
                 else:
                     self.mild_version = True
-                    # self.phase_duration = np.random.poisson(disease.mild_recovery_period - disease.incubation_period)
+                    # self.phase_duration =
+                    # np.random.poisson(disease.mild_recovery_period
+                    # - disease.incubation_period)
                     self.phase_duration = max(
                         1,
                         np.random.poisson(disease.mild_recovery_period)
@@ -228,9 +233,10 @@ class Person:
                     if t - self.status_change_time >= self.phase_duration:
                         self.hospitalised = True
                         self.hospital = e.find_hospital()
-                        if self.hospital == None:
+                        if self.hospital is None:
                             print(
-                                "Error: agent is hospitalised, but there are no hospitals in the location graph."
+                                "Error: agent is hospitalised, but there are no "
+                                "hospitals in the location graph."
                             )
                             sys.exit()
                         e.num_hospitalised += 1
@@ -242,12 +248,15 @@ class Person:
                             e.rank,
                         )
 
-                        self.status_change_time = t  # hospitalisation is a status change, because recovery_period is from date of hospitalisation.
+                        self.status_change_time = t
+                        # hospitalisation is a status change,
+                        # because recovery_period is from date of hospitalisation.
                         if probability(
                             self.get_mortality_chance(disease)
                             / self.get_hospitalisation_chance(disease)
                         ):
-                            # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
+                            # avg mortality rate (divided by the average hospitalization rate).
+                            # task: read from YML.
                             self.dying = True
                             self.phase_duration = np.random.poisson(
                                 disease.mortality_period
@@ -279,7 +288,7 @@ class Person:
                             self.recover(e, "hospital")
 
         elif e.disease.immunity_duration > 0 and (
-            self.status == "recovered" or self.status == "immune"
+            self.status in ("recovered", "immune")
         ):
             if t - self.status_change_time >= self.phase_duration:
                 # print("susc.", self.status, self.phase_duration)

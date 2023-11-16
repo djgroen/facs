@@ -479,7 +479,7 @@ class Ecosystem:
             h = self.houses[i]
             for hh in h.households:
                 for a in hh.agents:
-                    a.plan_visits(self, reduce_stochasticity)
+                    a.plan_visits(self)
                     a.progress_condition(self, self.time, self.disease)
 
                     if (
