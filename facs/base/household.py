@@ -8,9 +8,8 @@ from .person import Person
 from .utils import probability
 
 
-home_interaction_fraction = (
-    0.2  # people are within 2m at home of a specific other person 20% of the time.
-)
+HOME_INTERACTION_FRACTION = 0.2
+# people are within 2m at home of a specific other person 20% of the time.
 
 
 @dataclass
@@ -38,6 +37,7 @@ class Household:
             self.agents.append(Person(self.house, self, self.ages))
 
     def get_infectious_count(self):
+        """Get the number of infectious people in the household."""
         ic = 0
         for i in range(0, self.size):
             if (
@@ -48,9 +48,13 @@ class Household:
         return ic
 
     def is_infected(self):
+        """Check if the household has any infectious people."""
+
         return self.get_infectious_count() > 0
 
     def evolve(self, e, disease):
+        """Evolve the household."""
+
         ic = self.get_infectious_count()
         for i in range(0, self.size):
             if self.agents[i].status == "susceptible":
@@ -58,7 +62,7 @@ class Household:
                     infection_chance = (
                         e.contact_rate_multiplier["house"]
                         * disease.infection_rate
-                        * home_interaction_fraction
+                        * HOME_INTERACTION_FRACTION
                         * ic
                     )
                     # house infection already incorporates airflow, because derived from literature.
