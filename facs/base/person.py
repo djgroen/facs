@@ -147,20 +147,25 @@ class Person:
                         location_to_visit = random.choice(location_to_visit)
 
     def print_needs(self):
+        """Print the needs of a person."""
         print(self.age, needs.get_needs(self))
 
     def get_needs(self):
+        """Get the needs of a person."""
         return needs.get_needs(self)
 
     def get_hospitalisation_chance(self, disease):
+        """Get the hospitalisation chance of a person."""
         age = int(min(self.age, len(disease.hospital) - 1))
         return disease.hospital[age]
 
     def get_mortality_chance(self, disease):
+        """Get the mortality chance of a person."""
         age = int(min(self.age, len(disease.hospital) - 1))
         return disease.mortality[age]
 
     def infect(self, e, severity="exposed", location_type="house"):
+        """Infect a person."""
         # severity can be overridden to infectious when rigidly inserting cases.
         # but by default, it should be exposed.
         self.status = severity
@@ -178,6 +183,7 @@ class Person:
         )
 
     def recover(self, e, location):
+        """Recover a person."""
         if e.disease.immunity_duration > 0:
             self.phase_duration = np.random.gamma(
                 e.disease.immunity_duration / 20.0, 20.0
@@ -190,6 +196,7 @@ class Person:
         )
 
     def progress_condition(self, e, t, disease):
+        """Progress the condition of a person."""
         if self.status_change_time > t:
             return
         if self.status == "exposed":
