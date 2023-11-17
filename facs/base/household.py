@@ -1,11 +1,18 @@
 """Module for the Household class."""
 
+from __future__ import annotations
+
 import random
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 from .person import Person
 from .utils import probability
+
+if TYPE_CHECKING:
+    from .facs import Ecosystem
+    from .disease import Disease
 
 
 HOME_INTERACTION_FRACTION = 0.2
@@ -52,7 +59,7 @@ class Household:
 
         return self.get_infectious_count() > 0
 
-    def evolve(self, e, disease):
+    def evolve(self, eco: Ecosystem, disease: Disease):
         """Evolve the household."""
 
         ic = self.get_infectious_count()
@@ -60,11 +67,11 @@ class Household:
             if self.agents[i].status == "susceptible":
                 if ic > 0:
                     infection_chance = (
-                        e.contact_rate_multiplier["house"]
+                        eco.contact_rate_multiplier["house"]
                         * disease.infection_rate
                         * HOME_INTERACTION_FRACTION
                         * ic
                     )
                     # house infection already incorporates airflow, because derived from literature.
                     if probability(infection_chance):
-                        self.agents[i].infect(e)
+                        self.agents[i].infect(eco)
