@@ -2,6 +2,9 @@
 
 import random
 
+from unittest import mock
+from unittest.mock import Mock
+
 import pytest
 
 from facs.base.household import Household
@@ -29,32 +32,59 @@ def sample_ages():
 
 def test_household_initialization(sample_house, sample_ages):
     """Test the initialization of Household class."""
-    household = Household(sample_house, sample_ages)
+
+    household = Household(sample_house, sample_ages, size=3)
     assert household.house == sample_house
     assert household.ages == sample_ages
     assert len(household.agents) == household.size
 
 
-def test_get_infectious_count(sample_house, sample_ages):
+def test_get_infectious_count_type(sample_house, sample_ages):
     """Test get_infectious_count method in Household class."""
+
     household = Household(sample_house, sample_ages)
-    # You may need to manipulate the agents' statuses here to simulate different scenarios
     assert isinstance(household.get_infectious_count(), int)
 
 
-def test_is_infected(sample_house, sample_ages):
+def test_is_infected_type(sample_house, sample_ages):
     """Test is_infected method in Household class."""
+
     household = Household(sample_house, sample_ages)
     # Manipulate the agents' statuses here to test different scenarios
     assert isinstance(household.is_infected(), bool)
 
 
-def test_evolve(sample_house, sample_ages):
+def test_get_infected_value(sample_house, sample_ages):
     """Test evolve method in Household class."""
-    household = Household(sample_house, sample_ages)
-    # Setup necessary mock or real objects for the 'e' and 'disease' parameters
-    # Test evolve method behavior
-    assert ...  # Assertions based on evolve method's expected behavior
+
+    household = Household(sample_house, sample_ages, size=3)
+
+    assert household.get_infectious_count() == 0
+
+    household.agents[random.randint(0, 2)].status = "infectious"
+    infectious = household.get_infectious_count()
+
+    assert infectious == 1
 
 
-# Additional tests as needed
+@mock.patch("facs.base.household.probability", return_value=1.0)
+def test_evolve(mock_probability, sample_house, sample_ages):
+    """Test evolve method in Household class."""
+
+    eco = Mock()
+    disease = Mock()
+
+    eco.contact_rate_multiplier = {"house": 1.0}
+    eco.disease.incubation_period = 5.0
+    eco.num_infections_today = 0
+
+    disease.infection_rate = 1.0
+
+    household = Household(sample_house, sample_ages, size=3)
+    household.agents[0].status = "infectious"
+    household.evolve(eco, disease)
+
+    assert mock_probability.call_count == 2
+    assert household.agents[0].status == "infectious"
+    assert household.agents[1].status == "exposed"
+    assert household.agents[2].status == "exposed"
