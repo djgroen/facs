@@ -256,7 +256,6 @@ class Person:
                             / self.get_hospitalisation_chance(disease)
                         ):
                             # avg mortality rate (divided by the average hospitalization rate).
-                            # task: read from YML.
                             self.dying = True
                             self.phase_duration = np.random.poisson(
                                 disease.mortality_period
