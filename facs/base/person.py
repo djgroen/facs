@@ -1,7 +1,12 @@
 """Module for the Person class."""
 
+from __future__ import annotations
+
 import random
 import sys
+
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 import numpy as np
 import yaml
@@ -17,46 +22,56 @@ from .utils import (
     log_death,
 )
 
+if TYPE_CHECKING:
+    from .house import House
+    from .household import Household
+    from .location import Location
+
 
 needs = Needs("covid_data/needs.csv", list(building_types_dict.keys()))
-antivax_chance = yaml.safe_load(open("covid_data/vaccinations.yml", encoding="utf-8"))[
-    "antivax_fraction"
-]
+
+with open("covid_data/vaccinations.yml", encoding="utf-8") as f:
+    vac_data = yaml.safe_load(f)
+    antivax_chance = vac_data["antivax_fraction"]
 
 
+@dataclass
 class Person:
     """Class for a person."""
 
-    def __init__(self, location, household, ages):
-        self.location = location  # current location
-        self.location.increment_num_agents()
-        self.home_location = location
-        self.household = household
-        self.mild_version = True
-        self.hospitalised = False
-        self.dying = False
-        self.work_from_home = False
-        self.school_from_home = False
-        self.phase_duration = 0.0  # duration to next phase.
-        self.symptoms_suppressed = (
-            False  # Symptoms suppressed, e.g. due to vaccination, but still infectious.
-        )
+    # pylint: disable=too-many-instance-attributes
 
-        self.antivax = False  # Refuses vaccines if true.
+    location: House
+    household: Household
+    ages: list[int]
+    home_location: Location = field(init=False)
+    mild_version: bool = field(init=False, default=True)
+    hospitalised: bool = field(init=False, default=False)
+    dying: bool = field(init=False, default=False)
+    work_from_home: bool = field(init=False, default=False)
+    school_from_home: bool = field(init=False, default=False)
+    phase_duration: float = field(init=False, default=0.0)
+    symptoms_suppressed: bool = field(init=False, default=False)
+    antivax: bool = field(init=False, default=False)
+    status: str = field(init=False, default="susceptible")
+    # states: susceptible, exposed, infectious, recovered, dead, immune.
+    symptomatic: bool = field(init=False, default=False)
+    status_change_time: float = field(init=False, default=-1)
+    age: int = field(init=False)
+    job: int = field(init=False)
+    groups: dict = field(init=False, default_factory=dict)
+    hospital: Location = field(init=False)
+
+    def __post_init__(self):
+        self.location.increment_num_agents()
+        self.home_location = self.location
+
         if np.random.rand() < antivax_chance:  # 5% are antivaxxers.
             self.antivax = True
 
-        self.status = "susceptible"
-        # states: susceptible, exposed, infectious, recovered, dead, immune.
-        self.symptomatic = False  # may be symptomatic if infectious
-        self.status_change_time = -1
-
-        self.age = np.random.choice(91, p=ages)  # age in years
-        self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[
-            0
-        ]  # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
-        self.groups = {}  # used to assign a grouping to a person.
-        self.hospital = None  # hospital location
+        self.age = np.random.choice(91, p=self.ages)  # age in years
+        self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[0]
+        # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
 
     def assign_group(self, location_type, num_groups):
         """
