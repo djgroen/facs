@@ -39,6 +39,30 @@ def test_household_initialization(sample_house, sample_ages):
     assert len(household.agents) == household.size
 
 
+def test_household_initialization_no_size(sample_house, sample_ages):
+    """Test the initialization of Household class."""
+
+    household = Household(sample_house, sample_ages)
+    assert household.house == sample_house
+    assert household.ages == sample_ages
+    assert len(household.agents) == household.size
+    assert household.size in [1, 2, 3, 4]
+
+
+def test_household_initialization_bad_size(sample_house, sample_ages):
+    """Test the initialization of Household class."""
+
+    with pytest.raises(ValueError):
+        Household(sample_house, sample_ages, size=0)
+
+
+def test_household_initialization_large_size(sample_house, sample_ages):
+    """Test the initialization of Household class."""
+
+    with pytest.warns(UserWarning):
+        Household(sample_house, sample_ages, size=5)
+
+
 def test_get_infectious_count_type(sample_house, sample_ages):
     """Test get_infectious_count method in Household class."""
 
