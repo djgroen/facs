@@ -1,0 +1,17 @@
+pyyaml
+mkdocs
+# mkdocs-autolinks-plugin
+mkdocs-autorefs
+mkdocs-macros-plugin
+mkdocs-markdownextradata-plugin
+mkdocs-material
+mkdocs-material-extensions
+mkdocs-mermaid2-plugin
+mkdocs-minify-plugin
+mkdocs-awesome-pages-plugin
+mkdocs-autolinks-plugin
+mkdocstrings==0.18.1
+mkdocstrings-python-legacy
+# mkdocs-enumerate-headings-plugin
+# mkdocs-print-site-plugin
+# pytkdocs==0.12
