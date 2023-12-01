@@ -10,14 +10,17 @@ build:
     python: "3.8"
 
 # Build documentation with MkDocs
-mkdocs:
- configuration: mkdocs.yml
- fail_on_warning: false
+sphinx:
+  configuration: docs/conf.py
+  
+#mkdocs:
+# configuration: mkdocs.yml
+# fail_on_warning: false
  
 # Optionally set the version of Python and requirements required to build your docs
 python:
   install:
-    - requirements: docs/mkdocs-requirements.txt
+    - requirements: docs/requirements.txt
     - requirements: requirements.txt
     # - method: setuptools
     #   path: .
