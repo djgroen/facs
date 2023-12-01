@@ -31,7 +31,7 @@ def test_disease_initialization(disease: Disease):
         repr(disease) == "Disease(infection_rate=0.05, "
         "incubation_period=5.0, mild_recovery_period=10.0, "
         "recovery_period=15.0, mortality_period=20.0, "
-        "period_to_hospitalisation=25.0, immunity_duration=30.0)"
+        "period_to_hospitalisation=25.0, immunity_duration=30.0, immunity_fraction=0.5)"
     )
 
 
