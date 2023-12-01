@@ -1,11 +1,18 @@
 """Module for the Person class."""
 
+from __future__ import annotations
+
+import random
 import sys
 
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
+
 import numpy as np
+import yaml
 
 from .needs import Needs
-from .location_types import building_types_dict
+from .location_types import building_types_dict, building_types_data
 from .utils import (
     probability,
     get_random_int,
@@ -15,42 +22,56 @@ from .utils import (
     log_death,
 )
 
+if TYPE_CHECKING:
+    from .house import House
+    from .household import Household
+    from .location import Location
+
 
 needs = Needs("covid_data/needs.csv", list(building_types_dict.keys()))
 
+with open("covid_data/vaccinations.yml", encoding="utf-8") as f:
+    vac_data = yaml.safe_load(f)
+    antivax_chance = vac_data["antivax_fraction"]
 
+
+@dataclass
 class Person:
     """Class for a person."""
 
-    def __init__(self, location, household, ages):
-        self.location = location  # current location
+    # pylint: disable=too-many-instance-attributes
+
+    location: House
+    household: Household
+    ages: list[int]
+    home_location: Location = field(init=False)
+    mild_version: bool = field(init=False, default=True)
+    hospitalised: bool = field(init=False, default=False)
+    dying: bool = field(init=False, default=False)
+    work_from_home: bool = field(init=False, default=False)
+    school_from_home: bool = field(init=False, default=False)
+    phase_duration: float = field(init=False, default=0.0)
+    symptoms_suppressed: bool = field(init=False, default=False)
+    antivax: bool = field(init=False, default=False)
+    status: str = field(init=False, default="susceptible")
+    # states: susceptible, exposed, infectious, recovered, dead, immune.
+    symptomatic: bool = field(init=False, default=False)
+    status_change_time: float = field(init=False, default=-1)
+    age: int = field(init=False)
+    job: int = field(init=False)
+    groups: dict = field(init=False, default_factory=dict)
+    hospital: Location = field(init=False)
+
+    def __post_init__(self):
         self.location.increment_num_agents()
-        self.home_location = location
-        self.household = household
-        self.mild_version = True
-        self.hospitalised = False
-        self.dying = False
-        self.work_from_home = False
-        self.school_from_home = False
-        self.phase_duration = 0.0  # duration to next phase.
-        self.symptoms_suppressed = (
-            False  # Symptoms suppressed, e.g. due to vaccination, but still infectious.
-        )
-        self.antivax = False  # Refuses vaccines if true.
-        if np.random.rand() < 0.05:  # 5% are antivaxxers.
+        self.home_location = self.location
+
+        if np.random.rand() < antivax_chance:  # 5% are antivaxxers.
             self.antivax = True
 
-        self.status = "susceptible"
-        # states: susceptible, exposed, infectious, recovered, dead, immune.
-        self.symptomatic = False  # may be symptomatic if infectious
-        self.status_change_time = -1
-
-        self.age = np.random.choice(91, p=ages)  # age in years
-        self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[
-            0
-        ]  # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
-        self.groups = {}  # used to assign a grouping to a person.
-        self.hospital = None  # hospital location
+        self.age = np.random.choice(91, p=self.ages)  # age in years
+        self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[0]
+        # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
 
     def assign_group(self, location_type, num_groups):
         """
@@ -87,7 +108,7 @@ class Person:
                 self.symptoms_suppressed = True
         # print("vac", self.status, self.symptoms_suppressed, self.phase_duration)
 
-    def plan_visits(self, e, deterministic=False):
+    def plan_visits(self, e):
         """
         Plan visits for the day.
         TODO: plan visits to classes not using nearest location (make an override).
@@ -128,23 +149,38 @@ class Person:
                     continue
 
                 e.visit_minutes += minutes
-                location_to_visit.register_visit(e, self, minutes, deterministic)
+
+                if isinstance(location_to_visit, list):
+                    loc_type = location_to_visit[0].loc_type
+
+                    if building_types_data[loc_type]["weighted"]:
+                        sizes = [x.sqm for x in location_to_visit]
+                        prob = [x / sum(sizes) for x in sizes]
+                        location_to_visit = np.random.choice(location_to_visit, p=prob)
+
+                    else:
+                        location_to_visit = random.choice(location_to_visit)
 
     def print_needs(self):
+        """Print the needs of a person."""
         print(self.age, needs.get_needs(self))
 
     def get_needs(self):
+        """Get the needs of a person."""
         return needs.get_needs(self)
 
     def get_hospitalisation_chance(self, disease):
+        """Get the hospitalisation chance of a person."""
         age = int(min(self.age, len(disease.hospital) - 1))
         return disease.hospital[age]
 
     def get_mortality_chance(self, disease):
+        """Get the mortality chance of a person."""
         age = int(min(self.age, len(disease.hospital) - 1))
         return disease.mortality[age]
 
     def infect(self, e, severity="exposed", location_type="house"):
+        """Infect a person."""
         # severity can be overridden to infectious when rigidly inserting cases.
         # but by default, it should be exposed.
         self.status = severity
@@ -162,10 +198,12 @@ class Person:
         )
 
     def recover(self, e, location):
+        """Recover a person."""
         if e.disease.immunity_duration > 0:
             self.phase_duration = np.random.gamma(
                 e.disease.immunity_duration / 20.0, 20.0
-            )  # shape parameter is changed with variable, scale parameter is kept fixed at 20 (assumption).
+            )  # shape parameter is changed with variable,
+            # scale parameter is kept fixed at 20 (assumption).
         self.status = "recovered"
         self.status_change_time = e.time
         e.num_recoveries_today = log_recovery(
@@ -173,6 +211,7 @@ class Person:
         )
 
     def progress_condition(self, e, t, disease):
+        """Progress the condition of a person."""
         if self.status_change_time > t:
             return
         if self.status == "exposed":
@@ -182,10 +221,12 @@ class Person:
                 self.status_change_time = t
                 if (
                     probability(self.get_hospitalisation_chance(disease))
-                    and self.symptoms_suppressed == False
+                    and self.symptoms_suppressed is False
                 ):
                     self.mild_version = False
-                    # self.phase_duration = np.random.poisson(disease.period_to_hospitalisation - disease.incubation_period)
+                    # self.phase_duration =
+                    # np.random.poisson(disease.period_to_hospitalisation
+                    # - disease.incubation_period)
                     self.phase_duration = max(
                         1,
                         np.random.poisson(disease.period_to_hospitalisation)
@@ -193,7 +234,9 @@ class Person:
                     )
                 else:
                     self.mild_version = True
-                    # self.phase_duration = np.random.poisson(disease.mild_recovery_period - disease.incubation_period)
+                    # self.phase_duration =
+                    # np.random.poisson(disease.mild_recovery_period
+                    # - disease.incubation_period)
                     self.phase_duration = max(
                         1,
                         np.random.poisson(disease.mild_recovery_period)
@@ -212,9 +255,10 @@ class Person:
                     if t - self.status_change_time >= self.phase_duration:
                         self.hospitalised = True
                         self.hospital = e.find_hospital()
-                        if self.hospital == None:
+                        if self.hospital is None:
                             print(
-                                "Error: agent is hospitalised, but there are no hospitals in the location graph."
+                                "Error: agent is hospitalised, but there are no "
+                                "hospitals in the location graph."
                             )
                             sys.exit()
                         e.num_hospitalised += 1
@@ -226,12 +270,14 @@ class Person:
                             e.rank,
                         )
 
-                        self.status_change_time = t  # hospitalisation is a status change, because recovery_period is from date of hospitalisation.
+                        self.status_change_time = t
+                        # hospitalisation is a status change,
+                        # because recovery_period is from date of hospitalisation.
                         if probability(
                             self.get_mortality_chance(disease)
                             / self.get_hospitalisation_chance(disease)
                         ):
-                            # avg mortality rate (divided by the average hospitalization rate). TODO: read from YML.
+                            # avg mortality rate (divided by the average hospitalization rate).
                             self.dying = True
                             self.phase_duration = np.random.poisson(
                                 disease.mortality_period
@@ -263,7 +309,7 @@ class Person:
                             self.recover(e, "hospital")
 
         elif e.disease.immunity_duration > 0 and (
-            self.status == "recovered" or self.status == "immune"
+            self.status in ("recovered", "immune")
         ):
             if t - self.status_change_time >= self.phase_duration:
                 # print("susc.", self.status, self.phase_duration)

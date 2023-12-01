@@ -3,18 +3,27 @@ park:
   labels:
   - park
   default_sqm: 20000
+  neighbours: 1
+  fixed: true
+  weighted: false
 
 hospital:
   index: 1
   labels:
   - hospital
   default_sqm: 1600
+  neighbours: 5
+  fixed: false
+  weighted: true
   
 supermarket:
   index: 2
   labels:
   - supermarket
   default_sqm: 400
+  neighbours: 10
+  fixed: false
+  weighted: false
   
 office:
   index: 3
@@ -27,6 +36,9 @@ office:
   - bank
   - service
   default_sqm: 1600
+  neighbours: 50
+  fixed: true
+  weighted: false
   
 school:
   index: 4
@@ -35,6 +47,9 @@ school:
   - university
   - college
   default_sqm: 1600
+  neighbours: 5
+  fixed: true
+  weighted: false
   
 leisure:
   index: 5
@@ -54,6 +69,9 @@ leisure:
   - library
   - community_centre
   default_sqm: 400
+  neighbours: 10
+  fixed: false
+  weighted: false
   
 shopping:
   index: 6
@@ -69,3 +87,6 @@ shopping:
   - shops
   - retail
   default_sqm: 200
+  neighbours: 10
+  fixed: false
+  weighted: false

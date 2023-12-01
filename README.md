@@ -1,6 +1,6 @@
 # FACS: Flu And Coronavirus Simulator
 
-[![Build Status](https://travis-ci.com/djgroen/facs.svg?branch=master)](https://travis-ci.com/djgroen/facs)
+![Code Tests](https://github.com/djgroen/facs/actions/workflows/pytest.yml/badge.svg)
 [![GitHub Issues](https://img.shields.io/github/issues/djgroen/facs.svg)](https://github.com/djgroen/facs/issues)
 [![GitHub last-commit](https://img.shields.io/github/last-commit/djgroen/facs.svg)](https://github.com/djgroen/facs/commits/master)
 

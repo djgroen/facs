@@ -20,8 +20,19 @@ def read_disease_yml(ymlfile: str) -> Disease:
         data["period_to_hospitalisation"],
         data["immunity_duration"],
     )
-    disease.add_hospitalisation_chances(data["hospitalised"])
+    
     disease.add_mortality_chances(data["mortality"])
-    disease.add_mutations(data["mutations"])
+    disease.add_hospitalisation_chances(data["hospitalised"])
+    
+    if "mutations" in data:
+        # Handle mutations
+        disease.add_mutations(data["mutations"])
+    elif "genotypes" in data:
+        # Handle genotypes
+        disease.add_genotypes(data["genotypes"])
+    else:
+        print("No mutations or genotypes provided")
+    
     print(disease)
+    
     return disease

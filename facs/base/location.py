@@ -49,7 +49,7 @@ class Location:
         visit_time = self.avg_visit_time
         if person.status == "dead":
             return
-        elif person.status == "infectious":
+        if person.status == "infectious":
             visit_time *= (
                 e.self_isolation_multiplier
             )  # implementing case isolation (CI)

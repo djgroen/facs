@@ -66,6 +66,7 @@ def read_building_csv(
         xbound = [99999.0, -99999.0]
         ybound = [99999.0, -99999.0]
 
+        print("Reading in buildings...", file=sys.stderr)
         for row in building_reader:
             if row[0][0] == "#":
                 continue
@@ -106,8 +107,8 @@ def read_building_csv(
                     e.addLocation(num_locs, location_type, x, y, sqm)
             row_number += 1
             if row_number % 10000 == 0:
-                print(row_number, "read", file=sys.stderr)
-        print(row_number, "read", file=sys.stderr)
+                print(f"{row_number} buildings read", file=sys.stderr, end="\r")
+        print(f"Total {row_number} buildings read", file=sys.stderr)
         print("bounds:", xbound, ybound, file=sys.stderr)
         office_sqm = (
             workspace * house_csv_count * work_participation_rate

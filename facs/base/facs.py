@@ -337,14 +337,15 @@ class Ecosystem:
             print(",".join(f"{x}" for x in building_types), file=f)
 
         count = 0
+        print("Updating nearest locations...", file=sys.stderr)
         for h in self.houses:
             ni = h.find_nearest_locations(self)
             if dump_and_exit == True:
                 print(",".join(f"{x}" for x in ni), file=f)
             count += 1
             if count % 1000 == 0:
-                print(count, "houses scanned.", file=sys.stderr)
-        print(count, "houses scanned.", file=sys.stderr)
+                print(f"{count} houses scanned.", file=sys.stderr, end="\r")
+        print(f"Total {count} houses scanned.", file=sys.stderr)
 
         print(dump_and_exit)
 
@@ -478,7 +479,7 @@ class Ecosystem:
             h = self.houses[i]
             for hh in h.households:
                 for a in hh.agents:
-                    a.plan_visits(self, reduce_stochasticity)
+                    a.plan_visits(self)
                     a.progress_condition(self, self.time, self.disease)
 
                     if (
