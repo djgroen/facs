@@ -103,8 +103,7 @@ The FACS code is currently under active development. In order to update FACS to 
 Citing FACS
 -----------
 
-Our journal paper on FACS has now been accepted, and can be found here:
-https://bura.brunel.ac.uk/handle/2438/20914
+Mahmood, I., Arabnejad, H., Suleimenova, D., Sassoon, I., Marshan, A., Serrano-Rico, A., Louvieris, P., Anagnostou, A., JE Taylor, S., Bell, D. and Groen, D., 2022. FACS: a geospatial agent-based simulator for analysing COVID-19 spread and public health measures on local regions. Journal of Simulation, 16(4), pp.355-373.
 
 The BibTex code is here::
 
