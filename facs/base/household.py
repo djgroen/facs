@@ -5,7 +5,8 @@ from __future__ import annotations
 import random
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
+from warnings import warn
 
 from .person import Person
 from .utils import probability
@@ -30,29 +31,34 @@ class Household:
 
     house: House
     ages: list[float]
-    size: int = -1
+    size: Optional[int] = None
 
     agents: list[Person] = field(default_factory=list, init=False)
 
     def __post_init__(self):
         """Post init function."""
 
-        if self.size <= -1:
+        if self.size is None:
             self.size = random.choice([1, 2, 3, 4])
+
+        if self.size < 1:
+            raise ValueError("Household size must be at least 1.")
+
+        if self.size > 4:
+            warn("Household size is greater than 4.")
 
         for _ in range(self.size):
             self.agents.append(Person(self.house, self, self.ages))
 
     def get_infectious_count(self):
         """Get the number of infectious people in the household."""
-        ic = 0
-        for i in range(0, self.size):
-            if (
-                self.agents[i].status == "infectious"
-                and self.agents[i].hospitalised is False
-            ):
-                ic += 1
-        return ic
+        return len(
+            list(
+                agent
+                for agent in self.agents
+                if agent.status == "infectious" and not agent.hospitalised
+            )
+        )
 
     def is_infected(self):
         """Check if the household has any infectious people."""
