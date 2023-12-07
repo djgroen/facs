@@ -23,6 +23,7 @@ class Disease:
     mortality_period: float
     period_to_hospitalisation: float
     immunity_duration: float
+    immunity_fraction: float
 
     hospital: list[float] = field(default_factory=list, init=False, repr=False)
     mortality: list[float] = field(default_factory=list, init=False, repr=False)
@@ -53,6 +54,9 @@ class Disease:
 
             if getattr(self, attr) == 0:
                 warnings.warn(f"{attr} is zero", RuntimeWarning)
+
+        if self.immunity_fraction < 0 or self.immunity_fraction > 1:
+            raise ValueError("Immunity fraction must be between 0 and 1")
 
     def array_sanity_check(self, array: list[list[float]], name: str):
         """Sanity check for Hospitalisation and Mortality parameters."""

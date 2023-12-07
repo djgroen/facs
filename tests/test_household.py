@@ -106,6 +106,8 @@ def test_evolve(mock_probability, sample_house, sample_ages):
 
     household = Household(sample_house, sample_ages, size=3)
     household.agents[0].status = "infectious"
+    household.agents[1].status = "susceptible"
+    household.agents[2].status = "susceptible"
     household.evolve(eco, disease)
 
     assert mock_probability.call_count == 2

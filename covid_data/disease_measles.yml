@@ -30,6 +30,7 @@ mild_recovery_period: 14.0      # Mild measles cases may have a shorter recovery
 incubation_period: 10.0         # Measles' incubation period, from virus exposure to symptom onset, is around 10 to 14 days (range: 7 to 21 days).
 period_to_hospitalisation: 7.0  # The time to hospitalisation varies; severe cases may require it within days, while mild cases may not need hospitalisation.  
 immunity_duration: 9125.0       # Natural immunity after measles recovery is usually lifelong, but waning immunity can occur over decades. MMR vaccination provides long-lasting immunity, often for life.
+immunity_fraction: 0.8          # The initial fraction of the population that is immune to measles due to vaccination or prior infection.
 genotypes:
   D4:
     infection_rate: 0.12

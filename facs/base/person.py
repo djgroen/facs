@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 import yaml
 
+from facs.readers.read_disease_yml import read_disease_yml
 from .needs import Needs
 from .location_types import building_types_dict, building_types_data
 from .utils import (
@@ -26,6 +27,7 @@ if TYPE_CHECKING:
     from .house import House
     from .household import Household
     from .location import Location
+    from .disease import Disease
 
 
 needs = Needs("covid_data/needs.csv", list(building_types_dict.keys()))
@@ -33,6 +35,9 @@ needs = Needs("covid_data/needs.csv", list(building_types_dict.keys()))
 with open("covid_data/vaccinations.yml", encoding="utf-8") as f:
     vac_data = yaml.safe_load(f)
     antivax_chance = vac_data["antivax_fraction"]
+
+immune_duration = read_disease_yml("covid_data/disease_covid19.yml").immunity_duration
+immunity_fraction = read_disease_yml("covid_data/disease_covid19.yml").immunity_fraction
 
 
 @dataclass
@@ -68,6 +73,10 @@ class Person:
 
         if np.random.rand() < antivax_chance:  # 5% are antivaxxers.
             self.antivax = True
+
+        if np.random.rand() < 0.5:  # 50% immune initially
+            self.status = "immune"
+            self.phase_duration = np.random.poisson(immune_duration)
 
         self.age = np.random.choice(91, p=self.ages)  # age in years
         self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[0]
@@ -210,7 +219,7 @@ class Person:
             e.time, self.location.location_x, self.location.location_x, location, e.rank
         )
 
-    def progress_condition(self, e, t, disease):
+    def progress_condition(self, e, t, disease: Disease):
         """Progress the condition of a person."""
         if self.status_change_time > t:
             return

@@ -20,6 +20,7 @@ def disease():
         mortality_period=20.0,
         period_to_hospitalisation=25.0,
         immunity_duration=30.0,
+        immunity_fraction=0.5,
     )
 
 
@@ -30,7 +31,7 @@ def test_disease_initialization(disease: Disease):
         repr(disease) == "Disease(infection_rate=0.05, "
         "incubation_period=5.0, mild_recovery_period=10.0, "
         "recovery_period=15.0, mortality_period=20.0, "
-        "period_to_hospitalisation=25.0, immunity_duration=30.0)"
+        "period_to_hospitalisation=25.0, immunity_duration=30.0, immunity_fraction=0.5)"
     )
 
 
@@ -86,6 +87,7 @@ def test_disease_initialisation_warn_zero_parameters():
             mortality_period=20.0,
             period_to_hospitalisation=25.0,
             immunity_duration=30.0,
+            immunity_fraction=0.5,
         )
 
 
@@ -101,6 +103,7 @@ def test_disease_initialisation_fail_negative_parameters():
             mortality_period=20.0,
             period_to_hospitalisation=25.0,
             immunity_duration=30.0,
+            immunity_fraction=0.5,
         )
 
 
@@ -116,6 +119,23 @@ def test_disease_initialisation_fail_string_parameters():
             mortality_period=20.0,
             period_to_hospitalisation=25.0,
             immunity_duration=30.0,
+            immunity_fraction=0.5,
+        )
+
+
+def test_disease_initialisation_invalid_immunity_fraction():
+    """Test Disease initialization with string parameters."""
+
+    with pytest.raises(TypeError):
+        Disease(
+            infection_rate="0.05",
+            incubation_period=5.0,
+            mild_recovery_period=10.0,
+            recovery_period=15.0,
+            mortality_period=20.0,
+            period_to_hospitalisation=25.0,
+            immunity_duration=30.0,
+            immunity_fraction=1.5,
         )
 
 
@@ -131,6 +151,7 @@ def test_disease_initialisation_fail_list_parameters():
             mortality_period=20.0,
             period_to_hospitalisation=25.0,
             immunity_duration=30.0,
+            immunity_fraction=0.5,
         )
 
 
