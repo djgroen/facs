@@ -64,7 +64,7 @@ class Person:
     status_change_time: float = field(init=False, default=-1)
     age: int = field(init=False)
     job: int = field(init=False)
-    groups: dict = field(init=False, default_factory=dict)
+    # groups: dict = field(init=False, default_factory=dict)
     hospital: Location = field(init=False)
 
     def __post_init__(self):
@@ -81,11 +81,6 @@ class Person:
         self.age = np.random.choice(91, p=self.ages)  # age in years
         self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[0]
         # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
-
-    def location_has_grouping(self, lid):
-        """Check if a location has a particular grouping."""
-
-        return lid in list(self.groups)
 
     def vaccinate(self, time, vac_no_symptoms, vac_no_transmission, vac_duration):
         """Vaccinate a person."""
@@ -138,9 +133,6 @@ class Person:
                         location_to_visit = nearest_locs[
                             building_types_dict["hospital"]
                         ]
-
-                elif self.location_has_grouping(k):
-                    location_to_visit = e.get_location_by_group(k, self.groups[k])
 
                 elif nearest_locs[k]:
                     location_to_visit = nearest_locs[k]
