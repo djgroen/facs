@@ -64,7 +64,6 @@ class Person:
     status_change_time: float = field(init=False, default=-1)
     age: int = field(init=False)
     job: int = field(init=False)
-    # groups: dict = field(init=False, default_factory=dict)
     hospital: Location = field(init=False)
 
     def __post_init__(self):
@@ -82,7 +81,13 @@ class Person:
         self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[0]
         # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
 
-    def vaccinate(self, time, vac_no_symptoms, vac_no_transmission, vac_duration):
+    def vaccinate(
+        self,
+        time: float,
+        vac_no_symptoms: float,
+        vac_no_transmission: float,
+        vac_duration: float,
+    ):
         """Vaccinate a person."""
 
         self.status_change_time = time  # necessary if vaccines give temporary immunity.
