@@ -16,7 +16,6 @@ from .needs import Needs
 from .location_types import building_types_dict, building_types_data
 from .utils import (
     probability,
-    get_random_int,
     log_infection,
     log_hospitalisation,
     log_recovery,
@@ -28,6 +27,7 @@ if TYPE_CHECKING:
     from .household import Household
     from .location import Location
     from .disease import Disease
+    from .facs import Ecosystem
 
 
 needs = Needs("covid_data/needs.csv", list(building_types_dict.keys()))
@@ -81,16 +81,6 @@ class Person:
         self.age = np.random.choice(91, p=self.ages)  # age in years
         self.job = np.random.choice(4, 1, p=[0.865, 0.015, 0.08, 0.04])[0]
         # 0=default, 1=teacher (1.5%), 2=shop worker (8%), 3=health worker (4%)
-
-    def assign_group(self, location_type, num_groups):
-        """
-        Used to assign a grouping to a person.
-        For example, a campus may have 30 classes (num_groups = 30). Then you would use:
-        assign_group("school", 30)
-        The location type should match the corresponding personal needs category
-        (e.g., school or supermarket).
-        """
-        self.groups[building_types_dict[location_type]] = get_random_int(num_groups)
 
     def location_has_grouping(self, lid):
         """Check if a location has a particular grouping."""
@@ -188,21 +178,21 @@ class Person:
         age = int(min(self.age, len(disease.hospital) - 1))
         return disease.mortality[age]
 
-    def infect(self, e, severity="exposed", location_type="house"):
+    def infect(self, eco: Ecosystem, severity="exposed", location_type="house"):
         """Infect a person."""
         # severity can be overridden to infectious when rigidly inserting cases.
         # but by default, it should be exposed.
         self.status = severity
-        self.status_change_time = e.time
+        self.status_change_time = eco.time
         self.mild_version = True
         self.hospitalised = False
-        self.phase_duration = max(1, np.random.poisson(e.disease.incubation_period))
-        e.num_infections_today += log_infection(
-            e.time,
+        self.phase_duration = max(1, np.random.poisson(eco.disease.incubation_period))
+        eco.num_infections_today += log_infection(
+            eco.time,
             self.location.location_x,
             self.location.location_y,
             location_type,
-            e.rank,
+            eco.rank,
             self.phase_duration,
         )
 

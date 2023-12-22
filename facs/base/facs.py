@@ -174,24 +174,6 @@ class Ecosystem:
         # print("Seasonal effect month: ",month,", multiplier: ",multipliers[month])
         return multipliers[month - 1]
 
-    def make_group(self, loc_type, max_groups):
-        """
-        Creates a grouping for a location, and assigns agents randomly to groups.
-        Agents need to have been read in *before* running this function.
-        """
-        print("make group:", self.locations.keys(), loc_type)
-        num_locs = len(self.locations[loc_type])
-        self.loc_groups[loc_type] = {}
-        # Assign groups to specific locations of that type in round robin fashion.
-        for i in range(0, max_groups):
-            self.loc_groups[loc_type][i] = self.locations[loc_type][i % num_locs]
-
-        # randomly assign agents to groups
-        for k, e in enumerate(self.houses):
-            for hh in e.households:
-                for a in hh.agents:
-                    a.assign_group(loc_type, max_groups)
-
     def get_location_by_group(self, loc_type_id, group_num):
         loc_type = building_types[loc_type_id]
         return self.loc_groups[loc_type][group_num]
