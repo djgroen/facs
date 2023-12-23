@@ -49,7 +49,7 @@ class Person:
     location: House
     household: Household
     ages: list[int]
-    home_location: Location = field(init=False)
+    home_location: House = field(init=False)
     mild_version: bool = field(init=False, default=True)
     hospitalised: bool = field(init=False, default=False)
     dying: bool = field(init=False, default=False)
