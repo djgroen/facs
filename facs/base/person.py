@@ -107,55 +107,55 @@ class Person:
                 self.symptoms_suppressed = True
         # print("vac", self.status, self.symptoms_suppressed, self.phase_duration)
 
-    def plan_visits(self, e):
-        """
-        Plan visits for the day.
-        TODO: plan visits to classes not using nearest location (make an override).
-        """
+    # def plan_visits(self, e):
+    #     """
+    #     Plan visits for the day.
+    #     TODO: plan visits to classes not using nearest location (make an override).
+    #     """
 
-        if self.status in [
-            "susceptible",
-            "exposed",
-            "infectious",
-        ]:  # recovered people are assumed to be immune.
-            personal_needs = needs.get_needs(self)
-            for k, minutes in enumerate(personal_needs):
-                nearest_locs = self.home_location.nearest_locations
+    #     if self.status in [
+    #         "susceptible",
+    #         "exposed",
+    #         "infectious",
+    #     ]:  # recovered people are assumed to be immune.
+    #         personal_needs = needs.get_needs(self)
+    #         for k, minutes in enumerate(personal_needs):
+    #             nearest_locs = self.home_location.nearest_locations
 
-                if minutes < 1:
-                    continue
-                elif k == building_types_dict["hospital"] and self.hospitalised:
-                    location_to_visit = self.hospital
+    #             if minutes < 1:
+    #                 continue
+    #             elif k == building_types_dict["hospital"] and self.hospitalised:
+    #                 location_to_visit = self.hospital
 
-                elif k == building_types_dict["office"] and self.job > 0:
-                    if self.job == 1:  # teacher
-                        location_to_visit = nearest_locs[building_types_dict["school"]]
-                    if self.job == 2:  # shop employee
-                        location_to_visit = nearest_locs[
-                            building_types_dict["shopping"]
-                        ]
-                    if self.job == 3:  # health worker
-                        location_to_visit = nearest_locs[
-                            building_types_dict["hospital"]
-                        ]
+    #             elif k == building_types_dict["office"] and self.job > 0:
+    #                 if self.job == 1:  # teacher
+    #                     location_to_visit = nearest_locs[building_types_dict["school"]]
+    #                 if self.job == 2:  # shop employee
+    #                     location_to_visit = nearest_locs[
+    #                         building_types_dict["shopping"]
+    #                     ]
+    #                 if self.job == 3:  # health worker
+    #                     location_to_visit = nearest_locs[
+    #                         building_types_dict["hospital"]
+    #                     ]
 
-                elif nearest_locs[k]:
-                    location_to_visit = nearest_locs[k]
-                else:  # no known nearby locations.
-                    continue
+    #             elif nearest_locs[k]:
+    #                 location_to_visit = nearest_locs[k]
+    #             else:  # no known nearby locations.
+    #                 continue
 
-                e.visit_minutes += minutes
+    #             e.visit_minutes += minutes
 
-                if isinstance(location_to_visit, list):
-                    loc_type = location_to_visit[0].loc_type
+    #             if isinstance(location_to_visit, list):
+    #                 loc_type = location_to_visit[0].loc_type
 
-                    if building_types_data[loc_type]["weighted"]:
-                        sizes = [x.sqm for x in location_to_visit]
-                        prob = [x / sum(sizes) for x in sizes]
-                        location_to_visit = np.random.choice(location_to_visit, p=prob)
+    #                 if building_types_data[loc_type]["weighted"]:
+    #                     sizes = [x.sqm for x in location_to_visit]
+    #                     prob = [x / sum(sizes) for x in sizes]
+    #                     location_to_visit = np.random.choice(location_to_visit, p=prob)
 
-                    else:
-                        location_to_visit = random.choice(location_to_visit)
+    #                 else:
+    #                     location_to_visit = random.choice(location_to_visit)
 
     def print_needs(self):
         """Print the needs of a person."""
