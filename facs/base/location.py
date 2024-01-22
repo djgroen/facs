@@ -43,7 +43,7 @@ class Location:
         self.visits = []
         e.loc_inf_minutes[self.loc_inf_minutes_id] = 0.0
 
-    def register_visit(self, e, person, need, deterministic):
+    def register_visit(self, e, person, need, deterministic=False):
         """Register a visit to the location."""
 
         visit_time = self.avg_visit_time
