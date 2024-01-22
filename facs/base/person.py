@@ -170,6 +170,10 @@ class Person:
                     else:
                         location_to_visit = random.choice(location_to_visit)
 
+                # Register the actual visit to the location.
+                location_to_visit.register_visit(e, self, minutes)
+                
+
     def print_needs(self):
         """Print the needs of a person."""
         print(self.age, needs.get_needs(self))
