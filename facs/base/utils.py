@@ -18,7 +18,7 @@ def probability(prob):
     """Return True with probability prob."""
 
     if prob < 0 or prob > 1:
-        raise ValueError("prob must be between 0 and 1")
+        raise ValueError(f"Probability (currently {prob}) must be between 0 and 1.")
 
     return np.random.random() < prob
 

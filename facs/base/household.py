@@ -45,7 +45,7 @@ class Household:
             raise ValueError("Household size must be at least 1.")
 
         if self.size > 4:
-            warn("Household size is greater than 4.")
+            warn(f"Household size {self.size} is greater than 4.")
 
         for _ in range(self.size):
             self.agents.append(Person(self.house, self, self.ages))

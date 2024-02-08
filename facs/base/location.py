@@ -75,6 +75,9 @@ class Location:
         else:
             return
 
+        if visit_probability > 1.0:
+            visit_probability = 1.0
+
         if deterministic:
             self.visit_probability_counter += min(visit_probability, 1)
             if self.visit_probability_counter > 1.0:
