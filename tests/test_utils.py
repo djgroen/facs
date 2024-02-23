@@ -24,12 +24,12 @@ def test_probability_with_mock(mock_random):
     assert utils.probability(0.4) is False
 
 
-def test_probability_raises_error():
+def test_probability_raises_warning():
     """Test the probability function raises an error."""
 
-    with pytest.raises(ValueError):
+    with pytest.warns(UserWarning):
         utils.probability(-0.1)
-    with pytest.raises(ValueError):
+    with pytest.warns(UserWarning):
         utils.probability(1.1)
 
 
