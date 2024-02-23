@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 
 from typing import TYPE_CHECKING
+from warnings import warn
 
 import numpy as np
 
@@ -18,7 +19,7 @@ def probability(prob):
     """Return True with probability prob."""
 
     if prob < 0 or prob > 1:
-        raise ValueError(f"Probability (currently {prob}) must be between 0 and 1.")
+        warn(f"Probability (currently {prob}) must be between 0 and 1.")
 
     return np.random.random() < prob
 
