@@ -275,7 +275,7 @@ class Person:
                             )
                             sys.exit()
                         e.num_hospitalised += 1
-                        e.num_hospitalisations_today = log_hospitalisation(
+                        e.num_hospitalisations_today += log_hospitalisation(
                             t,
                             self.location.location_x,
                             self.location.location_y,
