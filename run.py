@@ -15,8 +15,6 @@ from facs.readers import (
     read_age_csv,
     read_building_csv,
     read_disease_yml,
-    read_measures_yml,
-    read_vaccinations_yml
 )
 
 
@@ -299,7 +297,7 @@ def main():
             eco.debug_mode = False
             eco.print_status(outfile, silent=True)
 
-    for time in range(0, end_time):
+    for _ in range(0, end_time):
         measures.enact_measures_and_evolutions(
             eco, eco.time, measures_yml, vaccinations_yml, disease_yml
         )
