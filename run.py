@@ -2,9 +2,12 @@
 
 import argparse
 import csv
+import random
 import sys
 from datetime import datetime, timedelta
 from os import makedirs, path
+
+import numpy as np
 
 from facs.base import facs
 from facs.base.measures import Measures
@@ -119,6 +122,15 @@ def parse_arguments() -> dict:
         default="20",
         help="Workspace per person in m2.",
     )
+
+    parser.add_argument(
+        "--seed",
+        action="store",
+        type=int,
+        default=None,
+        help="Seed for random number generator.",
+    )
+
     return parser.parse_args()
 
 
@@ -165,6 +177,11 @@ def main():
     args = parse_arguments()
 
     print(args)
+
+    if args.seed is not None:
+        np.random.seed(args.seed)
+        random.seed(args.seed)
+        print(f"Random seed set to {args.seed}")
 
     house_ratio = get_house_ratio(args.quicktest)
     location = args.location
