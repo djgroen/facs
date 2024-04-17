@@ -10,6 +10,7 @@ infection_rate: 0.07
 # 13.8% secondary attack rate in house holds: 1.138^(1/8.5)= 1.015325 -> 1.5325% infections chance per day.
 # We assume that 20% of the time is spent within 2 meters in the household -> 1.5325% / 20% = 7.6625% or 0.076625
 # Wei Li et al., clinical Infectious Diseases 2020. Source paper: https://doi.org/10.1093/cid/ciaa450
+# NOTE: Here the 8.5 days value indicates the generational period of COVID, i.e. the average time point (after time of infection) where an infected person would be infecting someone else.
 
 # Verity et al., Lancet, 2020. Median age, (probability)
 mortality: 
