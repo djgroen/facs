@@ -1,32 +1,38 @@
-import matplotlib
-import pandas as pd
+"""Validation script for the FACS model."""
 
-matplotlib.use("Pdf")
 import sys
 import warnings
 from datetime import datetime
 
-import matplotlib.pyplot as plt
-import numpy as np
+import matplotlib
+import pandas as pd
+
+matplotlib.use("Pdf")
 
 warnings.filterwarnings("ignore")
 
 
 def load_output_data(out_dir):
-    facs_output = pd.read_csv("%s/out.csv" % (out_dir), sep=",", encoding="latin1")
+    """Load the output data from the FACS model."""
+
+    filename = f"{out_dir}/out.csv"
+    facs_output = pd.read_csv(filename, sep=",", encoding="latin1")
 
     return facs_output
 
 
 def load_admissions_data(out_dir):
-    val_adm_output = pd.read_csv(
-        "%s/covid_data/admissions.csv" % (out_dir), sep=",", encoding="latin1"
-    )
+    """Load the admissions data from the validation data."""
+
+    filename = f"{out_dir}/covid_data/admissions.csv"
+    val_adm_output = pd.read_csv(filename, sep=",", encoding="latin1")
 
     return val_adm_output
 
 
-if __name__ == "__main__":
+def validate():
+    """Validate the FACS model."""
+
     d_sim = load_output_data(sys.argv[1])
     d_adm = load_admissions_data(sys.argv[1])
     start_date = datetime.strptime("1/3/2020", "%d/%m/%Y")
@@ -37,14 +43,9 @@ if __name__ == "__main__":
 
     d_adm.sort_values(by=["days"], inplace=True)
 
-    # print(d_adm['days'].max(),d_adm['days'].min())
-
-    # print(d_sim["cum num hospitalisations today"],d_adm["days"],d_adm["admissions"], d_adm["admissions"].cumsum())
-
-    # dict building
     validation_table = {"days": [], "admissions": [], "admissions sim": []}
 
-    for index, row in d_adm.iterrows():
+    for _, row in d_adm.iterrows():
         day = int(row["days"])
         adm = int(row["admissions"])
         adm_sim = d_sim.loc[d_sim["#time"] == day]["num hospitalisations today"].values[
@@ -64,16 +65,13 @@ if __name__ == "__main__":
         d_val["cum admissions"] - d_val["cum admissions sim"]
     ).abs()
 
-    print("input directory: {}".format(sys.argv[1]))
+    print(f"input directory: {sys.argv[1]}")
     print("totals:")
-    print("  cumulative admissions data: {}".format(d_val["cum admissions"].iloc[-1]))
-    print(
-        "  cumulative admissions sim: {}".format(d_val["cum admissions sim"].iloc[-1])
-    )
-    print(
-        "  MAPE: {}".format(
-            d_val["admissions error"].mean() / d_val["cum admissions"].mean()
-        )
-    )
+    print(f"  cumulative admissions data: {d_val['cum admissions'].iloc[-1]}")
+    print(f"  cumulative admissions sim: {d_val['cum admissions sim'].iloc[-1]}")
+    mape = d_val["admissions error"].mean() / d_val["cum admissions"].mean()
+    print(f"  MAPE: {mape:.2f}")
 
-    # print(d_val['admissions error'].mean(), d_val['cum admissions'].mean(), d_val['admissions error'].mean() / d_val['cum admissions'].mean())
+
+if __name__ == "__main__":
+    validate()
