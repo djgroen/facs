@@ -4,58 +4,164 @@
 [![GitHub Issues](https://img.shields.io/github/issues/djgroen/facs.svg)](https://github.com/djgroen/facs/issues)
 [![GitHub last-commit](https://img.shields.io/github/last-commit/djgroen/facs.svg)](https://github.com/djgroen/facs/commits/master)
 
-
 Full documentation can be found at: http://facs.readthedocs.io
 
-## How to run the code
-To run a simple simulation of a basic test dataset, type:
-`python3 run.py --location=test --output_dir=.`
+## What is FACS?
 
-To run it in parallel, type (for four core runs):
-`mpirun -np 4 python3 run.py --location=test --output_dir=.`
+FACS is an agent-based modeling code that simulates the spread of flu and coronaviruses in local regions. So far, it has been used to model the spread of COVID-19 across various regions in Europe, including the United Kingdom—specifically Greater London, South-East, and North-West England; Lithuania’s region of Klaipėda; Romania’s city of Călărași; and Türkiye’s cities of Ankara and Istanbul.
 
-To do a run of custom length (with -t flag), and with a generically named out.csv output file, type:
-`mpirun -np 1 python3 run.py -t=10 -g --location=test --output_dir=.`
+## How FACS Works?
 
-To run a simulation of the Borough of Brent, type:
-`python3 run.py --location=brent --output_dir=.`
+FACS operates by mapping agents to their natural geographical locations, simulating realistic movement and interactions. Each agent is assigned specific attributes, which influence their behavior, such as travel patterns and adherence to health guidelines set by authorities. Agents move between locations based on their needs, with some following health rules while others may not.
 
-To run a simulation of Brunel University London, type:
-`python3 run_campus.py --location=brunel --output_dir=.`
+When agents gather in the same location, infections can spread through proximity to infected agents, allowing them to carry and transmit the infection to other locations as they travel. FACS progresses on a daily basis, updating agent locations and health states to simulate the spread of infection over time.
 
-Outputs are written as CSV files in the output\_dir. E.g. for the test run you will get:
-covid\_out\_infections.csv
-test-extend-lockdown-62.csv
+## FACS Supported Arguments
 
-There is a hardcoded lockdown in run.py which is representative for the UK. This can be disabled by selecting the transition scenario "no-measures".
+The current supported arguments for running FACS are listed below. These allow users to customize simulation parameters such as location, starting infections, disease configuration, and more:
 
-We also included a simple plotting script. This can be called e.g. as follows:
-`python3 PlotSEIR.py test-extend-lockdown-62.csv test`
+- **--location**: Sets the location for the simulation (e.g., --location=test).
+- **--measures_yml**: Specifies the YAML file containing intervention measures (e.g., --measures_yml=measures_uk).
+- **--disease_yml**: Specifies the YAML configuration file for disease parameters (e.g., --disease_yml=disease_covid19).
+- **--vaccinations_yml**: Specifies the YAML configuration file for vaccination parameters (e.g., - **--vaccinations_yml=vaccinations).
+- **--output_dir**: Defines the directory where output files are saved (default: .).
+- **--data_dir**: Directory for data files relevant to the simulation, such as COVID-related data (e.g., --data_dir=covid_data).
+- **--starting_infections**: Initial number of infections at the start of the simulation (e.g., --starting_infections=1).
+- **--household_size**: Average household size for the simulated population (e.g., --household_size=2.6).
+- **--start_date**: Start date of the simulation in dd/mm/yyyy format (e.g., --start_date=1/3/2020).
+- **--quicktest**: Enables a quick test mode if set to True, for faster run times with minimal processing (default: False).
+- **--generic_outfile**: If enabled (True), produces a generic output file without location-specific data (default: False).
+- **--dbg**: Enables debugging mode for additional output and information (default: False).
+- **--simulation_period**: Duration of the simulation in days. Use -1 for an indefinite period (e.g., --simulation_period=30).
+- **--office_size**: Specifies the maximum office size, impacting workplace infections (e.g., --office_size=2500).
+- **--workspace**: Sets the average workspace area in square feet, which affects infection spread in office settings (e.g., --workspace=20).
+- **--seed**: Sets a specific seed for random number generation, ensuring reproducible results (e.g., --seed=42).
 
-## Advanced usage
+### Example usage
 
-### Running with a specific data directory
-Flacs can be run with a different input data directory as follows:
-`python3 run.py --location=brent --output_dir=. --data_dir=/home/derek/covid19-postprocess/facs_input_private`
+```bash
+python run.py --location=test --measures_yml=measures_uk --disease_yml=disease_covid19 --vaccinations_yml=vaccinations --output_dir=. --data_dir=covid_data --starting_infections=1 --start_date=1/3/2020 --simulation_period=-1 --household_size=2.6 --office_size=2500 --workspace=20 
+```
 
-### Performing quick tests
-Quick tests can be triggered with the '-q' flag. This sets the house ratio to 100 (default is 2), which means that households will be less well distributed.
-However, as a number of calculations are performed on the house level (not the household level), this setting speeds up the code by up to an order of magnitude.
-`python3 run.py -q --location=brent --output_dir=.`
+This example sets up a simulation with 1 initial infections, running indefinitely, with data sourced from covid_data and using the disease_covid19.yml configuration file.
 
-## Submitting jobs to the GridPP via HTCondor
-Facs directory contains four additional files: 
-`script_grid.sh (bash script for job submission automation)`
-`run_grid.py (python script equivalent to run.py for job submission)`
-`joblist_grid.txt (list of jobs with facs arguments for job queuing)`
-`job_grid.submit (contains the configuration for facs simulations)`
+## Parallel Execution with MPI
 
-After initiating the python environment, the pyinstaller package can be used to create an executable from 'run_grid.py'. 
-`pyinstaller run_grid.py --onefile`
+FACS is parallelized and can take advantage of multiple processors to speed up simulations, especially useful for large-scale scenarios. To run FACS in parallel, use the mpirun command, which allows distribution of tasks across available processors.
 
-There are currently 18 locations (jobs) in the 'joblist_grid.txt' file. (optional) 
-The jobs are submitted with the command: 
-`condor_submit job_grid.submit`
+**Requirements**: Ensure that MPI (Message Passing Interface) is installed on your system. Most systems use OpenMPI or MPICH for MPI support. Full description is provided in FACS [Read-the-Docs](http://facs.readthedocs.io).
 
-The results are transferred back to the local machine and placed in 'output_dir'.
+### Example Usage: To run FACS on 4 processors, use the following command
 
+```bash
+mpirun -np 4 python run.py --location=test --measures_yml=measures_uk --disease_yml=disease_covid19 --vaccinations_yml=vaccinations --output_dir=. --data_dir=covid_data --starting_infections=1 --start_date=1/3/2020 --simulation_period=1
+```
+
+In this example, -np 4 specifies that FACS should run across 4 processors. Adjust the number of processors as needed, based on the resources available on your system.
+
+### Benefits of Parallelization
+
+Running FACS with MPI enables efficient handling of complex simulations, reducing execution time and allowing for scalability across different regions or larger populations. This parallelization capability is especially useful for simulations with high computational demands, such as modeling extensive population movement or disease spread across multiple locations.
+
+## Available Locations and Customization
+
+FACS includes over 20 pre-configured locations within the covid_data directory such as `harrow`, `hillingdon` and `brent`, allowing users to quickly set up simulations for various regions. If you’d like to experiment with these provided locations, simply specify the desired location using the --location argument (e.g., --location=location_name).
+
+For users who wish to create custom locations, FACS supports user-defined locations. To create a new location, follow the guidelines provided in the documentation. This flexibility enables users to adapt FACS to specific geographic areas or custom scenarios beyond the predefined options.
+
+## FACS Output
+
+FACS generates two types of output files, providing detailed insights into the simulation:
+
+Individual Event Files: These files contain information on individual infections, hospitalizations, recoveries, and deaths. Each file is generated in CSV format and named according to the event and processor rank:
+
+- covid_out_infections_rank.csv
+- covid_out_hospitalisations_rank.csv
+- covid_out_recoveries_rank.csv
+- covid_out_deaths_rank.csv
+
+Each of these files includes time-stamped data on individual events, allowing for granular analysis of how the disease progresses and affects the population over time.
+
+### Comprehensive Location Output
+
+FACS also produces a full summary output for the entire simulation, saved in the format location-<measures>.csv. This file consolidates data across all individual events and provides an overview of the outcomes for the specified location and intervention measures.
+
+These output files are invaluable for analyzing simulation results, tracking disease spread, and assessing the impact of different intervention strategies.
+
+## Post-Processing and Analysis
+
+After generating output files, FACS provides several scripts for post-processing and analyzing simulation results. These scripts enable users to visualize trends in infections, hospitalizations, recoveries, and deaths.
+
+For instance, the PlotSEIR.py script creates an interactive SEIR (Susceptible-Exposed-Infectious-Recovered) plot, allowing users to analyze changes in disease states over time.
+
+### Usage Example
+
+```bash
+python PlotSEIR.py test-measures_uk.csv test
+```
+
+This command generates an HTML file (test.html) that visualizes the data from test-measures_uk.csv.
+
+### PlotSEIR.py Code Explanation
+
+The PlotSEIR.py script reads a specified CSV file and generates a plot with the following elements:
+
+- **New Cases**: Calculated as the daily change in the exposed and infectious populations.
+- **Susceptible**: The number of individuals susceptible to infection.
+- **Exposed**: The number of individuals exposed to the virus.
+- **Infectious**: The number of infectious individuals actively spreading the virus.
+- **Recovered**: The cumulative number of recovered individuals.
+- **Dead**: The cumulative number of deaths.
+  
+Each of these elements is plotted over time using the plotly library, creating a detailed SEIR visualization.
+
+#### Example Code (PlotSEIR.py)
+
+```python
+import sys
+import pandas as pd
+import plotly as py
+import plotly.graph_objects as go
+
+# Load data from the specified CSV file
+df = pd.read_csv(sys.argv[1], delimiter=",")
+
+# Calculate daily new cases
+df["new cases"] = df["exposed"].diff(1) + df["infectious"].diff(1)
+
+# Initialize the plot figure
+fig = go.Figure()
+
+# Add traces for each SEIR component
+fig.add_trace(go.Scatter(x=df["#time"], y=df["susceptible"], mode="lines+markers", name="susceptible", line=dict(color="orange")))
+fig.add_trace(go.Scatter(x=df["#time"], y=df["exposed"], mode="lines+markers", name="exposed", line=dict(color="purple")))
+fig.add_trace(go.Bar(x=df["#time"], y=df["new cases"], name="change in # affected"))
+fig.add_trace(go.Scatter(x=df["#time"], y=df["infectious"], mode="lines+markers", name="infectious", line=dict(color="red")))
+fig.add_trace(go.Scatter(x=df["#time"], y=df["recovered"], mode="lines+markers", name="recovered", line=dict(color="green")))
+fig.add_trace(go.Scatter(x=df["#time"], y=df["dead"], mode="lines+markers", name="dead", line=dict(color="black")))
+
+# Save plot as an HTML file
+py.offline.plot(fig, filename=f"{sys.argv[2]}.html")
+```
+
+The output of this script is an HTML file that opens in a web browser, showing an interactive plot with line and bar charts for each SEIR component, enabling users to explore infection trends and other key metrics over time.
+
+This post-processing tool and similar scripts make FACS data analysis more accessible, offering insights into the spread and control of infectious diseases.
+
+## Quick Tests
+
+You can run quick tests by using the -q flag. This increases the house ratio to 100 (default is 2), which reduces distribution accuracy but speeds up the simulation significantly.
+
+### Example command
+
+```bash
+python run.py -q --location=brent --output_dir=.
+```
+
+The results are saved to the specified output_dir on your local machine.
+
+## Running Large-Scale Simulations
+
+For users interested in running large-scale simulations locally or on remote systems, we recommend exploring [FabSim3](https://github.com/djgroen/FabSim3) and [FabCovid19](https://github.com/djgroen/FabCovid19). These tools extend FACS’s capabilities, making it easier to manage complex simulations across multiple machines, automate workflows, and efficiently handle high-performance computing environments.
+
+**Note**: If you experience any issues, please raise a GitHub issue so we can assist you.
