@@ -43,6 +43,8 @@ office:
 school:
   index: 4
   labels:
+  - kindergarten
+  - nursery
   - school
   - university
   - college

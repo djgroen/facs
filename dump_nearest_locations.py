@@ -27,6 +27,7 @@ if __name__ == "__main__":
         default="0.625",
         help="Multiplier set for Case Isolation which represents the ratio of out-of-house interactions for Covid patients relative to the default interaction rate. Default value comes from Imp Report 9.",
     )
+    parser.add_argument("--disease_yml", action="store", default="disease_covid19")
     parser.add_argument("--output_dir", action="store", default=".")
     parser.add_argument("--data_dir", action="store", default="covid_data")
     parser.add_argument(
@@ -38,6 +39,7 @@ if __name__ == "__main__":
     house_ratio = 2
     location = args.location
     ci_multiplier = float(args.ci_multiplier)
+    disease_yml = args.disease_yml
     output_dir = args.output_dir
     data_dir = args.data_dir
 
@@ -54,12 +56,12 @@ if __name__ == "__main__":
     e = facs.Ecosystem(end_time)
 
     e.ci_multiplier = ci_multiplier
-    e.ages = read_age_csv.read_age_csv("{}/age-distr.csv".format(data_dir), location)
+    e.ages = read_age_csv.read_age_csv("{}/age_distribution.csv".format(data_dir), location)
 
     print("age distribution in system:", e.ages, file=sys.stderr)
 
     e.disease = read_disease_yml.read_disease_yml(
-        "{}/disease_covid19.yml".format(data_dir)
+        "{}/{}.yml".format(data_dir, disease_yml)
     )
 
     building_file = "{}/{}_buildings.csv".format(data_dir, location)

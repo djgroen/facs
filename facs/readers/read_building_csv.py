@@ -58,6 +58,7 @@ def read_building_csv(
         sys.exit()
     with open(csvfile) as csvfile:
         building_reader = csv.reader(csvfile)
+        next(building_reader)
         row_number = 0
         num_locs = 0
         num_houses = 0
@@ -115,15 +116,10 @@ def read_building_csv(
         )  # 10 sqm per worker, 2.6 person per household, 50% in workforce
         office_sqm_red = office_sqm
 
-        f = open("offices.csv", "w")
+        f = open("covid_data/offices.csv", "w")
         while office_sqm_red > 0:
             num_locs += 1
             e.addRandomOffice(f, num_locs, xbound, ybound, office_size)
-            # x = random.uniform(xbound[0],xbound[1])
-            # y = random.uniform(ybound[0],ybound[1])
-            # e.addLocation(num_locs, "office", x, y, office_size)
-            # f.write("office,{},{},{}\n".format(x, y, office_size))
-
             office_sqm_red -= office_size
 
     if e.rank == 0:

@@ -42,5 +42,5 @@ if __name__ == "__main__":
     print(args)
 
     population_generator(
-        args.location, "covid_data/population_generator.yml", "covid_data/age-distr.csv"
+        args.location, "covid_data/population_generator.yml", "covid_data/age_distribution.csv"
     )

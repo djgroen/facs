@@ -55,7 +55,7 @@ If you only have validation data for a single hospital, then you could choose to
 
 3. Acquiring demographics data
 ==============================
-We provide example demographics data in https://www.github.com/djgroen/facs/covid_data/age-distr.csv . This data is loaded automatically into FACS on startup.
+We provide example demographics data in https://www.github.com/djgroen/facs/covid_data/age_distribution.csv . This data is loaded automatically into FACS on startup.
 
 The data contains the number of citizens by age, with a generic group for people aged 90 and over. 
 The layout of the file is as follows::

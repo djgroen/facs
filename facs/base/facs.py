@@ -76,7 +76,7 @@ class Ecosystem:
         )
         self.vaccinations_legal_age_limit = 16  # Minimum age to be allowed vaccines.
         self.vaccine_effect_time = 14
-        self.traffic_multiplier = 1.0
+        self.traffic_multiplier = 0.0
         self.status = {
             "susceptible": 0,
             "exposed": 0,

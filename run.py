@@ -216,7 +216,7 @@ def main():
 
     eco = facs.Ecosystem(end_time)
 
-    eco.ages = read_age_csv.read_age_csv(f"{data_dir}/age-distr.csv", location)
+    eco.ages = read_age_csv.read_age_csv(f"{data_dir}/age_distribution.csv", location)
 
     print("age distribution in system:", eco.ages, file=sys.stderr)
 
