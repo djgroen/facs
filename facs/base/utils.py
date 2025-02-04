@@ -62,7 +62,7 @@ out_files = OutputFiles()
 def log_to_file(category: str, rank: int, data: list[int | float | str]):
     """Log data to a file."""
 
-    out_file = out_files.open(f"{LOG_PREFIX}/covid_out_{category}_{rank}.csv")
+    out_file = out_files.open(f"{LOG_PREFIX}/out_{category}_{rank}.csv")
     data = ",".join([str(x) for x in data])
     print(data, file=out_file, flush=True)
 

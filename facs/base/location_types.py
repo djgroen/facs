@@ -1,10 +1,21 @@
 """Module to store location types and their ids."""
 
+import os
+import sys
 import yaml
 
 
-def read_building_types(ymlfile: str):
+def read_building_types(data_dir="covid_data", ymlfile=None):
     """Read building types from a YAML file."""
+    
+    # Set the default file path if none is provided
+    if ymlfile is None:
+        ymlfile = f"{data_dir}/building_types_map.yml"
+
+    # Check if the file exists
+    if not os.path.exists(ymlfile):
+        print(f"ERROR: Building types YML file not found at {ymlfile}. Exiting.")
+        sys.exit()
 
     with open(ymlfile, encoding="utf-8") as file:
         buildings_data = yaml.safe_load(file)
@@ -36,9 +47,14 @@ def get_building_types(types):
 
     return buildings
 
+# Default data directory (will be updated dynamically)
+data_dir = "covid_data"
 
-_data = read_building_types("covid_data/building_types_map.yml")
+# Dynamically load building types
+_data = read_building_types(data_dir)
 building_types_dict = get_building_types(_data)
 building_types = _data.keys()
 
-building_types_data = yaml.safe_load(open("covid_data/building_types_map.yml"))
+# Load full building type data dynamically
+with open(f"{data_dir}/building_types_map.yml", encoding="utf-8") as f:
+    building_types_data = yaml.safe_load(f)

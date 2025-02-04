@@ -8,7 +8,7 @@ Full documentation can be found at: http://facs.readthedocs.io
 
 ## What is FACS?
 
-FACS is an agent-based modeling code that simulates the spread of flu and coronaviruses in local regions. So far, it has been used to model the spread of COVID-19 across various regions in Europe, including the United Kingdom—specifically Greater London, South-East, and North-West England; Lithuania’s region of Klaipėda; Romania’s city of Călărași; and Türkiye’s cities of Ankara and Istanbul.
+FACS is an agent-based modeling code that simulates the spread of flu and coronaviruses in local regions. So far, it has been used to model the spread of infectious across various regions in Europe, including the United Kingdom, specifically Greater London, South-East, and North-West England; Lithuania’s region of Klaipėda; Romania’s city of Călărași; and Türkiye’s cities of Ankara and Istanbul.
 
 ## How FACS Works?
 
@@ -22,10 +22,10 @@ The current supported arguments for running FACS are listed below. These allow u
 
 - **--location**: Sets the location for the simulation (e.g., --location=test).
 - **--measures_yml**: Specifies the YAML file containing intervention measures (e.g., --measures_yml=measures_uk).
-- **--disease_yml**: Specifies the YAML configuration file for disease parameters (e.g., --disease_yml=disease_covid19).
+- **--disease_yml**: Specifies the YAML configuration file for disease parameters (e.g., --disease_yml=disease_covid19 or --disease_yml=disease_measles).
 - **--vaccinations_yml**: Specifies the YAML configuration file for vaccination parameters (e.g., - **--vaccinations_yml=vaccinations).
 - **--output_dir**: Defines the directory where output files are saved (default: .).
-- **--data_dir**: Directory for data files relevant to the simulation, such as COVID-related data (e.g., --data_dir=covid_data).
+- **--data_dir**: Directory for data files relevant to the simulation, such as COVID- and measles-related data (e.g., --data_dir=covid_data).
 - **--starting_infections**: Initial number of infections at the start of the simulation (e.g., --starting_infections=1).
 - **--household_size**: Average household size for the simulated population (e.g., --household_size=2.6).
 - **--start_date**: Start date of the simulation in dd/mm/yyyy format (e.g., --start_date=1/3/2020).
@@ -73,12 +73,14 @@ For users who wish to create custom locations, FACS supports user-defined locati
 
 FACS generates two types of output files, providing detailed insights into the simulation:
 
-Individual Event Files: These files contain information on individual infections, hospitalizations, recoveries, and deaths. Each file is generated in CSV format and named according to the event and processor rank:
+### Individual Event Files:
 
-- covid_out_infections_rank.csv
-- covid_out_hospitalisations_rank.csv
-- covid_out_recoveries_rank.csv
-- covid_out_deaths_rank.csv
+These files contain information on individual infections, hospitalizations, recoveries, and deaths. Each file is generated in CSV format and named according to the event and processor rank:
+
+- out_infections_rank.csv
+- out_hospitalisations_rank.csv
+- out_recoveries_rank.csv
+- out_deaths_rank.csv
 
 Each of these files includes time-stamped data on individual events, allowing for granular analysis of how the disease progresses and affects the population over time.
 

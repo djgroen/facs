@@ -8,14 +8,19 @@ __measure_mask_uptake_shopping = 0.0
 __measure_social_distance = 0.0
 __measure_work_from_home = 0.0
 
-def read_measures_yml(e, ymlfile="covid_data/measures.yml"):
+def read_measures_yml(e, data_dir="covid_data", ymlfile=None):
     global __measure_mask_uptake, __measure_mask_uptake_shopping, __measure_social_distance, __measure_work_from_home
+    
+    # Construct the correct path dynamically if `ymlfile` is not provided
+    if ymlfile is None:
+        ymlfile = f"{data_dir}/measures.yml"
 
     if not os.path.exists(ymlfile):
         print("ERROR: measures YML file not found. Exiting.")
         sys.exit()
 
-    with open(ymlfile) as f:
+    # Load YAML file
+    with open(ymlfile, encoding="utf-8") as f:
         m = yaml.safe_load(f)
 
     if m["keyworker_fraction"]:
@@ -94,5 +99,3 @@ def read_measures_yml(e, ymlfile="covid_data/measures.yml"):
         if "track_trace_efficiency" in dm:
             e.track_trace__multiplier = 1.0 - float(dm["track_trace_efficiency"])
 
-        print(date)
-        # print(dm)

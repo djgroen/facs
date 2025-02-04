@@ -12,6 +12,7 @@ def read_disease_yml(ymlfile: str) -> Disease:
         print(data)
 
     disease = Disease(
+        data["name"],
         data["infection_rate"],
         data["incubation_period"],
         data["mild_recovery_period"],
@@ -33,7 +34,5 @@ def read_disease_yml(ymlfile: str) -> Disease:
         disease.add_genotypes(data["genotypes"])
     else:
         print("No mutations or genotypes provided")
-
-    print(disease)
 
     return disease

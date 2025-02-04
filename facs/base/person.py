@@ -28,11 +28,19 @@ if TYPE_CHECKING:
     from .household import Household
     from .location import Location
     from .disease import Disease
+    
+    
+# Define `data_dir` globally but allow it to be overridden later
+data_dir = "covid_data"  # Default value
 
+def set_data_directory(directory):
+    """Function to update the global data directory."""
+    global data_dir
+    data_dir = directory
 
-needs = Needs("covid_data/needs.csv", list(building_types_dict.keys()))
+needs = Needs(f"{data_dir}/needs.csv", list(building_types_dict.keys()))
 
-with open("covid_data/vaccinations.yml", encoding="utf-8") as f:
+with open(f"{data_dir}/vaccinations.yml", encoding="utf-8") as f:
     vac_data = yaml.safe_load(f)
     antivax_chance = vac_data["antivax_fraction"]
 
@@ -41,7 +49,7 @@ def load_disease_config(disease_yml_path):
     return disease_config.immunity_duration, disease_config.immunity_fraction
 
 # Example of usage
-immune_duration, immunity_fraction = load_disease_config("covid_data/disease_measles.yml")
+immune_duration, immunity_fraction = load_disease_config(f"{data_dir}/disease_measles.yml")
 
 
 @dataclass

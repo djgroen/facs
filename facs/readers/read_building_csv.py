@@ -28,7 +28,8 @@ def apply_building_mapping(mapdict, label):
 def read_building_csv(
     e,
     csvfile,
-    building_type_map="covid_data/building_types_map.yml",
+    data_dir="covid_data",
+    building_type_map=None,
     house_ratio=1,
     workspace=14,
     office_size=1600,
@@ -44,6 +45,10 @@ def read_building_csv(
     household_size = average size of household.
     work_participation_rate = fraction of population that works.
     """
+    
+    # Set building_type_map dynamically if not provided
+    if building_type_map is None:
+        building_type_map = f"{data_dir}/building_types_map.yml"
 
     e.household_size = household_size
 
@@ -110,28 +115,26 @@ def read_building_csv(
             if row_number % 10000 == 0:
                 print(f"{row_number} buildings read", file=sys.stderr, end="\r")
         print(f"Total {row_number} buildings read", file=sys.stderr)
-        print("bounds:", xbound, ybound, file=sys.stderr)
+        print("Coordinate bounds:", xbound, ybound, file=sys.stderr)
         office_sqm = (
             workspace * house_csv_count * work_participation_rate
         )  # 10 sqm per worker, 2.6 person per household, 50% in workforce
         office_sqm_red = office_sqm
-
-        f = open("covid_data/offices.csv", "w")
-        while office_sqm_red > 0:
-            num_locs += 1
-            e.addRandomOffice(f, num_locs, xbound, ybound, office_size)
-            office_sqm_red -= office_size
+            
+        with open(f"{data_dir}/offices.csv", "w") as f: 
+            while office_sqm_red > 0:
+                num_locs += 1
+                e.addRandomOffice(f, num_locs, xbound, ybound, office_size)
+                office_sqm_red -= office_size  # Reduce available office space
 
     if e.rank == 0:
         print("Read in {} houses and {} other locations.".format(num_houses, num_locs))
-        print("Office sqm = {}".format(office_sqm))
-        print("Type distribution:")
-        print("house", len(e.houses))
+        print("Office sqm: {}".format(office_sqm))
 
     e.init_loc_inf_minutes()
 
     if e.rank == 0:
-        print("raw types are:")
+        print("Building types:")
         pp.pprint(building_types)
 
     e.update_nearest_locations(dumpnearest)

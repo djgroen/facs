@@ -9,14 +9,13 @@ from os import makedirs, path
 
 import numpy as np
 
-from facs.base import facs
+from facs.base import facs, person
 from facs.base.measures import Measures
 from facs.readers import (
     read_age_csv,
     read_building_csv,
     read_disease_yml,
 )
-
 
 def parse_arguments() -> dict:
     """Formats command-line arguments as dictionary
@@ -168,12 +167,10 @@ def get_measures_file(filename: str) -> str:
 
     return str(filename)
 
-
 def main():
     """The main program"""
 
     args = parse_arguments()
-
     print(args)
 
     if args.seed is not None:
@@ -201,24 +198,28 @@ def main():
 
     workspace = args.workspace
     office_size = args.office_size
-
-    print("Running basic Covid-19 simulation kernel.")
-    print(f"scenario = {location}")
-    print(f"measures input yml = {measures_yml}")
-    print(f"disease input yml = {disease_yml}")
-    print(f"vaccinations input yml = {vaccinations_yml}")
-    print(f"end_time = {end_time}")
-    print(f"output_dir  = {output_dir}")
-    print(f"outfile  = {outfile}")
-    print(f"data_dir  = {data_dir}")
+    
+    eco = facs.Ecosystem(end_time, data_dir)
+    
+    if eco.mpi.rank == 0:
+        print("Running basic simulation kernel.")
+        print(f"scenario = {location}")
+        print(f"measures input yml = {measures_yml}")
+        print(f"disease input yml = {disease_yml}")
+        print(f"vaccinations input yml = {vaccinations_yml}")
+        print(f"end_time = {end_time}")
+        print(f"output_dir  = {output_dir}")
+        print(f"outfile  = {outfile}")
+        print(f"data_dir  = {data_dir}")
     
     measures = Measures()
-
-    eco = facs.Ecosystem(end_time)
+    
+    person.set_data_directory(data_dir) 
 
     eco.ages = read_age_csv.read_age_csv(f"{data_dir}/age_distribution.csv", location)
-
-    print("age distribution in system:", eco.ages, file=sys.stderr)
+    
+    if eco.mpi.rank == 0:
+        print("Age distribution:", eco.ages, file=sys.stderr)
 
     eco.disease = read_disease_yml.read_disease_yml(f"{data_dir}/{disease_yml}.yml")
 
@@ -226,7 +227,7 @@ def main():
     read_building_csv.read_building_csv(
         eco,
         building_file,
-        f"{data_dir}/building_types_map.yml",
+        data_dir=data_dir,
         house_ratio=house_ratio,
         workspace=workspace,
         office_size=office_size,
@@ -240,13 +241,6 @@ def main():
     # people work in much more spacious environments)
     # household size: average size of each household, specified separately here.
     # work participation rate: fraction of population in workforce, irrespective of age
-
-    # print("{}/{}_cases.csv".format(data_dir, location))
-    # Can only be done after houses are in.
-    # read_cases_csv.read_cases_csv(e,
-    #                              "{}/{}_cases.csv".format(data_dir, location),
-    #                              start_date=args.start_date,
-    #                              date_format="%m/%d/%Y")
 
     eco.print_status(
         outfile, silent=True
@@ -266,10 +260,11 @@ def main():
     elif location == "test":
         starting_num_infections = 10
 
-    print(
-        f"THIS SIMULATIONS HAS {eco.num_agents} AGENTS."
-        f"Starting with {starting_num_infections} infections."
-    )
+    if eco.mpi.rank == 0:
+        print(
+            f"THIS SIMULATIONS HAS {eco.num_agents} AGENTS. "
+            f"Starting with {starting_num_infections} infections."
+        )
 
     eco.time = -20
     eco.date = datetime.strptime(args.start_date, "%d/%m/%Y")
@@ -284,12 +279,14 @@ def main():
         eco.add_infections(num)
 
         measures.enact_measures_and_evolutions(
-            eco, eco.time, measures_yml, vaccinations_yml, disease_yml
+            eco, eco.time, data_dir, measures_yml, vaccinations_yml, disease_yml
         )
 
         eco.evolve(reduce_stochasticity=False)
-
-        print(eco.time)
+        
+        if eco.mpi.rank == 0:
+            print(f"t({eco.time})")
+            
         if args.dbg:
             eco.debug_mode = True
             eco.print_status(outfile)
@@ -299,7 +296,7 @@ def main():
 
     for _ in range(0, end_time):
         measures.enact_measures_and_evolutions(
-            eco, eco.time, measures_yml, vaccinations_yml, disease_yml
+            eco, eco.time, data_dir, measures_yml, vaccinations_yml, disease_yml
         )
 
         # Propagate the model by one time step.
@@ -311,8 +308,8 @@ def main():
     # calculate cumulative sums.
     eco.add_cum_column(outfile, ["num hospitalisations today", "num infections today"])
 
-    print("Simulation complete.", file=sys.stderr)
-
+    if eco.mpi.rank == 0:
+        print("Simulation complete.", file=sys.stderr)
 
 if __name__ == "__main__":
     main()

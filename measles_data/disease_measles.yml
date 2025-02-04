@@ -1,0 +1,39 @@
+name: Measles
+infection_rate: 0.02
+mortality:
+  - [4.5, 0.83]     # Mortality rate for children under 5 years old
+  - [14.5, 0.47]    # Mortality rate for children aged 5-14 years
+  - [24.5, 0.5]     # Mortality rate for individuals aged 15-24 years
+  - [34.5, 0.66]    # Mortality rate for individuals aged 25-34 years
+  - [44.5, 0.66]    # Mortality rate for individuals aged 35-44 years
+  - [54.5, 0.67]    # Mortality rate for individuals aged 45-54 years
+  - [64.5, 0.7]     # Mortality rate for individuals aged 55-64 years
+  - [74.5, 0.72]    # Mortality rate for individuals aged 65-74 years
+  - [84.5, 0.78]    # Mortality rate for individuals aged 75-84 years
+
+hospitalised:
+  - [4.5, 0.89]     # Hospitalisation rate for children under 5 years old
+  - [14.5, 0.82]    # Hospitalisation rate for children aged 5-14 years
+  - [24.5, 0.87]    # Hospitalisation rate for individuals aged 15-24 years
+  - [34.5, 0.96]    # Hospitalisation rate for individuals aged 25-34 years
+  - [44.5, 0.85]    # Hospitalisation rate for individuals aged 35-44 years
+  - [54.5, 0.72]    # Hospitalisation rate for individuals aged 45-54 years
+  - [64.5, 0.77]    # Hospitalisation rate for individuals aged 55-64 yearsgit
+  - [74.5, 0.83]    # Hospitalisation rate for individuals aged 65-74 years
+  - [84.5, 0.89]    # Hospitalisation rate for individuals aged 75-84 years
+
+mortality_period: 7.0           # Measles mortality typically occurs 7 to 10 days after symptom onset due to complications like pneumonia or encephalitis.
+recovery_period: 21.0           # Measles recovery lasts about 2 to 3 weeks from symptom onset as individuals gradually recover.
+mild_recovery_period: 14.0      # Mild measles cases may have a shorter recovery period, typically 1 to 2 weeks.
+incubation_period: 10.0         # Measles' incubation period, from virus exposure to symptom onset, is around 10 to 14 days (range: 7 to 21 days).
+period_to_hospitalisation: 7.0  # The time to hospitalisation varies; severe cases may require it within days, while mild cases may not need hospitalisation.  
+immunity_duration: 9125.0       # Natural immunity after measles recovery is usually lifelong, but waning immunity can occur over decades. MMR vaccination provides long-lasting immunity, often for life.
+immunity_fraction: 0.8          # The initial fraction of the population that is immune to measles due to vaccination or prior infection.
+genotypes:
+  D4:
+    infection_rate: 0.02
+  B3:
+    infection_rate: 0.04
+  H1:
+    infection_rate: 0.07
+    

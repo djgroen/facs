@@ -29,13 +29,38 @@ from .mpi import MPIManager
 
 log_prefix = "."
 
-# Global storage for needs now, to keep it simple.
-needs = Needs("covid_data/needs.csv", building_types)
-
-
 class Ecosystem:
-    def __init__(self, duration, needsfile="covid_data/needs.csv", mode="parallel"):
-        self.mode = mode  # "serial" or "parallel"
+    def __init__(self, duration, data_dir, mode="parallel"):
+        self.data_dir = data_dir
+        self.needsfile = f"{self.data_dir}/needs.csv"
+        
+        # Moveing MPI setup to the top to ensures `self.rank` exists early
+        self.size = 1  # number of processes
+        self.rank = 0  # rank of current process
+        self.mode = mode  # parallel or serial
+
+        if self.mode == "parallel":
+            self.mpi = MPIManager()
+            self.rank = self.mpi.comm.Get_rank()
+            self.size = self.mpi.comm.Get_size()
+            self.mpi.comm.Barrier()  # Ensure all ranks reach this point before continuing
+
+        if self.rank == 0:
+            print(f"MPI initialized with {self.size} ranks available.")
+
+        self.global_stats = np.zeros(6, dtype="int64")
+        
+        # Only Rank 0 creates the Needs object
+        global needs
+        if self.rank == 0:
+            needs = Needs(self.needsfile, building_types)
+            needs.compute_needs_statistics()
+        else:
+            needs = None  # Other ranks start with None
+
+        # Broadcast Needs object to all MPI ranks
+        needs = self.mpi.comm.bcast(needs, root=0)
+        
         self.locations = {}
         self.houses = []
         self.house_names = []
@@ -87,7 +112,6 @@ class Ecosystem:
         }
         self.enforce_masks_on_transport = False
         self.loc_groups = {}
-        self.needsfile = needsfile
 
         self.airflow_indoors = 0.007
         self.airflow_outdoors = 0.028  # assuming x4: x20 from the literature but also that people occupy only 20% of the park space on average
@@ -110,22 +134,9 @@ class Ecosystem:
         self.num_recoveries_today = 0
         self.num_hospitalisations_today = 0
         self.num_deaths_today = 0
-
-        self.size = 1  # number of processes
-        self.rank = 0  # rank of current process
+        
         self.debug_mode = False
         self.verbose = False
-        if self.mode == "parallel":
-            self.mpi = MPIManager()
-            self.rank = (
-                self.mpi.comm.Get_rank()
-            )  # this is stored outside of the MPI manager, to have one code for seq and parallel.
-            self.size = (
-                self.mpi.comm.Get_size()
-            )  # this is stored outside of the MPI manager, to have one code for seq and parallel.
-            self.global_stats = np.zeros(6, dtype="int64")
-
-            print("Hello from process {} out of {}".format(self.rank, self.size))
 
     def get_partition_size(self, num):
         """
@@ -197,90 +208,90 @@ class Ecosystem:
         return self.loc_groups[loc_type][group_num]
 
     def print_contact_rate(self, measure):
-        print("Enacted measure:", measure)
-        print("contact rate multipliers set to:")
-        print(self.contact_rate_multiplier)
+        if self.rank == 0:
+            print("Enacted measure:", measure)
+            print("contact rate multipliers set to:")
+            print(self.contact_rate_multiplier)
 
     def print_isolation_rate(self, measure):
-        print("Enacted measure:", measure)
-        print("isolation rate multipliers set to:")
-        print(self.self_isolation_multiplier)
-
+        if self.rank == 0:
+            print("Enacted measure:", measure)
+            print("Isolation rate multipliers set to ", end="")
+            print(self.self_isolation_multiplier)
+    
     def evolve_public_transport(self):
         """
-        Pinf =
-        Contact rate multiplier [dimensionless] (Term 1)
-        *
-        Infection rate [dimensionless] / airflow coefficient [dimensionless] (Term 2)
-        *
-        Duration of susceptible person visit [minutes] / 1 day [minutes] (Term 3)
-        *
-        (Average number of infectious person visiting today [#] * physical area of a single standing person [m^2]) /
-        (Area of space [m^2]) (Term 4)
-        *
-        Average infectious person visit duration [minutes] / minutes_opened [minutes] (Term 5)
-
+        This function models infection spread in public transport without overemphasising travel.
+        The new version ensures:
+        - Transport infections only occur if travel is actually enabled.
+        - The infection probability reflects multiple sources (not just transport).
+        - External infections are only considered if travel importation is enabled.
         """
 
-        if self.time < 0:  # do not model transport during warmup phase!
+        # Check if transport infection should be modeled at all
+        if self.time < 0:  # Skip transport during warm-up
+            return
+        if self.traffic_multiplier == 0:  # No travel → No transport infections
             return
 
-        self.print_status(None, silent=True)  # Synchronize global stats
+        # Synchronize infection statistics
+        self.print_status(None, silent=True)  
         num_agents = (
             self.global_stats[0]
             + self.global_stats[1]
             + self.global_stats[2]
             + self.global_stats[3]
-            + self.global_stats[5]
-        )  # leaving out [4] because dead people don't travel.
-        infected_external_passengers = (
-            num_agents * self.external_infection_ratio * self.external_travel_multiplier
+            + self.global_stats[5]  # Exclude dead individuals
         )
 
-        infection_probability = (
-            self.traffic_multiplier
-        )  # we use travel uptake rate as contact rate multiplier (it implicity has case isolation multiplier in it)
+        # Handle external infections only if enabled
+        if self.external_travel_multiplier > 0:
+            infected_external_passengers = (
+                num_agents * self.external_infection_ratio * self.external_travel_multiplier
+            )
+        else:
+            infected_external_passengers = 0  # No external disease introduction
+
+        # Calculate base infection probability, reducing transport emphasis
+        base_infection_probability = (
+            self.disease.infection_rate * self.traffic_multiplier * 0.5  # Reduce impact of travel
+        )
+
+        # Adjust based on duration & exposure
+        exposure_time_factor = (30.0 / 1440.0)  # 30 min exposure / full day
+        occupancy_factor = (
+            (self.global_stats[2] + infected_external_passengers) / num_agents
+        )  # Proportion of infected travelers
+
+        infection_probability = base_infection_probability * exposure_time_factor * occupancy_factor
+
+        # Further adjust based on specific diseases
+        if self.disease.name.lower() == "measles":
+            infection_probability *= 1.5  # Measles has a higher airborne spread
+        elif self.disease.name.lower() == "covid-19":
+            infection_probability *= 0.9  # COVID-19 transmission is lower in transport than in homes
+
+        # Apply mask effects if enabled
         if self.enforce_masks_on_transport:
-            infection_probability *= 0.44  # 56% reduction when masks are widely used: https://www.medrxiv.org/content/10.1101/2020.04.17.20069567v4.full.pdf
-        # print(infection_probability)
-        infection_probability *= (
-            self.disease.infection_rate
-        )  # Term 2: Airflow coefficient set to 1, as setting mimics confined spaces from infection rate literature (prison, cruiseship).
-        # print(infection_probability)
-        infection_probability *= (
-            30.0 / 1440.0
-        )  # Term 3: visit duration assumed to be 30 minutes per day on average / length of full day.
-        # print(infection_probability)
-        infection_probability *= (
-            (self.global_stats[2] + infected_external_passengers) * 1.0 / num_agents
-        )  # Term 4, space available is equal to number of agents.
-        # print(infection_probability)
-        infection_probability *= (
-            30.0 / 900.0
-        )  # visit duration assumed to be 30 minutes per day / transport services assumed to be operational for 15 hours per day.
+            infection_probability *= 0.44  # 56% reduction from masks
 
-        # print(self.global_stats[2], num_agents, infected_external_passengers, infection_probability)
-        # sys.exit()
-
-        # assume average of 40-50 minutes travel per day per travelling person (5 million people travel, so I reduced it to 30 minutes per person), transport open of 900 minutes/day (15h), self_isolation further reduces use of transport, and each agent has 1 m^2 of space in public transport.
-        # traffic multiplier = relative reduction in travel minutes^2 / relative reduction service minutes
-        # 1. if half the people use a service that has halved intervals, then the number of infection halves.
-        # 2. if half the people use a service that has normal intervals, then the number of infections reduces by 75%.
-
+        # Iterate through agents and infect if probability threshold is met
         num_inf = 0
         for i in range(0, len(self.houses)):
             h = self.houses[i]
             for hh in h.households:
                 for a in hh.agents:
-                    if probability(infection_probability):
+                    if probability(infection_probability):  # Use new adjusted probability
                         a.infect(self, location_type="traffic")
                         num_inf += 1
 
-        print(
-            "Transport: t {} p_inf {}, inf_ext_pas {}, # of infections {}.".format(
-                self.time, infection_probability, infected_external_passengers, num_inf
+        # Log results
+        if self.rank == 0:
+            print(
+                f"Transport: t={self.time}, p_inf={infection_probability:.5f}, "
+                f"inf_ext_pas={int(infected_external_passengers)}, # of infections={num_inf}."
             )
-        )
+
 
     def load_nearest_from_file(self, fname):
         """
@@ -346,8 +357,6 @@ class Ecosystem:
             if count % 1000 == 0:
                 print(f"{count} houses scanned.", file=sys.stderr, end="\r")
         print(f"Total {count} houses scanned.", file=sys.stderr)
-
-        print(dump_and_exit)
 
         if dump_and_exit == True:
             sys.exit()
@@ -549,19 +558,29 @@ class Ecosystem:
 
     def addRandomOffice(self, office_log, name, xbounds, ybounds, office_size):
         """
-        Office coords are generated on proc 0, then broadcasted to others.
+        Office coordinates are generated on Rank 0, then broadcasted to others.
         """
 
-        data = None
-        if self.mpi.rank == 0:
+        data = None  # Explicitly initialize `data` to None
+
+        if self.rank == 0:
             x = random.uniform(xbounds[0], xbounds[1])
             y = random.uniform(ybounds[0], ybounds[1])
             data = [x, y]
 
+        # Broadcast the data to all ranks
         data = self.mpi.comm.bcast(data, root=0)
-        # print("Coords: ",self.mpi.rank, data)
+
+        # Ensure data is valid after broadcast
+        if data is None:
+            raise ValueError(f"MPI Broadcast Failed! Rank {self.rank} received None.")
+
+        # Add the office location
         self.addLocation(name, "office", data[0], data[1], office_size)
-        office_log.write("office,{},{},{}\n".format(data[0], data[1], office_size))
+
+        # Only Rank 0 writes to the office log to prevent duplicate writes
+        if self.rank == 0:
+            office_log.write("office,{},{},{}\n".format(data[0], data[1], office_size))
 
     def addLocation(self, name, loc_type, x, y, sqm=400):
         l = Location(name, loc_type, x, y, sqm)
@@ -646,10 +665,8 @@ class Ecosystem:
         self.print_contact_rate("Removal of SD")
 
     def remove_all_measures(self):
-        global needs
         self.initialise_social_distance()
         self.remove_closures()
-        needs = Needs(self.needsfile, building_types)
         for k, e in enumerate(self.houses):
             for hh in e.households:
                 for a in hh.agents:
@@ -697,7 +714,7 @@ class Ecosystem:
             self.contact_rate_multiplier[e] *= m
 
         self.print_contact_rate(
-            "SD (covid_flee method) with distance {} and compliance {}".format(
+            "Social Distancing of {} and compliance {}".format(
                 distance, compliance
             )
         )

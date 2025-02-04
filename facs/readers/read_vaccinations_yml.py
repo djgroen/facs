@@ -6,7 +6,7 @@ import yaml
 __mutation_daily_change = 0.0
 __mutation_days_remaining = -1
 
-def read_vaccinations_yml(e, base_date, ymlfile, diseasefile):
+def read_vaccinations_yml(e, base_date, data_dir, ymlfile, diseasefile):
     global __mutation_daily_change, __mutation_days_remaining
     with open(ymlfile, "r", encoding="utf-8") as f:
         v = yaml.safe_load(f)
@@ -59,7 +59,7 @@ def read_vaccinations_yml(e, base_date, ymlfile, diseasefile):
 
     verbose = False
     try:
-        with open("covid_data/mutations.yml") as f:
+        with open(f"{data_dir}/mutations.yml") as f:
             v = yaml.safe_load(f)
 
         with open(diseasefile) as g:
@@ -78,7 +78,7 @@ def read_vaccinations_yml(e, base_date, ymlfile, diseasefile):
     except FileNotFoundError:
         if verbose:
             print(
-                "WARNING: covid_data/mutations.yml OR {} not found".format(diseasefile)
+                f"WARNING: {data_dir}/mutations.yml OR {diseasefile} not found"
             )
 
     if __mutation_days_remaining > 0:

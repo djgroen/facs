@@ -15,7 +15,7 @@ class Disease:
     """Class for Disease."""
 
     # pylint: disable=too-many-instance-attributes
-
+    name: str
     infection_rate: float
     incubation_period: float
     mild_recovery_period: float
@@ -32,6 +32,12 @@ class Disease:
 
     def __post_init__(self):
         """Ensure that all the parameters are positive floats."""
+        
+        # Validate name
+        if not isinstance(self.name, str):
+            raise TypeError("Disease name must be a string")
+        if not self.name:
+            warnings.warn("Disease name is empty", RuntimeWarning)
 
         positive_attributes = [
             "infection_rate",
@@ -44,18 +50,16 @@ class Disease:
         ]
 
         for attr in positive_attributes:
-            if not isinstance(getattr(self, attr), float) and not isinstance(
-                getattr(self, attr), int
-            ):
+            value = getattr(self, attr)
+            if not isinstance(value, (float, int)):
                 raise TypeError(f"{attr} must be int or float")
-
-            if getattr(self, attr) < 0:
+            if value < 0:
                 raise ValueError(f"{attr} must not be negative")
-
-            if getattr(self, attr) == 0:
+            if value == 0:
                 warnings.warn(f"{attr} is zero", RuntimeWarning)
 
-        if self.immunity_fraction < 0 or self.immunity_fraction > 1:
+        # Validate immunity fraction
+        if not (0 <= self.immunity_fraction <= 1):
             raise ValueError("Immunity fraction must be between 0 and 1")
 
     def array_sanity_check(self, array: list[list[float]], name: str):

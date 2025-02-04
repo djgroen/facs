@@ -29,7 +29,7 @@ class Measures:
 
         return (1.0 - fraction) * source + (fraction * dest)
 
-    def enact_measures_and_evolutions(self, e, t, measures_yml, vaccinations_yml, disease_yml):
+    def enact_measures_and_evolutions(self, e, t, data_dir, measures_yml, vaccinations_yml, disease_yml):
         # add in Alpha mutation
         # Prevalence increases linearly from Oct 22 (1%) to Jan 20th (100%)
         # if t > 235 and t < 316:
@@ -50,10 +50,9 @@ class Measures:
         read_vaccinations_yml(
             e,
             e.get_date_string(),
-            "covid_data/{}.yml".format(vaccinations_yml),
-            "covid_data/{}.yml".format(disease_yml),
+            data_dir,
+            f"{data_dir}/{vaccinations_yml}.yml",
+            f"{data_dir}/{disease_yml}.yml",
         )
-        read_measures_yml(e, "covid_data/{}.yml".format(measures_yml))
+        read_measures_yml(e, data_dir, f"{data_dir}/{measures_yml}.yml")
         
-        
-

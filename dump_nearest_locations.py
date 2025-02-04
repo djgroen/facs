@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
     end_time = 1100
 
-    print("Running basic Covid-19 simulation kernel.")
+    print("Running basic simulation kernel.")
     print("scenario = %s" % (location))
 
     e = facs.Ecosystem(end_time)

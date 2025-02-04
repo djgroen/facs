@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import random
+import warnings
 
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
-from warnings import warn
 
 from .person import Person
 from .utils import probability
@@ -14,7 +14,12 @@ from .utils import probability
 if TYPE_CHECKING:
     from .facs import Ecosystem
     from .disease import Disease
+    
+warnings.simplefilter("default")  # Ensure warnings are shown
+def format_warning(message, category, filename, lineno, file=None, line=None):
+    return f"Warning: {message}\n"
 
+warnings.formatwarning = format_warning  # Override default format
 
 HOME_INTERACTION_FRACTION = 0.2
 # people are within 2m at home of a specific other person 20% of the time.
@@ -45,7 +50,7 @@ class Household:
             raise ValueError("Household size must be at least 1.")
 
         if self.size > 4:
-            warn(f"Household size {self.size} is greater than 4.")
+            warnings.warn(f"Household size {self.size} is greater than 4.")
 
         for _ in range(self.size):
             self.agents.append(Person(self.house, self, self.ages))
