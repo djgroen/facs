@@ -34,8 +34,6 @@ def test_disease_initialization(disease: Disease):
         "recovery_period=15.0, mortality_period=20.0, "
         "period_to_hospitalisation=25.0, immunity_duration=30.0, immunity_fraction=0.5)"
     )
-    
-    #assert repr(disease) == expected_repr, f"Expected: {expected_repr}, Got: {repr(disease)}"
 
 
 def test_add_hospitalisation_chances(disease: Disease):

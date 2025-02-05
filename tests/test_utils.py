@@ -110,7 +110,7 @@ def test_log_to_file(mock_print, mocked_file):
 
     utils.log_to_file(category, rank, data)
 
-    mocked_file.assert_called_once_with(f"./covid_out_{category}_{rank}.csv")
+    mocked_file.assert_called_once_with(f"./out_{category}_{rank}.csv")
     mock_print.assert_called_once_with(expected_output, file=mocked_file(), flush=True)
 
 
@@ -122,7 +122,7 @@ def test_log_infection(mock_print, mock_open):
     utils.log_infection(1, 2, 3, 4, 5, 6)
 
     mock_open.assert_called_once_with(
-        "./covid_out_infections_5.csv", "a", encoding="utf-8"
+        "./out_infections_5.csv", "a", encoding="utf-8"
     )
     mock_print.assert_called_once_with(
         "1,2,3,4,5,6", file=mock_open.return_value, flush=True
@@ -137,7 +137,7 @@ def test_log_hospitalisation(mock_print, mock_open):
     utils.log_hospitalisation(1, 2, 3, 4, 5)
 
     mock_open.assert_called_once_with(
-        "./covid_out_hospitalisations_5.csv", "a", encoding="utf-8"
+        "./out_hospitalisations_5.csv", "a", encoding="utf-8"
     )
     mock_print.assert_called_once_with(
         "1,2,3,4", file=mock_open.return_value, flush=True
@@ -151,7 +151,7 @@ def test_log_death(mock_print, mock_open):
 
     utils.log_death(1, 2, 3, 4, 5)
 
-    mock_open.assert_called_once_with("./covid_out_deaths_5.csv", "a", encoding="utf-8")
+    mock_open.assert_called_once_with("./out_deaths_5.csv", "a", encoding="utf-8")
     mock_print.assert_called_once_with(
         "1,2,3,4", file=mock_open.return_value, flush=True
     )
@@ -165,7 +165,7 @@ def test_log_recovery(mock_print, mock_open):
     utils.log_recovery(1, 2, 3, 4, 5)
 
     mock_open.assert_called_once_with(
-        "./covid_out_recoveries_5.csv", "a", encoding="utf-8"
+        "./out_recoveries_5.csv", "a", encoding="utf-8"
     )
     mock_print.assert_called_once_with(
         "1,2,3,4", file=mock_open.return_value, flush=True
@@ -216,10 +216,10 @@ def test_write_headers(mock_print, mock_file):
         "#time,x,y,age",
     ]
     file_names = [
-        "./covid_out_infections_1.csv",
-        "./covid_out_hospitalisations_1.csv",
-        "./covid_out_deaths_1.csv",
-        "./covid_out_recoveries_1.csv",
+        "./out_infections_1.csv",
+        "./out_hospitalisations_1.csv",
+        "./out_deaths_1.csv",
+        "./out_recoveries_1.csv",
     ]
 
     assert mock_file.call_count == 4
