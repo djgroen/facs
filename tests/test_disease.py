@@ -13,6 +13,7 @@ def disease():
     """Return a Disease instance."""
 
     return Disease(
+        name="COVID-19",
         infection_rate=0.05,
         incubation_period=5.0,
         mild_recovery_period=10.0,
@@ -28,11 +29,13 @@ def test_disease_initialization(disease: Disease):
     """Test Disease initialization."""
 
     assert (
-        repr(disease) == "Disease(infection_rate=0.05, "
+        repr(disease) == "Disease(name='COVID-19', infection_rate=0.05, "
         "incubation_period=5.0, mild_recovery_period=10.0, "
         "recovery_period=15.0, mortality_period=20.0, "
         "period_to_hospitalisation=25.0, immunity_duration=30.0, immunity_fraction=0.5)"
     )
+    
+    #assert repr(disease) == expected_repr, f"Expected: {expected_repr}, Got: {repr(disease)}"
 
 
 def test_add_hospitalisation_chances(disease: Disease):
@@ -80,6 +83,7 @@ def test_disease_initialisation_warn_zero_parameters():
 
     with pytest.warns(RuntimeWarning):
         Disease(
+            name="COVID-19",
             infection_rate=0.0,
             incubation_period=5.0,
             mild_recovery_period=10.0,
@@ -96,6 +100,7 @@ def test_disease_initialisation_fail_negative_parameters():
 
     with pytest.raises(ValueError):
         Disease(
+            name="COVID-19",
             infection_rate=-0.05,
             incubation_period=5.0,
             mild_recovery_period=10.0,
@@ -112,6 +117,7 @@ def test_disease_initialisation_fail_string_parameters():
 
     with pytest.raises(TypeError):
         Disease(
+            name="COVID-19",
             infection_rate="0.05",
             incubation_period=5.0,
             mild_recovery_period=10.0,
@@ -128,6 +134,7 @@ def test_disease_initialisation_invalid_immunity_fraction():
 
     with pytest.raises(TypeError):
         Disease(
+            name="COVID-19",
             infection_rate="0.05",
             incubation_period=5.0,
             mild_recovery_period=10.0,
@@ -144,6 +151,7 @@ def test_disease_initialisation_fail_list_parameters():
 
     with pytest.raises(TypeError):
         Disease(
+            name="COVID-19",
             infection_rate=[0.05],
             incubation_period=5.0,
             mild_recovery_period=10.0,
