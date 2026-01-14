@@ -1,8 +1,9 @@
 import sys
-
 import numpy as np
-
 import facs.readers.read_age_csv as r
+
+# This is an early prototype script that randomly generates footfall numbers.
+# Potentially this script could be modified to use FACS-based numbers.
 
 ages = r.read_age_csv(sys.argv[1])
 
